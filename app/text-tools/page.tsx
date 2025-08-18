@@ -1,0 +1,115 @@
+import { Type, FileText, Key, Shuffle, RotateCcw, Hash } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import Link from "next/link"
+
+const textTools = [
+  {
+    title: "Word Counter",
+    description: "Count words, characters, paragraphs, and reading time",
+    icon: FileText,
+    href: "/text-tools/word-counter",
+    popular: true,
+  },
+  {
+    title: "Case Converter",
+    description: "Convert text to uppercase, lowercase, title case, and more",
+    icon: Type,
+    href: "/text-tools/case-converter",
+    popular: true,
+  },
+  {
+    title: "Lorem Ipsum Generator",
+    description: "Generate placeholder text for your designs",
+    icon: Shuffle,
+    href: "/text-tools/lorem-ipsum",
+    popular: true,
+  },
+  {
+    title: "Password Generator",
+    description: "Generate secure passwords with custom options",
+    icon: Key,
+    href: "/text-tools/password-generator",
+    popular: true,
+  },
+  {
+    title: "Text Reverser",
+    description: "Reverse text, words, or entire sentences",
+    icon: RotateCcw,
+    href: "/text-tools/text-reverser",
+    popular: false,
+  },
+  {
+    title: "Hash Generator",
+    description: "Generate MD5, SHA1, SHA256 hashes from text",
+    icon: Hash,
+    href: "/text-tools/hash-generator",
+    popular: false,
+  },
+]
+
+export default function TextToolsPage() {
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-2">
+              <Type className="h-8 w-8 text-primary" />
+              <h1 className="text-2xl font-serif font-bold text-primary">ToolHub</h1>
+            </Link>
+            <nav className="flex items-center space-x-4">
+              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+                Home
+              </Link>
+              <span className="text-primary font-medium">Text Tools</span>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="py-12 bg-gradient-to-br from-background to-muted/30">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-serif font-bold text-foreground mb-4">Text & Generator Tools</h2>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Powerful text manipulation and generation tools for writers, developers, and content creators. All tools
+            work instantly in your browser.
+          </p>
+        </div>
+      </section>
+
+      {/* Tools Grid */}
+      <section className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {textTools.map((tool) => {
+              const IconComponent = tool.icon
+              return (
+                <Link key={tool.title} href={tool.href}>
+                  <Card className="h-full hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer group relative">
+                    {tool.popular && (
+                      <div className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs px-2 py-1 rounded-full font-medium">
+                        Popular
+                      </div>
+                    )}
+                    <CardHeader className="text-center">
+                      <IconComponent className="h-12 w-12 text-accent mx-auto mb-4 group-hover:text-primary transition-colors" />
+                      <CardTitle className="font-serif text-xl group-hover:text-primary transition-colors">
+                        {tool.title}
+                      </CardTitle>
+                      <CardDescription className="text-base">{tool.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <div className="text-sm text-accent font-medium">Use Tool →</div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
