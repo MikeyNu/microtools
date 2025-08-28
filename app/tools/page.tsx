@@ -298,20 +298,6 @@ const allTools = [
     icon: Globe,
   },
   {
-    name: "Base64 Encoder/Decoder",
-    description: "Encode and decode Base64 strings",
-    category: "Web Tools",
-    href: "/web-tools/base64",
-    icon: Globe,
-  },
-  {
-    name: "JSON Formatter",
-    description: "Format, validate, and minify JSON data",
-    category: "Web Tools",
-    href: "/web-tools/json-formatter",
-    icon: Globe,
-  },
-  {
     name: "UUID Generator",
     description: "Generate unique identifiers (UUIDs)",
     category: "Web Tools",
@@ -361,7 +347,11 @@ const categories = [
   { name: "All", count: allTools.length },
   { name: "Calculators", count: allTools.filter(tool => tool.category === "Calculators").length },
   { name: "Converters", count: allTools.filter(tool => tool.category === "Converters").length },
-  { name: "Text Tools", count: allTools.filter(tool => tool.category === "Text Tools").length },
+  { name: "Text Utilities", count: allTools.filter(tool => tool.category === "Text Utilities").length },
+  { name: "Developer Tools", count: allTools.filter(tool => tool.category === "Developer Tools").length },
+  { name: "Timestamp Tools", count: allTools.filter(tool => tool.category === "Timestamp Tools").length },
+  { name: "Image Tools", count: allTools.filter(tool => tool.category === "Image Tools").length },
+  { name: "PDF Tools", count: allTools.filter(tool => tool.category === "PDF Tools").length },
   { name: "Web Tools", count: allTools.filter(tool => tool.category === "Web Tools").length },
   { name: "SEO Tools", count: allTools.filter(tool => tool.category === "SEO Tools").length },
 ]
