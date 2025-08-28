@@ -1,6 +1,6 @@
 'use client'
 
-import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap, Search, Filter } from "lucide-react"
+import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap, Search, Filter, Clock, Image, FileText, Code2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -96,50 +96,189 @@ const allTools = [
     icon: Zap,
   },
 
-  // Text Tools
+  // Text Utilities
   {
-    name: "Word Counter",
-    description: "Count words, characters, and paragraphs in text",
-    category: "Text Tools",
-    href: "/text-tools/word-counter",
+    name: "Markdown Editor",
+    description: "Write and preview Markdown with live rendering",
+    category: "Text Utilities",
+    href: "/text-utilities/markdown-editor",
     icon: Type,
     popular: true,
   },
   {
+    name: "Text Diff Tool",
+    description: "Compare two texts and highlight differences",
+    category: "Text Utilities",
+    href: "/text-utilities/text-diff",
+    icon: Type,
+    popular: true,
+  },
+  {
+    name: "URL Encoder/Decoder",
+    description: "Encode and decode URLs with various formats",
+    category: "Text Utilities",
+    href: "/text-utilities/url-encoder",
+    icon: Type,
+  },
+  {
+    name: "HTML Encoder/Decoder",
+    description: "Encode and decode HTML entities safely",
+    category: "Text Utilities",
+    href: "/text-utilities/html-encoder",
+    icon: Type,
+  },
+  {
+    name: "Word Counter",
+    description: "Count words, characters, and paragraphs in text",
+    category: "Text Utilities",
+    href: "/text-tools/word-counter",
+    icon: Type,
+  },
+  {
     name: "Case Converter",
     description: "Convert text to uppercase, lowercase, title case, etc.",
-    category: "Text Tools",
+    category: "Text Utilities",
     href: "/text-tools/case-converter",
     icon: Type,
   },
   {
     name: "Lorem Ipsum Generator",
     description: "Generate placeholder text for design and development",
-    category: "Text Tools",
+    category: "Text Utilities",
     href: "/text-tools/lorem-ipsum",
     icon: Type,
   },
+
+  // Developer Tools
   {
-    name: "Text Reverser",
-    description: "Reverse text, words, or entire sentences",
-    category: "Text Tools",
-    href: "/text-tools/text-reverser",
-    icon: Type,
+    name: "JSON Formatter",
+    description: "Format, validate, and beautify JSON data",
+    category: "Developer Tools",
+    href: "/developer-tools/json-formatter",
+    icon: Code2,
+    popular: true,
   },
   {
-    name: "Password Generator",
-    description: "Generate secure passwords with custom options",
-    category: "Text Tools",
-    href: "/text-tools/password-generator",
-    icon: Type,
+    name: "Regex Tester",
+    description: "Test and debug regular expressions",
+    category: "Developer Tools",
+    href: "/developer-tools/regex-tester",
+    icon: Code2,
     popular: true,
+  },
+  {
+    name: "Base64 Encoder/Decoder",
+    description: "Encode and decode Base64 strings",
+    category: "Developer Tools",
+    href: "/developer-tools/base64",
+    icon: Code2,
   },
   {
     name: "Hash Generator",
     description: "Generate MD5, SHA1, SHA256, and other hashes",
-    category: "Text Tools",
-    href: "/text-tools/hash-generator",
-    icon: Type,
+    category: "Developer Tools",
+    href: "/developer-tools/hash-generator",
+    icon: Code2,
+  },
+  {
+    name: "Password Generator",
+    description: "Generate secure passwords with custom options",
+    category: "Developer Tools",
+    href: "/developer-tools/password-generator",
+    icon: Code2,
+  },
+
+  // Timestamp Tools
+  {
+    name: "Unix Timestamp Converter",
+    description: "Convert Unix timestamps to human-readable dates",
+    category: "Timestamp Tools",
+    href: "/timestamp-tools/unix-converter",
+    icon: Clock,
+    popular: true,
+  },
+  {
+    name: "Date Calculator",
+    description: "Calculate differences between dates",
+    category: "Timestamp Tools",
+    href: "/timestamp-tools/date-calculator",
+    icon: Clock,
+  },
+  {
+    name: "Timezone Converter",
+    description: "Convert times between different timezones",
+    category: "Timestamp Tools",
+    href: "/timestamp-tools/timezone-converter",
+    icon: Clock,
+  },
+  {
+    name: "Time Formatter",
+    description: "Format dates and times in various formats",
+    category: "Timestamp Tools",
+    href: "/timestamp-tools/time-formatter",
+    icon: Clock,
+  },
+
+  // Image Tools
+  {
+    name: "Image Compressor",
+    description: "Compress images to reduce file size",
+    category: "Image Tools",
+    href: "/image-tools/compressor",
+    icon: Image,
+    popular: true,
+  },
+  {
+    name: "Image Format Converter",
+    description: "Convert between different image formats",
+    category: "Image Tools",
+    href: "/image-tools/format-converter",
+    icon: Image,
+  },
+  {
+    name: "Image Resizer",
+    description: "Resize images to specific dimensions",
+    category: "Image Tools",
+    href: "/image-tools/resizer",
+    icon: Image,
+  },
+  {
+    name: "Image Cropper",
+    description: "Crop images to desired dimensions",
+    category: "Image Tools",
+    href: "/image-tools/cropper",
+    icon: Image,
+  },
+
+  // PDF Tools
+  {
+    name: "PDF Merger",
+    description: "Merge multiple PDF files into one",
+    category: "PDF Tools",
+    href: "/pdf-tools/merger",
+    icon: FileText,
+    popular: true,
+  },
+  {
+    name: "PDF Splitter",
+    description: "Split PDF files into separate pages",
+    category: "PDF Tools",
+    href: "/pdf-tools/splitter",
+    icon: FileText,
+  },
+  {
+    name: "PDF to Image",
+    description: "Convert PDF pages to image files",
+    category: "PDF Tools",
+    href: "/pdf-tools/to-image",
+    icon: FileText,
+  },
+  {
+    name: "PDF Compressor",
+    description: "Compress PDF files to reduce size",
+    category: "PDF Tools",
+    href: "/pdf-tools/compressor",
+    icon: FileText,
   },
 
   // Web Tools

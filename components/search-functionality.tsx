@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, X, Calculator, Wrench, Type, Palette, Globe, BarChart3 } from 'lucide-react';
+import { Search, X, Calculator, Wrench, Type, Palette, Globe, BarChart3, FileText, Image, Code2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,14 +28,26 @@ const TOOLS_DATABASE = [
   
   // Text Tools
   { id: 'word-counter', name: 'Word Counter', description: 'Count words, characters, and paragraphs', category: 'text-tools', href: '/text-tools/word-counter', icon: Type, keywords: ['word', 'count', 'character', 'paragraph', 'text', 'writing'] },
-  { id: 'case-converter', name: 'Case Converter', description: 'Convert text to different cases', category: 'text-tools', href: '/text-tools/case-converter', icon: Type, keywords: ['case', 'uppercase', 'lowercase', 'title', 'camel', 'text', 'convert'] },
+  { id: 'case-converter', name: 'Case Converter', description: 'Convert text to different cases (UPPERCASE, lowercase, Title Case, etc.)', category: 'text-tools', href: '/text-tools/case-converter', icon: Type, keywords: ['case', 'uppercase', 'lowercase', 'title', 'camel', 'text', 'convert'] },
   { id: 'text-formatter', name: 'Text Formatter', description: 'Format and clean up text', category: 'text-tools', href: '/text-tools/formatter', icon: Type, keywords: ['format', 'clean', 'text', 'whitespace', 'trim', 'normalize'] },
   { id: 'markdown-converter', name: 'Markdown Converter', description: 'Convert Markdown to HTML and vice versa', category: 'text-tools', href: '/text-tools/markdown', icon: Type, keywords: ['markdown', 'html', 'convert', 'format', 'documentation'] },
-  { id: 'lorem-generator', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text', category: 'text-tools', href: '/text-tools/lorem', icon: Type, keywords: ['lorem', 'ipsum', 'placeholder', 'text', 'dummy', 'generate'] },
+  { id: 'lorem-generator', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text for design and development', category: 'text-tools', href: '/text-tools/lorem', icon: Type, keywords: ['lorem', 'ipsum', 'placeholder', 'text', 'dummy', 'generate'] },
+  { id: 'markdown-editor', name: 'Markdown Editor', description: 'Rich markdown editor with live preview, syntax highlighting, and export options', category: 'text-tools', href: '/text-utilities/markdown-editor', icon: Type, keywords: ['markdown', 'editor', 'preview', 'syntax', 'export'] },
+  { id: 'text-diff', name: 'Text Diff Tool', description: 'Compare two texts side-by-side with detailed diff analysis', category: 'text-tools', href: '/text-utilities/text-diff', icon: Type, keywords: ['diff', 'compare', 'text', 'analysis', 'git'] },
+  { id: 'url-encoder', name: 'URL Encoder/Decoder', description: 'Encode and decode URLs with support for different encoding types', category: 'text-tools', href: '/text-utilities/url-encoder', icon: Type, keywords: ['url', 'encode', 'decode', 'web', 'percent-encoding'] },
+  { id: 'html-encoder', name: 'HTML Encoder/Decoder', description: 'Encode and decode HTML entities with support for named, decimal, and hex formats', category: 'text-tools', href: '/text-utilities/html-encoder', icon: Type, keywords: ['html', 'encode', 'decode', 'entities', 'web'] },
   
+  // Color Tools
+  { id: 'color-picker', name: 'Color Picker', description: 'Advanced color picker with format conversion and harmony generation', category: 'color-tools', href: '/color-tools/color-picker', icon: Palette, keywords: ['color', 'picker', 'hex', 'rgb', 'hsl', 'harmony', 'palette'] },
+  { id: 'gradient-generator', name: 'Gradient Generator', description: 'Create beautiful CSS gradients with live preview and code generation', category: 'color-tools', href: '/color-tools/gradient-generator', icon: Palette, keywords: ['gradient', 'css', 'linear', 'radial', 'conic', 'background'] },
+  { id: 'palette-generator', name: 'Color Palette Generator', description: 'Generate harmonious color palettes using color theory principles', category: 'color-tools', href: '/color-tools/palette-generator', icon: Palette, keywords: ['palette', 'color', 'harmony', 'monochromatic', 'analogous', 'complementary', 'triadic'] },
+
+  // Timestamp Tools
+  { id: 'unix-converter', name: 'Unix Timestamp Converter', description: 'Convert between Unix timestamps and human-readable dates', category: 'timestamp-tools', href: '/timestamp-tools/unix-converter', icon: Globe, keywords: ['unix', 'timestamp', 'epoch', 'date', 'time', 'converter'] },
+  { id: 'timezone-converter', name: 'Timezone Converter', description: 'Convert time between different timezones with world clock', category: 'timestamp-tools', href: '/timestamp-tools/timezone-converter', icon: Globe, keywords: ['timezone', 'time', 'world', 'clock', 'utc', 'dst'] },
+  { id: 'epoch-converter', name: 'Epoch Time Converter', description: 'Convert epoch timestamps with support for various precisions', category: 'timestamp-tools', href: '/timestamp-tools/epoch-converter', icon: Globe, keywords: ['epoch', 'timestamp', 'milliseconds', 'microseconds', 'nanoseconds'] },
+
   // Design Tools
-  { id: 'color-picker', name: 'Color Picker', description: 'Pick and convert colors between formats', category: 'design-tools', href: '/design-tools/color-picker', icon: Palette, keywords: ['color', 'picker', 'hex', 'rgb', 'hsl', 'palette', 'design'] },
-  { id: 'gradient-generator', name: 'Gradient Generator', description: 'Create CSS gradients', category: 'design-tools', href: '/design-tools/gradient', icon: Palette, keywords: ['gradient', 'css', 'linear', 'radial', 'color', 'design'] },
   { id: 'shadow-generator', name: 'Box Shadow Generator', description: 'Generate CSS box shadows', category: 'design-tools', href: '/design-tools/shadow', icon: Palette, keywords: ['shadow', 'box', 'css', 'design', 'effect'] },
   { id: 'border-radius', name: 'Border Radius Generator', description: 'Generate CSS border radius', category: 'design-tools', href: '/design-tools/border-radius', icon: Palette, keywords: ['border', 'radius', 'css', 'rounded', 'corner', 'design'] },
   { id: 'image-resizer', name: 'Image Resizer', description: 'Resize images online', category: 'design-tools', href: '/design-tools/image-resizer', icon: Palette, keywords: ['image', 'resize', 'scale', 'photo', 'picture', 'compress'] },
@@ -52,25 +64,53 @@ const TOOLS_DATABASE = [
   { id: 'keyword-density', name: 'Keyword Density Checker', description: 'Check keyword density in text', category: 'seo-tools', href: '/seo-tools/keyword-density', icon: BarChart3, keywords: ['keyword', 'density', 'seo', 'analysis', 'text'] },
   { id: 'robots-generator', name: 'Robots.txt Generator', description: 'Generate robots.txt file', category: 'seo-tools', href: '/seo-tools/robots', icon: BarChart3, keywords: ['robots', 'txt', 'seo', 'crawl', 'search', 'engine'] },
   { id: 'sitemap-generator', name: 'Sitemap Generator', description: 'Generate XML sitemaps', category: 'seo-tools', href: '/seo-tools/sitemap', icon: BarChart3, keywords: ['sitemap', 'xml', 'seo', 'search', 'engine'] },
-  { id: 'open-graph', name: 'Open Graph Generator', description: 'Generate Open Graph meta tags', category: 'seo-tools', href: '/seo-tools/open-graph', icon: BarChart3, keywords: ['open', 'graph', 'meta', 'social', 'facebook', 'twitter'] }
+  { id: 'open-graph', name: 'Open Graph Generator', description: 'Generate Open Graph meta tags', category: 'seo-tools', href: '/seo-tools/open-graph', icon: BarChart3, keywords: ['open', 'graph', 'meta', 'social', 'facebook', 'twitter'] },
+
+  // PDF Tools
+  { id: 'pdf-compressor', name: 'PDF Compressor', description: 'Compress PDF files to reduce file size', category: 'pdf-tools', href: '/pdf-tools/compress', icon: FileText, keywords: ['pdf', 'compress', 'reduce', 'size', 'file', 'document'] },
+  { id: 'pdf-to-word', name: 'PDF to Word Converter', description: 'Convert PDF files to Word documents', category: 'pdf-tools', href: '/pdf-tools/pdf-to-word', icon: FileText, keywords: ['pdf', 'word', 'convert', 'document', 'docx', 'file'] },
+  { id: 'pdf-merger', name: 'PDF Merger', description: 'Merge multiple PDF files into one', category: 'pdf-tools', href: '/pdf-tools/merge', icon: FileText, keywords: ['pdf', 'merge', 'combine', 'join', 'document', 'file'] },
+  { id: 'pdf-splitter', name: 'PDF Splitter', description: 'Split PDF files into separate pages', category: 'pdf-tools', href: '/pdf-tools/split', icon: FileText, keywords: ['pdf', 'split', 'separate', 'pages', 'document', 'file'] },
+
+  // Image Tools
+  { id: 'image-compressor', name: 'Image Compressor', description: 'Compress images to reduce file size', category: 'image-tools', href: '/image-tools/compress', icon: Image, keywords: ['image', 'compress', 'reduce', 'size', 'photo', 'picture', 'optimize'] },
+  { id: 'image-resizer-tool', name: 'Image Resizer', description: 'Resize images to specific dimensions', category: 'image-tools', href: '/image-tools/resize', icon: Image, keywords: ['image', 'resize', 'dimensions', 'scale', 'photo', 'picture'] },
+  { id: 'webp-converter', name: 'WebP Converter', description: 'Convert images to WebP format', category: 'image-tools', href: '/image-tools/webp-converter', icon: Image, keywords: ['webp', 'convert', 'image', 'format', 'photo', 'picture'] },
+  { id: 'image-format-converter', name: 'Image Format Converter', description: 'Convert between different image formats', category: 'image-tools', href: '/image-tools/format-converter', icon: Image, keywords: ['image', 'format', 'convert', 'jpg', 'png', 'gif', 'photo'] },
+
+  // Developer Tools
+  { id: 'json-formatter-validator', name: 'JSON Formatter & Validator', description: 'Format, validate, and beautify JSON data', category: 'developer-tools', href: '/developer-tools/json-formatter', icon: Code2, keywords: ['json', 'format', 'validate', 'beautify', 'developer', 'api'] },
+  { id: 'regex-tester', name: 'Regex Tester', description: 'Test and debug regular expressions', category: 'developer-tools', href: '/developer-tools/regex-tester', icon: Code2, keywords: ['regex', 'regular', 'expression', 'test', 'pattern', 'developer'] },
+  { id: 'base64-encoder-decoder', name: 'Base64 Encoder/Decoder', description: 'Encode and decode Base64 strings and files', category: 'developer-tools', href: '/developer-tools/base64', icon: Code2, keywords: ['base64', 'encode', 'decode', 'string', 'file', 'developer'] },
+  { id: 'hash-generator', name: 'Hash Generator', description: 'Generate MD5, SHA256, and other hash values', category: 'developer-tools', href: '/developer-tools/hash-generator', icon: Code2, keywords: ['hash', 'md5', 'sha256', 'checksum', 'crypto', 'developer'] }
 ];
 
 const CATEGORY_ICONS = {
   calculators: Calculator,
   converters: Wrench,
   'text-tools': Type,
+  'color-tools': Palette,
+  'timestamp-tools': Globe,
   'design-tools': Palette,
   'web-tools': Globe,
-  'seo-tools': BarChart3
+  'seo-tools': BarChart3,
+  'pdf-tools': FileText,
+  'image-tools': Image,
+  'developer-tools': Code2
 };
 
 const CATEGORY_COLORS = {
   calculators: 'bg-blue-100 text-blue-800',
   converters: 'bg-green-100 text-green-800',
   'text-tools': 'bg-purple-100 text-purple-800',
+  'color-tools': 'bg-pink-100 text-pink-800',
+  'timestamp-tools': 'bg-yellow-100 text-yellow-800',
   'design-tools': 'bg-pink-100 text-pink-800',
   'web-tools': 'bg-orange-100 text-orange-800',
-  'seo-tools': 'bg-red-100 text-red-800'
+  'seo-tools': 'bg-red-100 text-red-800',
+  'pdf-tools': 'bg-indigo-100 text-indigo-800',
+  'image-tools': 'bg-cyan-100 text-cyan-800',
+  'developer-tools': 'bg-gray-100 text-gray-800'
 };
 
 // Search Component

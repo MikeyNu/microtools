@@ -1,4 +1,4 @@
-import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap } from "lucide-react"
+import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap, Clock, Image, FileText, Code2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -25,12 +25,12 @@ const toolCategories = [
     tools: ["Currency Converter", "Unit Converter", "Image Converter", "Color Converter"],
   },
   {
-    title: "Text Tools",
-    description: "Text manipulation and generation",
+    title: "Text Utilities",
+    description: "Text processing and manipulation tools",
     icon: Type,
     count: 20,
-    href: "/text-tools",
-    tools: ["Word Counter", "Text Generator", "Case Converter", "Lorem Ipsum"],
+    href: "/text-utilities",
+    tools: ["Markdown Editor", "Text Diff Tool", "URL Encoder", "HTML Encoder"],
   },
   {
     title: "Design Tools",
@@ -41,12 +41,44 @@ const toolCategories = [
     tools: ["Color Picker", "Gradient Generator", "QR Code Generator", "Favicon Generator"],
   },
   {
+    title: "Developer Tools",
+    description: "Essential development utilities",
+    icon: Code2,
+    count: 15,
+    href: "/developer-tools",
+    tools: ["JSON Formatter", "Regex Tester", "Base64 Encoder", "Hash Generator"],
+  },
+  {
+    title: "Timestamp Tools",
+    description: "Date and time conversion utilities",
+    icon: Clock,
+    count: 10,
+    href: "/timestamp-tools",
+    tools: ["Unix Converter", "Date Calculator", "Timezone Converter", "Time Formatter"],
+  },
+  {
+    title: "Image Tools",
+    description: "Image processing and manipulation",
+    icon: Image,
+    count: 12,
+    href: "/image-tools",
+    tools: ["Image Compressor", "Format Converter", "Image Resizer", "Image Cropper"],
+  },
+  {
+    title: "PDF Tools",
+    description: "PDF processing and utilities",
+    icon: FileText,
+    count: 8,
+    href: "/pdf-tools",
+    tools: ["PDF Merger", "PDF Splitter", "PDF to Image", "PDF Compressor"],
+  },
+  {
     title: "Web Tools",
     description: "Website and development utilities",
     icon: Globe,
     count: 18,
     href: "/web-tools",
-    tools: ["URL Shortener", "Password Generator", "Hash Generator", "Base64 Encoder"],
+    tools: ["URL Shortener", "Password Generator", "Meta Tag Generator", "Robots.txt Generator"],
   },
   {
     title: "SEO Tools",
