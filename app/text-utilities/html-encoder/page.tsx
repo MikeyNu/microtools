@@ -59,10 +59,10 @@ export default function HTMLEncoderPage() {
     { character: '…', entity: '&hellip;', decimal: '&#8230;', hex: '&#x2026;', description: 'Horizontal ellipsis' },
     { character: '–', entity: '&ndash;', decimal: '&#8211;', hex: '&#x2013;', description: 'En dash' },
     { character: '—', entity: '&mdash;', decimal: '&#8212;', hex: '&#x2014;', description: 'Em dash' },
-    { character: ''', entity: '&lsquo;', decimal: '&#8216;', hex: '&#x2018;', description: 'Left single quote' },
-    { character: ''', entity: '&rsquo;', decimal: '&#8217;', hex: '&#x2019;', description: 'Right single quote' },
-    { character: '"', entity: '&ldquo;', decimal: '&#8220;', hex: '&#x201C;', description: 'Left double quote' },
-    { character: '"', entity: '&rdquo;', decimal: '&#8221;', hex: '&#x201D;', description: 'Right double quote' }
+    { character: '\u2018', entity: '&lsquo;', decimal: '&#8216;', hex: '&#x2018;', description: 'Left single quote' },
+    { character: '\u2019', entity: '&rsquo;', decimal: '&#8217;', hex: '&#x2019;', description: 'Right single quote' },
+    { character: '\u201C', entity: '&ldquo;', decimal: '&#8220;', hex: '&#x201C;', description: 'Left double quote' },
+    { character: '\u201D', entity: '&rdquo;', decimal: '&#8221;', hex: '&#x201D;', description: 'Right double quote' }
   ];
 
   // Encoding and decoding functions
