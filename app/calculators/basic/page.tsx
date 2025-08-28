@@ -1,15 +1,22 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ToolLayout } from "@/components/tool-layout"
+import { useToolTracker } from "@/components/analytics-provider"
 
 export default function BasicCalculatorPage() {
   const [display, setDisplay] = useState("0")
   const [previousValue, setPreviousValue] = useState<number | null>(null)
   const [operation, setOperation] = useState<string | null>(null)
   const [waitingForOperand, setWaitingForOperand] = useState(false)
+  const { trackToolStart, trackToolComplete, trackToolError } = useToolTracker('Basic Calculator', 'calculators')
+
+  useEffect(() => {
+    // Track when user starts using the calculator
+    trackToolStart()
+  }, [trackToolStart])
 
   const inputNumber = (num: string) => {
     if (waitingForOperand) {
@@ -38,19 +45,28 @@ export default function BasicCalculatorPage() {
   }
 
   const calculate = (firstValue: number, secondValue: number, operation: string) => {
-    switch (operation) {
-      case "+":
-        return firstValue + secondValue
-      case "-":
-        return firstValue - secondValue
-      case "×":
-        return firstValue * secondValue
-      case "÷":
-        return firstValue / secondValue
-      case "=":
-        return secondValue
-      default:
-        return secondValue
+    try {
+      switch (operation) {
+        case "+":
+          return firstValue + secondValue
+        case "-":
+          return firstValue - secondValue
+        case "×":
+          return firstValue * secondValue
+        case "÷":
+          if (secondValue === 0) {
+            trackToolError()
+            throw new Error('Division by zero')
+          }
+          return firstValue / secondValue
+        case "=":
+          return secondValue
+        default:
+          return secondValue
+      }
+    } catch (error) {
+      trackToolError()
+      return 0
     }
   }
 
@@ -63,6 +79,9 @@ export default function BasicCalculatorPage() {
       setPreviousValue(null)
       setOperation(null)
       setWaitingForOperand(true)
+      
+      // Track successful calculation
+      trackToolComplete()
     }
   }
 

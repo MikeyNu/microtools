@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:godaddy": "next build && echo 'Static files generated in ./out folder - Upload contents to GoDaddy public_html'",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start"

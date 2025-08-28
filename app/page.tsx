@@ -1,9 +1,11 @@
-import { Search, Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap } from "lucide-react"
+import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { AdSensePlaceholder } from "@/components/adsense-placeholder"
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
+import { SearchComponent, PopularSearches } from "@/components/search-functionality"
 
 const toolCategories = [
   {
@@ -91,14 +93,6 @@ export default function HomePage() {
             </nav>
 
             <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-border/30 hover:border-accent/40 bg-card/50 backdrop-blur-sm"
-              >
-                <Search className="h-4 w-4 mr-2" />
-                Search Tools
-              </Button>
             </div>
           </div>
         </div>
@@ -127,11 +121,10 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
               <div className="relative w-full sm:w-96">
-                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-foreground/40 h-5 w-5" />
-                <Input
-                  placeholder="Search for any tool..."
-                  className="pl-14 h-16 text-lg bg-card/60 border-border/30 backdrop-blur-md focus:border-accent/50 focus:ring-accent/20 rounded-xl"
-                />
+                <SearchComponent className="w-full" />
+                <div className="mt-4">
+                  <PopularSearches />
+                </div>
               </div>
               <Button
                 size="lg"
@@ -144,13 +137,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-8">
-        <div className="container mx-auto px-6">
-          <div className="flex justify-center">
-            <AdSensePlaceholder size="rectangle" />
+      {/* Strategic Ad Placement - Above the fold */}
+      {shouldDisplayAds() && (
+        <section className="py-8 bg-background/50">
+          <div className="container mx-auto px-6">
+            <div className="flex justify-center">
+              <AdSensePlaceholder 
+                size="leaderboard" 
+                adClient={ADSENSE_CONFIG.publisherId}
+                adSlot={getAdUnitId('homepageHero')}
+                responsive={true}
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="py-24 relative">
         <div className="container mx-auto px-6">
@@ -215,11 +216,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-8">
-        <div className="container mx-auto px-6 flex justify-center">
-          <AdSensePlaceholder size="rectangle" />
-        </div>
-      </section>
+      {/* High-performing middle placement */}
+      {shouldDisplayAds() && (
+        <section className="py-8 bg-card/10">
+          <div className="container mx-auto px-6 flex justify-center">
+            <AdSensePlaceholder 
+              size="large-rectangle" 
+              adClient={ADSENSE_CONFIG.publisherId}
+              adSlot={getAdUnitId('homepageMiddle')}
+              responsive={true}
+            />
+          </div>
+        </section>
+      )}
 
       <section className="py-20 bg-card/20 relative">
         <div className="container mx-auto px-6">
@@ -276,13 +285,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-8 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="flex justify-center">
-            <AdSensePlaceholder size="rectangle" />
+      {/* Footer ad placement */}
+      {shouldDisplayAds() && (
+        <section className="py-8 bg-background">
+          <div className="container mx-auto px-6">
+            <div className="flex justify-center">
+              <AdSensePlaceholder 
+                size="rectangle" 
+                adClient={ADSENSE_CONFIG.publisherId}
+                adSlot={getAdUnitId('homepageFooter')}
+                responsive={true}
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <footer className="bg-background border-t border-border/20 py-16">
         <div className="container mx-auto px-6">

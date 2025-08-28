@@ -1,6 +1,9 @@
 import { Calculator, DollarSign, Heart, Percent, Receipt, Home } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
+import React from "react"
+import { AdSensePlaceholder } from "@/components/adsense-placeholder"
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
 
 const calculators = [
   {
@@ -83,31 +86,57 @@ export default function CalculatorsPage() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {calculators.map((calc) => {
+            {calculators.map((calc, index) => {
               const IconComponent = calc.icon
               return (
-                <Link key={calc.title} href={calc.href}>
-                  <Card className="h-full hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer group relative">
-                    {calc.popular && (
-                      <div className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs px-2 py-1 rounded-full font-medium">
-                        Popular
-                      </div>
-                    )}
-                    <CardHeader className="text-center">
-                      <IconComponent className="h-12 w-12 text-accent mx-auto mb-4 group-hover:text-primary transition-colors" />
-                      <CardTitle className="font-serif text-xl group-hover:text-primary transition-colors">
-                        {calc.title}
-                      </CardTitle>
-                      <CardDescription className="text-base">{calc.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                      <div className="text-sm text-accent font-medium">Use Tool →</div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                <React.Fragment key={calc.title}>
+                  <Link href={calc.href}>
+                    <Card className="h-full hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer group relative">
+                      {calc.popular && (
+                        <div className="absolute -top-2 -right-2 bg-accent text-accent-foreground text-xs px-2 py-1 rounded-full font-medium">
+                          Popular
+                        </div>
+                      )}
+                      <CardHeader className="text-center">
+                        <IconComponent className="h-12 w-12 text-accent mx-auto mb-4 group-hover:text-primary transition-colors" />
+                        <CardTitle className="font-serif text-xl group-hover:text-primary transition-colors">
+                          {calc.title}
+                        </CardTitle>
+                        <CardDescription className="text-base">{calc.description}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <div className="text-sm text-accent font-medium">Use Tool →</div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                  
+                  {/* Strategic ad placement after every 3rd calculator */}
+                  {shouldDisplayAds() && (index + 1) % 3 === 0 && index < calculators.length - 1 && (
+                    <div className="md:col-span-2 lg:col-span-3 flex justify-center py-4">
+                      <AdSensePlaceholder 
+                        size="banner" 
+                        adClient={ADSENSE_CONFIG.publisherId}
+                        adSlot={getAdUnitId('categoryInline')}
+                        responsive={true}
+                      />
+                    </div>
+                  )}
+                </React.Fragment>
               )
             })}
           </div>
+          
+          {/* Footer ad for category page */}
+          {shouldDisplayAds() && (
+            <div className="mt-12 flex justify-center">
+              <AdSensePlaceholder 
+                size="large-rectangle" 
+                adClient={ADSENSE_CONFIG.publisherId}
+                adSlot={getAdUnitId('categoryFooter')}
+                responsive={true}
+              />
+            </div>
+          )}
         </div>
       </section>
     </div>

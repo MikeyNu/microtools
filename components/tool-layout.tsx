@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Share2, Bookmark, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
 
 interface ToolLayoutProps {
   title: string
@@ -61,14 +62,30 @@ export function ToolLayout({
             {/* Tool content */}
             <div className="mb-8">{children}</div>
 
-            <div className="mb-8 flex justify-center">
-              <AdSensePlaceholder size="rectangle" />
-            </div>
+            {/* Content area ad - high engagement */}
+            {shouldDisplayAds() && (
+              <div className="mb-8 flex justify-center">
+                <AdSensePlaceholder 
+                  size="banner" 
+                  adClient={ADSENSE_CONFIG.publisherId}
+                  adSlot={getAdUnitId('toolContent')}
+                  responsive={true}
+                />
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-1 order-1 lg:order-2">
             <div className="lg:sticky lg:top-24 space-y-6">
-              <AdSensePlaceholder size="rectangle" />
+              {/* Sidebar ad - high visibility */}
+              {shouldDisplayAds() && (
+                <AdSensePlaceholder 
+                  size="rectangle" 
+                  adClient={ADSENSE_CONFIG.publisherId}
+                  adSlot={getAdUnitId('toolSidebar')}
+                  responsive={true}
+                />
+              )}
 
               {relatedTools.length > 0 && (
                 <Card>
@@ -87,6 +104,16 @@ export function ToolLayout({
                     ))}
                   </CardContent>
                 </Card>
+              )}
+              
+              {/* Additional sidebar ad for longer pages */}
+              {shouldDisplayAds() && relatedTools.length > 0 && (
+                <AdSensePlaceholder 
+                  size="square" 
+                  adClient={ADSENSE_CONFIG.publisherId}
+                  adSlot={getAdUnitId('toolFooter')}
+                  responsive={true}
+                />
               )}
             </div>
           </div>
