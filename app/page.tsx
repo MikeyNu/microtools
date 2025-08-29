@@ -1,4 +1,5 @@
-import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap, Clock, Image, FileText, Code2 } from "lucide-react"
+'use client'
+import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap, Clock, Image, FileText, Code2, Database, Shield, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -6,13 +7,14 @@ import Link from "next/link"
 import { AdSensePlaceholder } from "@/components/adsense-placeholder"
 import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
 import { SearchComponent, PopularSearches } from "@/components/search-functionality"
+import { useRef } from "react"
 
 const toolCategories = [
   {
     title: "Calculators",
     description: "Mathematical and financial calculators",
     icon: Calculator,
-    count: 25,
+    count: 6,
     href: "/calculators",
     tools: ["Basic Calculator", "Loan Calculator", "BMI Calculator", "Percentage Calculator"],
   },
@@ -20,15 +22,15 @@ const toolCategories = [
     title: "Converters",
     description: "Unit and format conversion tools",
     icon: Zap,
-    count: 30,
+    count: 5,
     href: "/converters",
-    tools: ["Currency Converter", "Unit Converter", "Image Converter", "Color Converter"],
+    tools: ["Currency Converter", "Unit Converter", "Temperature Converter", "Color Converter"],
   },
   {
     title: "Text Utilities",
     description: "Text processing and manipulation tools",
     icon: Type,
-    count: 20,
+    count: 4,
     href: "/text-utilities",
     tools: ["Markdown Editor", "Text Diff Tool", "URL Encoder", "HTML Encoder"],
   },
@@ -36,15 +38,15 @@ const toolCategories = [
     title: "Design Tools",
     description: "Color, gradient and design utilities",
     icon: Palette,
-    count: 15,
+    count: 3,
     href: "/design-tools",
-    tools: ["Color Picker", "Gradient Generator", "QR Code Generator", "Favicon Generator"],
+    tools: ["Color Picker", "Gradient Generator", "Palette Generator"],
   },
   {
     title: "Developer Tools",
     description: "Essential development utilities",
     icon: Code2,
-    count: 15,
+    count: 4,
     href: "/developer-tools",
     tools: ["JSON Formatter", "Regex Tester", "Base64 Encoder", "Hash Generator"],
   },
@@ -52,45 +54,109 @@ const toolCategories = [
     title: "Timestamp Tools",
     description: "Date and time conversion utilities",
     icon: Clock,
-    count: 10,
+    count: 3,
     href: "/timestamp-tools",
-    tools: ["Unix Converter", "Date Calculator", "Timezone Converter", "Time Formatter"],
+    tools: ["Unix Converter", "Epoch Converter", "Timezone Converter"],
   },
   {
     title: "Image Tools",
     description: "Image processing and manipulation",
     icon: Image,
-    count: 12,
+    count: 4,
     href: "/image-tools",
-    tools: ["Image Compressor", "Format Converter", "Image Resizer", "Image Cropper"],
+    tools: ["Image Compressor", "Format Converter", "Image Resizer", "WebP Converter"],
   },
   {
     title: "PDF Tools",
     description: "PDF processing and utilities",
     icon: FileText,
-    count: 8,
+    count: 2,
     href: "/pdf-tools",
-    tools: ["PDF Merger", "PDF Splitter", "PDF to Image", "PDF Compressor"],
+    tools: ["PDF Compressor", "PDF to Word Converter"],
   },
   {
     title: "Web Tools",
     description: "Website and development utilities",
     icon: Globe,
-    count: 18,
+    count: 5,
     href: "/web-tools",
-    tools: ["URL Shortener", "Password Generator", "Meta Tag Generator", "Robots.txt Generator"],
+    tools: ["URL Shortener", "QR Generator", "Base64 Encoder", "JSON Formatter", "UUID Generator"],
   },
   {
     title: "SEO Tools",
     description: "Search engine optimization tools",
     icon: BarChart3,
-    count: 12,
+    count: 5,
     href: "/seo-tools",
-    tools: ["Meta Tag Generator", "Keyword Density", "Robots.txt Generator", "Sitemap Generator"],
+    tools: ["Meta Tag Generator", "Keyword Density", "Robots.txt Generator", "Open Graph Generator", "Schema Generator"],
+  },
+  {
+    title: "Data Tools",
+    description: "Data processing and validation utilities",
+    icon: Database,
+    count: 3,
+    href: "/data-tools",
+    tools: ["CSV to JSON Converter", "JSON Formatter", "YAML Converter"],
+  },
+  {
+    title: "Security Tools",
+    description: "Security and encryption utilities",
+    icon: Shield,
+    count: 4,
+    href: "/security-tools",
+    tools: ["Password Strength Checker", "Hash Generator", "Two-Factor Auth Generator", "SSL Certificate Checker"],
+  },
+  {
+    title: "Math Tools",
+    description: "Advanced mathematical calculators",
+    icon: Calculator,
+    count: 6,
+    href: "/math-tools",
+    tools: ["Scientific Calculator", "Equation Solver", "Matrix Calculator", "Statistics Calculator"],
+  },
+  {
+    title: "Crypto Tools",
+    description: "Cryptocurrency and blockchain utilities",
+    icon: Globe,
+    count: 2,
+    href: "/crypto-tools",
+    tools: ["Bitcoin Address Validator", "Crypto Price Converter"],
+  },
+  {
+    title: "Network Tools",
+    description: "Network analysis and testing tools",
+    icon: Globe,
+    count: 3,
+    href: "/network-tools",
+    tools: ["IP Address Lookup", "DNS Lookup", "Port Scanner"],
+  },
+  {
+    title: "Finance Tools",
+    description: "Financial calculators and tools",
+    icon: Calculator,
+    count: 3,
+    href: "/finance-tools",
+    tools: ["Compound Interest Calculator", "Investment Return Calculator", "Currency Converter"],
+  },
+  {
+    title: "Text Tools",
+    description: "Text processing and manipulation tools",
+    icon: Type,
+    count: 6,
+    href: "/text-tools",
+    tools: ["Case Converter", "Hash Generator", "Lorem Ipsum", "Password Generator", "Text Reverser", "Word Counter"],
   },
 ]
 
 export default function HomePage() {
+  const searchRef = useRef<{ setQuery: (query: string) => void }>(null);
+
+  const handlePopularSearchSelect = (query: string) => {
+    if (searchRef.current) {
+      searchRef.current.setQuery(query);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl sticky top-0 z-50">
@@ -153,17 +219,19 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
               <div className="relative w-full sm:w-96">
-                <SearchComponent className="w-full" />
+                <SearchComponent ref={searchRef} className="w-full" />
                 <div className="mt-4">
-                  <PopularSearches />
+                  <PopularSearches onSearchSelect={handlePopularSearchSelect} />
                 </div>
               </div>
-              <Button
-                size="lg"
-                className="h-16 px-10 bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-xl shadow-lg shadow-accent/20"
-              >
-                Explore Tools
-              </Button>
+              <Link href="/tools">
+                <Button
+                  size="lg"
+                  className="h-16 px-10 bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-xl shadow-lg shadow-accent/20"
+                >
+                  Explore Tools
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

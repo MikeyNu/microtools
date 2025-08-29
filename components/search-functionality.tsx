@@ -84,7 +84,40 @@ const TOOLS_DATABASE = [
   { id: 'json-formatter-validator', name: 'JSON Formatter & Validator', description: 'Format, validate, and beautify JSON data', category: 'developer-tools', href: '/developer-tools/json-formatter', icon: Code2, keywords: ['json', 'format', 'validate', 'beautify', 'developer', 'api'] },
   { id: 'regex-tester', name: 'Regex Tester', description: 'Test and debug regular expressions', category: 'developer-tools', href: '/developer-tools/regex-tester', icon: Code2, keywords: ['regex', 'regular', 'expression', 'test', 'pattern', 'developer'] },
   { id: 'base64-encoder-decoder', name: 'Base64 Encoder/Decoder', description: 'Encode and decode Base64 strings and files', category: 'developer-tools', href: '/developer-tools/base64', icon: Code2, keywords: ['base64', 'encode', 'decode', 'string', 'file', 'developer'] },
-  { id: 'hash-generator', name: 'Hash Generator', description: 'Generate MD5, SHA256, and other hash values', category: 'developer-tools', href: '/developer-tools/hash-generator', icon: Code2, keywords: ['hash', 'md5', 'sha256', 'checksum', 'crypto', 'developer'] }
+  { id: 'hash-generator', name: 'Hash Generator', description: 'Generate MD5, SHA256, and other hash values', category: 'developer-tools', href: '/developer-tools/hash-generator', icon: Code2, keywords: ['hash', 'md5', 'sha256', 'checksum', 'crypto', 'developer'] },
+
+  // Data Tools
+  { id: 'csv-to-json', name: 'CSV to JSON Converter', description: 'Convert CSV files to JSON format with customizable options', category: 'data-tools', href: '/data-tools/csv-to-json', icon: Code2, keywords: ['csv', 'json', 'convert', 'data', 'format', 'transform'] },
+  { id: 'json-formatter-data', name: 'JSON Formatter', description: 'Format, validate, and beautify JSON data with syntax highlighting', category: 'data-tools', href: '/data-tools/json-formatter', icon: Code2, keywords: ['json', 'format', 'validate', 'beautify', 'syntax', 'data'] },
+  { id: 'yaml-converter', name: 'YAML Converter', description: 'Convert between YAML and JSON formats with validation', category: 'data-tools', href: '/data-tools/yaml-converter', icon: Code2, keywords: ['yaml', 'json', 'convert', 'format', 'data', 'config'] },
+
+  // Security Tools
+  { id: 'password-checker', name: 'Password Strength Checker', description: 'Check password strength and generate secure passwords', category: 'security-tools', href: '/security-tools/password-checker', icon: Globe, keywords: ['password', 'strength', 'security', 'generator', 'check', 'safe'] },
+  { id: '2fa-generator', name: 'Two-Factor Authentication Generator', description: 'Generate TOTP codes and manage 2FA accounts', category: 'security-tools', href: '/security-tools/2fa-generator', icon: Globe, keywords: ['2fa', 'totp', 'authentication', 'security', 'otp', 'generator'] },
+  { id: 'ssl-checker', name: 'SSL Certificate Checker', description: 'Check SSL certificate details and security information', category: 'security-tools', href: '/security-tools/ssl-checker', icon: Globe, keywords: ['ssl', 'certificate', 'security', 'https', 'check', 'tls'] },
+  { id: 'hash-generator-security', name: 'Hash Generator', description: 'Generate various hash types including MD5, SHA256, SHA512', category: 'security-tools', href: '/security-tools/hash-generator', icon: Globe, keywords: ['hash', 'md5', 'sha256', 'sha512', 'checksum', 'crypto'] },
+
+  // Math Tools
+  { id: 'scientific-calculator', name: 'Scientific Calculator', description: 'Advanced calculator with scientific functions and constants', category: 'math-tools', href: '/math-tools/scientific-calculator', icon: Calculator, keywords: ['scientific', 'calculator', 'math', 'trigonometry', 'logarithm', 'advanced'] },
+  { id: 'equation-solver', name: 'Equation Solver', description: 'Solve linear, quadratic equations and systems with step-by-step solutions', category: 'math-tools', href: '/math-tools/equation-solver', icon: Calculator, keywords: ['equation', 'solver', 'linear', 'quadratic', 'math', 'algebra'] },
+  { id: 'matrix-calculator', name: 'Matrix Calculator', description: 'Perform matrix operations including multiplication, determinant, inverse', category: 'math-tools', href: '/math-tools/matrix-calculator', icon: Calculator, keywords: ['matrix', 'calculator', 'linear', 'algebra', 'determinant', 'inverse'] },
+  { id: 'statistics-calculator', name: 'Statistics Calculator', description: 'Calculate descriptive statistics, regression analysis, and confidence intervals', category: 'math-tools', href: '/math-tools/statistics-calculator', icon: BarChart3, keywords: ['statistics', 'mean', 'median', 'regression', 'analysis', 'data'] },
+  { id: 'graphing-calculator', name: 'Graphing Calculator', description: 'Plot mathematical functions with interactive graphing capabilities', category: 'math-tools', href: '/math-tools/graphing-calculator', icon: BarChart3, keywords: ['graphing', 'plot', 'function', 'math', 'chart', 'visualization'] },
+  { id: 'unit-converter-math', name: 'Unit Converter', description: 'Convert between various units including length, weight, temperature, and more', category: 'math-tools', href: '/math-tools/unit-converter', icon: Wrench, keywords: ['unit', 'convert', 'measurement', 'length', 'weight', 'temperature'] },
+
+  // Crypto Tools
+  { id: 'bitcoin-validator', name: 'Bitcoin Address Validator', description: 'Validate Bitcoin addresses and check address format', category: 'crypto-tools', href: '/crypto-tools/bitcoin-validator', icon: Globe, keywords: ['bitcoin', 'address', 'validate', 'crypto', 'blockchain', 'btc'] },
+  { id: 'crypto-price-converter', name: 'Crypto Price Converter', description: 'Convert between cryptocurrencies and fiat currencies with live rates', category: 'crypto-tools', href: '/crypto-tools/price-converter', icon: Globe, keywords: ['crypto', 'price', 'convert', 'bitcoin', 'ethereum', 'currency'] },
+
+  // Network Tools
+  { id: 'ip-lookup', name: 'IP Address Lookup', description: 'Get detailed information about IP addresses including geolocation', category: 'network-tools', href: '/network-tools/ip-lookup', icon: Globe, keywords: ['ip', 'address', 'lookup', 'geolocation', 'network', 'internet'] },
+  { id: 'dns-lookup', name: 'DNS Lookup', description: 'Perform DNS lookups and check various DNS records', category: 'network-tools', href: '/network-tools/dns-lookup', icon: Globe, keywords: ['dns', 'lookup', 'domain', 'records', 'network', 'server'] },
+  { id: 'port-scanner', name: 'Port Scanner', description: 'Scan network ports and check port availability', category: 'network-tools', href: '/network-tools/port-scanner', icon: Globe, keywords: ['port', 'scanner', 'network', 'tcp', 'udp', 'security'] },
+
+  // Finance Tools
+  { id: 'compound-interest', name: 'Compound Interest Calculator', description: 'Calculate compound interest with various compounding frequencies', category: 'finance-tools', href: '/finance-tools/compound-interest', icon: Calculator, keywords: ['compound', 'interest', 'investment', 'finance', 'savings', 'money'] },
+  { id: 'investment-return', name: 'Investment Return Calculator', description: 'Calculate investment returns and analyze portfolio performance', category: 'finance-tools', href: '/finance-tools/investment-return', icon: Calculator, keywords: ['investment', 'return', 'portfolio', 'finance', 'roi', 'profit'] },
+  { id: 'currency-converter-finance', name: 'Currency Converter', description: 'Convert between different currencies with live exchange rates', category: 'finance-tools', href: '/finance-tools/currency-converter', icon: Calculator, keywords: ['currency', 'exchange', 'rate', 'convert', 'money', 'forex'] }
 ];
 
 const CATEGORY_ICONS = {
@@ -97,7 +130,13 @@ const CATEGORY_ICONS = {
   'seo-tools': BarChart3,
   'pdf-tools': FileText,
   'image-tools': Image,
-  'developer-tools': Code2
+  'developer-tools': Code2,
+  'data-tools': Code2,
+  'security-tools': Globe,
+  'math-tools': Calculator,
+  'crypto-tools': Globe,
+  'network-tools': Globe,
+  'finance-tools': Calculator
 };
 
 const CATEGORY_COLORS = {
@@ -110,14 +149,34 @@ const CATEGORY_COLORS = {
   'seo-tools': 'bg-red-100 text-red-800',
   'pdf-tools': 'bg-indigo-100 text-indigo-800',
   'image-tools': 'bg-cyan-100 text-cyan-800',
-  'developer-tools': 'bg-gray-100 text-gray-800'
+  'developer-tools': 'bg-gray-100 text-gray-800',
+  'data-tools': 'bg-emerald-100 text-emerald-800',
+  'security-tools': 'bg-rose-100 text-rose-800',
+  'math-tools': 'bg-violet-100 text-violet-800',
+  'crypto-tools': 'bg-amber-100 text-amber-800',
+  'network-tools': 'bg-teal-100 text-teal-800',
+  'finance-tools': 'bg-lime-100 text-lime-800'
 };
 
 // Search Component
-export function SearchComponent({ className = '' }: { className?: string }) {
+interface SearchComponentRef {
+  setQuery: (query: string) => void;
+}
+
+export const SearchComponent = React.forwardRef<SearchComponentRef, { className?: string }>(({ className }, ref) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  const handleQueryChange = (newQuery: string) => {
+    setQuery(newQuery);
+    setIsOpen(true);
+    setSelectedIndex(-1);
+  };
+
+  React.useImperativeHandle(ref, () => ({
+    setQuery: handleQueryChange
+  }));
   const { trackSearch } = useSearchTracker();
 
   const searchResults = useMemo(() => {
@@ -192,11 +251,7 @@ export function SearchComponent({ className = '' }: { className?: string }) {
           type="text"
           placeholder="Search tools..."
           value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setIsOpen(true);
-            setSelectedIndex(-1);
-          }}
+          onChange={(e) => handleQueryChange(e.target.value)}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           className="pl-10 pr-10"
@@ -215,53 +270,57 @@ export function SearchComponent({ className = '' }: { className?: string }) {
 
       {/* Search Results Dropdown */}
       {isOpen && query.trim() && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 rounded-xl shadow-2xl z-50 max-h-[500px] overflow-y-auto before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/10 before:to-transparent before:pointer-events-none">
           {searchResults.length > 0 ? (
-            <div className="p-2">
-              <div className="text-xs text-muted-foreground mb-2 px-2">
+            <div className="p-4">
+              <div className="text-xs text-muted-foreground mb-4 px-2">
                 {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
               </div>
-              {searchResults.map((tool, index) => {
-                const IconComponent = tool.icon;
-                const isSelected = index === selectedIndex;
-                
-                return (
-                  <Link
-                    key={tool.id}
-                    href={tool.href}
-                    className={`block p-3 rounded-lg transition-colors ${
-                      isSelected ? 'bg-accent' : 'hover:bg-accent/50'
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="p-1.5 bg-primary/10 rounded-md">
-                        <IconComponent className="h-4 w-4 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-medium text-sm truncate">{tool.name}</h4>
-                          <Badge 
-                            variant="secondary" 
-                            className={`text-xs ${CATEGORY_COLORS[tool.category as keyof typeof CATEGORY_COLORS]}`}
-                          >
-                            {tool.category.replace('-', ' ')}
-                          </Badge>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {searchResults.map((tool, index) => {
+                  const IconComponent = tool.icon;
+                  const isSelected = index === selectedIndex;
+                  
+                  return (
+                    <Link
+                      key={tool.id}
+                      href={tool.href}
+                      className={`block p-4 rounded-lg transition-all duration-200 ${
+                        isSelected ? 'bg-white/30 dark:bg-gray-800/40 shadow-lg backdrop-blur-sm' : 'hover:bg-white/20 dark:hover:bg-gray-800/30 hover:shadow-md hover:backdrop-blur-sm'
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg shadow-sm backdrop-blur-sm flex-shrink-0">
+                            <IconComponent className="h-5 w-5 text-primary drop-shadow-sm" />
                         </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">
-                          {tool.description}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-medium text-sm truncate">{tool.name}</h4>
+                            <Badge 
+                              variant="secondary" 
+                              className={`text-xs ${CATEGORY_COLORS[tool.category as keyof typeof CATEGORY_COLORS]}`}
+                            >
+                              {tool.category.replace('-', ' ')}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                            {tool.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                );
-              })}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           ) : (
-            <div className="p-4 text-center text-muted-foreground">
-              <Search className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">No tools found for "{query}"</p>
-              <p className="text-xs mt-1">Try searching for calculators, converters, or text tools</p>
+            <div className="p-6 text-center text-muted-foreground">
+              <div className="p-3 bg-gradient-to-br from-gray-100/50 to-gray-200/30 dark:from-gray-800/50 dark:to-gray-700/30 rounded-full w-fit mx-auto mb-3 backdrop-blur-sm">
+                <Search className="h-8 w-8 opacity-60" />
+              </div>
+              <p className="text-sm font-medium">No tools found for "{query}"</p>
+              <p className="text-xs mt-1 opacity-75">Try searching for calculators, converters, or text tools</p>
             </div>
           )}
         </div>
@@ -276,26 +335,27 @@ export function SearchComponent({ className = '' }: { className?: string }) {
       )}
     </div>
   );
-}
+});
 
 // Popular Searches Component
-export function PopularSearches() {
+export function PopularSearches({ onSearchSelect }: { onSearchSelect?: (query: string) => void }) {
   const popularQueries = [
     'calculator', 'converter', 'color picker', 'word counter', 
     'qr generator', 'json formatter', 'percentage', 'bmi'
   ];
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2 justify-center">
       <span className="text-sm text-muted-foreground">Popular:</span>
       {popularQueries.map((query) => (
         <Badge 
           key={query} 
           variant="outline" 
-          className="cursor-pointer hover:bg-accent transition-colors text-xs"
+          className="cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors text-xs"
           onClick={() => {
-            // You can implement auto-fill functionality here
-            console.log('Search for:', query);
+            if (onSearchSelect) {
+              onSearchSelect(query);
+            }
           }}
         >
           {query}

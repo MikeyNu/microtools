@@ -49,6 +49,36 @@ export const SEO_CONFIG = {
       title: "SEO Tools - Meta Tag Generator, Keyword Density & More",
       description: "Free SEO tools to optimize your website. Meta tag generator, keyword density checker, robots.txt generator, and more.",
       keywords: ["SEO tools", "meta tags", "keyword density", "SEO checker", "website optimization"]
+    },
+    dataTools: {
+      title: "Data Tools - CSV to JSON, XML Formatter & Data Validation",
+      description: "Free data processing tools including CSV to JSON converter, XML formatter, SQL formatter, and data validator.",
+      keywords: ["data tools", "CSV to JSON", "XML formatter", "SQL formatter", "data validation"]
+    },
+    securityTools: {
+      title: "Security Tools - Password Checker, Hash Generator & 2FA",
+      description: "Free security tools including password strength checker, hash generator, two-factor authentication generator, and SSL certificate checker.",
+      keywords: ["security tools", "password checker", "hash generator", "2FA generator", "SSL checker"]
+    },
+    mathTools: {
+      title: "Math Tools - Scientific Calculator, Equation Solver & More",
+      description: "Advanced mathematical tools including scientific calculator, equation solver, matrix calculator, statistics calculator, and graphing calculator.",
+      keywords: ["math tools", "scientific calculator", "equation solver", "matrix calculator", "statistics calculator"]
+    },
+    cryptoTools: {
+      title: "Crypto Tools - Bitcoin Validator, Price Converter & More",
+      description: "Cryptocurrency tools including Bitcoin address validator, crypto price converter, and wallet generator.",
+      keywords: ["crypto tools", "bitcoin validator", "crypto price converter", "cryptocurrency tools", "blockchain tools"]
+    },
+    networkTools: {
+      title: "Network Tools - IP Lookup, DNS Lookup & Port Scanner",
+      description: "Network analysis tools including IP address lookup, DNS lookup, port scanner, and ping test.",
+      keywords: ["network tools", "IP lookup", "DNS lookup", "port scanner", "network analysis"]
+    },
+    financeTools: {
+      title: "Finance Tools - Compound Interest, Investment Calculator & More",
+      description: "Financial calculators including compound interest calculator, investment return calculator, and currency converter.",
+      keywords: ["finance tools", "compound interest", "investment calculator", "financial calculator", "currency converter"]
     }
   },
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap, Search, Filter, Clock, Image, FileText, Code2 } from "lucide-react"
+import { Calculator, Palette, Type, Globe, BarChart3, Wrench, Zap, Search, Filter, Clock, Image, FileText, Code2, Database, Shield, TrendingUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -174,7 +174,7 @@ const allTools = [
     icon: Code2,
   },
   {
-    name: "Hash Generator",
+    name: "Hash Generator (Dev)",
     description: "Generate MD5, SHA1, SHA256, and other hashes",
     category: "Developer Tools",
     href: "/developer-tools/hash-generator",
@@ -341,6 +341,165 @@ const allTools = [
     href: "/seo-tools/keyword-density",
     icon: BarChart3,
   },
+
+  // Data Tools
+  {
+    name: "CSV to JSON Converter",
+    description: "Convert CSV data to JSON format with customizable options",
+    category: "Data Tools",
+    href: "/data-tools/csv-to-json",
+    icon: Database,
+  },
+  {
+    name: "XML Formatter",
+    description: "Format and validate XML documents with syntax highlighting",
+    category: "Data Tools",
+    href: "/data-tools/xml-formatter",
+    icon: Database,
+  },
+  {
+    name: "SQL Formatter",
+    description: "Format and beautify SQL queries with proper indentation",
+    category: "Data Tools",
+    href: "/data-tools/sql-formatter",
+    icon: Database,
+  },
+  {
+    name: "Data Validator",
+    description: "Validate various data formats including JSON, XML, and CSV",
+    category: "Data Tools",
+    href: "/data-tools/data-validator",
+    icon: Database,
+  },
+
+  // Security Tools
+  {
+    name: "Password Strength Checker",
+    description: "Check password strength and get security recommendations",
+    category: "Security Tools",
+    href: "/security-tools/password-strength",
+    icon: Shield,
+  },
+  {
+    name: "Hash Generator (Security)",
+    description: "Generate MD5, SHA1, SHA256, and other hash values",
+    category: "Security Tools",
+    href: "/security-tools/hash-generator",
+    icon: Shield,
+  },
+  {
+    name: "Two-Factor Auth Generator",
+    description: "Generate TOTP codes for two-factor authentication",
+    category: "Security Tools",
+    href: "/security-tools/2fa-generator",
+    icon: Shield,
+  },
+
+  // Math Tools
+  {
+    name: "Scientific Calculator",
+    description: "Advanced calculator with scientific functions and constants",
+    category: "Math Tools",
+    href: "/math-tools/scientific-calculator",
+    icon: Calculator,
+  },
+  {
+    name: "Equation Solver",
+    description: "Solve linear, quadratic equations and systems with step-by-step solutions",
+    category: "Math Tools",
+    href: "/math-tools/equation-solver",
+    icon: Calculator,
+  },
+  {
+    name: "Matrix Calculator",
+    description: "Perform matrix operations including multiplication, determinant, inverse",
+    category: "Math Tools",
+    href: "/math-tools/matrix-calculator",
+    icon: Calculator,
+  },
+  {
+    name: "Statistics Calculator",
+    description: "Calculate descriptive statistics, regression analysis, and confidence intervals",
+    category: "Math Tools",
+    href: "/math-tools/statistics-calculator",
+    icon: Calculator,
+  },
+  {
+    name: "Graphing Calculator",
+    description: "Plot mathematical functions with interactive graphing capabilities",
+    category: "Math Tools",
+    href: "/math-tools/graphing-calculator",
+    icon: Calculator,
+  },
+  {
+    name: "Unit Converter (Math)",
+    description: "Convert between various units including length, weight, temperature, and more",
+    category: "Math Tools",
+    href: "/math-tools/unit-converter",
+    icon: Calculator,
+  },
+
+  // Crypto Tools
+  {
+    name: "Bitcoin Address Validator",
+    description: "Validate Bitcoin addresses and check address format",
+    category: "Crypto Tools",
+    href: "/crypto-tools/bitcoin-validator",
+    icon: Globe,
+  },
+  {
+    name: "Crypto Price Converter",
+    description: "Convert between cryptocurrencies and fiat currencies with live rates",
+    category: "Crypto Tools",
+    href: "/crypto-tools/price-converter",
+    icon: Globe,
+  },
+
+  // Network Tools
+  {
+    name: "IP Address Lookup",
+    description: "Get detailed information about IP addresses including geolocation",
+    category: "Network Tools",
+    href: "/network-tools/ip-lookup",
+    icon: Globe,
+  },
+  {
+    name: "DNS Lookup",
+    description: "Perform DNS lookups and check various DNS records",
+    category: "Network Tools",
+    href: "/network-tools/dns-lookup",
+    icon: Globe,
+  },
+  {
+    name: "Port Scanner",
+    description: "Scan network ports and check port availability",
+    category: "Network Tools",
+    href: "/network-tools/port-scanner",
+    icon: Globe,
+  },
+
+  // Finance Tools
+  {
+    name: "Compound Interest Calculator",
+    description: "Calculate compound interest with various compounding frequencies",
+    category: "Finance Tools",
+    href: "/finance-tools/compound-interest",
+    icon: TrendingUp,
+  },
+  {
+    name: "Investment Return Calculator",
+    description: "Calculate investment returns and analyze portfolio performance",
+    category: "Finance Tools",
+    href: "/finance-tools/investment-return",
+    icon: TrendingUp,
+  },
+  {
+    name: "Currency Converter (Finance)",
+    description: "Convert between different currencies with live exchange rates",
+    category: "Finance Tools",
+    href: "/finance-tools/currency-converter",
+    icon: TrendingUp,
+  },
 ]
 
 const categories = [
@@ -354,6 +513,12 @@ const categories = [
   { name: "PDF Tools", count: allTools.filter(tool => tool.category === "PDF Tools").length },
   { name: "Web Tools", count: allTools.filter(tool => tool.category === "Web Tools").length },
   { name: "SEO Tools", count: allTools.filter(tool => tool.category === "SEO Tools").length },
+  { name: "Data Tools", count: allTools.filter(tool => tool.category === "Data Tools").length },
+  { name: "Security Tools", count: allTools.filter(tool => tool.category === "Security Tools").length },
+  { name: "Math Tools", count: allTools.filter(tool => tool.category === "Math Tools").length },
+  { name: "Crypto Tools", count: allTools.filter(tool => tool.category === "Crypto Tools").length },
+  { name: "Network Tools", count: allTools.filter(tool => tool.category === "Network Tools").length },
+  { name: "Finance Tools", count: allTools.filter(tool => tool.category === "Finance Tools").length },
 ]
 
 export default function AllToolsPage() {
@@ -436,14 +601,17 @@ export default function AllToolsPage() {
           {/* Search */}
           <div className="max-w-md mx-auto mb-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Search tools..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl blur-xl"></div>
+              <div className="relative bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 rounded-xl shadow-lg">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
+                <Input
+                  type="text"
+                  placeholder="Search tools..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-transparent border-0 focus:ring-2 focus:ring-primary/20 focus:border-transparent placeholder:text-muted-foreground/70"
+                />
+              </div>
             </div>
           </div>
         </div>
