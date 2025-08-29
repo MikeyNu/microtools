@@ -3,6 +3,9 @@ import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Image, Shrink, Scale, ArrowRight, Palette, FileImage, Crop, Zap, Shield } from 'lucide-react'
+import { AdSensePlaceholder } from '@/components/adsense-placeholder'
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from '@/lib/adsense-config'
+import React from 'react'
 
 export const metadata: Metadata = {
   title: 'Image Tools - Free Online Image Utilities | ToolHub',
@@ -84,7 +87,6 @@ export default function ImageToolsPage() {
               <Link href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 All Tools
               </Link>
-              <span className="text-accent font-medium text-sm">Image Tools</span>
             </nav>
           </div>
         </div>
@@ -117,7 +119,8 @@ export default function ImageToolsPage() {
             {imageTools.map((tool, index) => {
               const IconComponent = tool.icon
               return (
-                <Link key={index} href={tool.href}>
+                <React.Fragment key={index}>
+                  <Link href={tool.href}>
                   <Card className="group relative h-full bg-card/40 border-border/30 hover:border-accent/40 transition-all duration-700 hover:scale-[1.03] backdrop-blur-md overflow-hidden rounded-2xl">
                     <div className="absolute inset-0 bg-gradient-to-br from-accent/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-background/5 to-transparent"></div>
@@ -161,6 +164,19 @@ export default function ImageToolsPage() {
                     </CardContent>
                   </Card>
                 </Link>
+                
+                {/* Strategic ad placement after every 3rd tool */}
+                {shouldDisplayAds() && (index + 1) % 3 === 0 && index < imageTools.length - 1 && (
+                  <div className="md:col-span-2 lg:col-span-3 flex justify-center py-8">
+                    <AdSensePlaceholder 
+                      size="banner" 
+                      adClient={ADSENSE_CONFIG.publisherId}
+                      adSlot={getAdUnitId('categoryInline')}
+                      responsive={true}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
               )
             })}
           </div>
@@ -239,6 +255,22 @@ export default function ImageToolsPage() {
           </Card>
         </div>
       </section>
+
+      {/* Footer ad for category page */}
+      {shouldDisplayAds() && (
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-center">
+              <AdSensePlaceholder 
+                size="large-rectangle" 
+                adClient={ADSENSE_CONFIG.publisherId}
+                adSlot={getAdUnitId('categoryFooter')}
+                responsive={true}
+              />
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

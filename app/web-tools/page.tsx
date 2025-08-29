@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import NextLink from "next/link"
 import { Metadata } from "next"
+import { AdSensePlaceholder } from "@/components/adsense-placeholder"
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
+import React from "react"
 
 export const metadata: Metadata = {
   title: "Web Tools - Essential Utilities for Developers | ToolHub",
@@ -90,27 +93,25 @@ export default function WebToolsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <NextLink href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-              <Globe className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-serif font-bold text-primary">ToolHub</h1>
+            <NextLink href="/" className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
+                  <Globe className="h-5 w-5 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
+              </div>
+              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
             </NextLink>
-            <nav className="hidden md:flex items-center space-x-6">
-              <NextLink href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <nav className="hidden md:flex items-center space-x-8">
+              <NextLink href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 Home
               </NextLink>
-              <NextLink href="/calculators" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Calculators
+              <NextLink href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
+                All Tools
               </NextLink>
-              <NextLink href="/converters" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Converters
-              </NextLink>
-              <NextLink href="/text-tools" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Text Tools
-              </NextLink>
-              <span className="text-sm font-medium text-primary">Web Tools</span>
             </nav>
           </div>
         </div>
@@ -160,46 +161,60 @@ export default function WebToolsPage() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {webTools.map((tool) => {
+            {webTools.map((tool, index) => {
               const IconComponent = tool.icon
               return (
-                <Card key={tool.title} className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-br from-background to-muted/30" />
-                  <div className="relative">
-                    {tool.popular && (
-                      <Badge className="absolute -top-1 -right-1 z-10 bg-primary text-primary-foreground">
-                        Popular
-                      </Badge>
-                    )}
-                    <CardHeader className="text-center pb-4">
-                      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl ${tool.color} bg-opacity-10 mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                        <IconComponent className={`h-8 w-8 ${tool.color.replace('bg-', 'text-')}`} />
-                      </div>
-                      <CardTitle className="font-serif text-xl mb-2 group-hover:text-primary transition-colors">
-                        {tool.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm leading-relaxed">
-                        {tool.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-3 mb-6">
-                        {tool.features.map((feature, index) => (
-                          <div key={index} className="flex items-center text-sm text-muted-foreground">
-                            <div className={`w-1.5 h-1.5 rounded-full ${tool.color} mr-2`} />
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
-                      <NextLink href={tool.href}>
-                        <Button className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                          Use Tool
-                          <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                      </NextLink>
-                    </CardContent>
-                  </div>
-                </Card>
+                <React.Fragment key={tool.title}>
+                  <Card className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <div className="absolute inset-0 bg-gradient-to-br from-background to-muted/30" />
+                    <div className="relative">
+                      {tool.popular && (
+                        <Badge className="absolute -top-1 -right-1 z-10 bg-primary text-primary-foreground">
+                          Popular
+                        </Badge>
+                      )}
+                      <CardHeader className="text-center pb-4">
+                        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl ${tool.color} bg-opacity-10 mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                          <IconComponent className={`h-8 w-8 ${tool.color.replace('bg-', 'text-')}`} />
+                        </div>
+                        <CardTitle className="font-serif text-xl mb-2 group-hover:text-primary transition-colors">
+                          {tool.title}
+                        </CardTitle>
+                        <CardDescription className="text-sm leading-relaxed">
+                          {tool.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <div className="space-y-3 mb-6">
+                          {tool.features.map((feature, featureIndex) => (
+                            <div key={featureIndex} className="flex items-center text-sm text-muted-foreground">
+                              <div className={`w-1.5 h-1.5 rounded-full ${tool.color} mr-2`} />
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
+                        <NextLink href={tool.href}>
+                          <Button className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            Use Tool
+                            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </NextLink>
+                      </CardContent>
+                    </div>
+                  </Card>
+                  
+                  {/* Strategic ad placement after every 3rd tool */}
+                  {shouldDisplayAds() && (index + 1) % 3 === 0 && index < webTools.length - 1 && (
+                    <div className="md:col-span-2 lg:col-span-4 flex justify-center py-8">
+                      <AdSensePlaceholder 
+                        size="banner" 
+                        adClient={ADSENSE_CONFIG.publisherId}
+                        adSlot={getAdUnitId('categoryInline')}
+                        responsive={true}
+                      />
+                    </div>
+                  )}
+                </React.Fragment>
               )
             })}
           </div>
@@ -247,14 +262,21 @@ export default function WebToolsPage() {
         </div>
       </section>
 
-      {/* AdSense Placeholder */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div className="bg-muted/50 border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
-            <p className="text-muted-foreground text-sm">AdSense Placeholder</p>
+      {/* Footer ad for category page */}
+      {shouldDisplayAds() && (
+        <section className="py-12">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-center">
+              <AdSensePlaceholder 
+                size="large-rectangle" 
+                adClient={ADSENSE_CONFIG.publisherId}
+                adSlot={getAdUnitId('categoryFooter')}
+                responsive={true}
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }

@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
+import { AdSensePlaceholder } from "@/components/adsense-placeholder";
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config";
 
 const NextLink = Link;
 
@@ -75,27 +77,25 @@ export default function TimestampToolsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <NextLink href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-              <Clock className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-serif font-bold text-primary">ToolHub</h1>
+            <NextLink href="/" className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
+                  <Clock className="h-5 w-5 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
+              </div>
+              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
             </NextLink>
-            <nav className="hidden md:flex items-center space-x-6">
-              <NextLink href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+            <nav className="hidden md:flex items-center space-x-8">
+              <NextLink href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 Home
               </NextLink>
-              <NextLink href="/calculators" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Calculators
+              <NextLink href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
+                All Tools
               </NextLink>
-              <NextLink href="/converters" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Converters
-              </NextLink>
-              <NextLink href="/text-tools" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Text Tools
-              </NextLink>
-              <span className="text-sm font-medium text-primary">Timestamp Tools</span>
             </nav>
           </div>
         </div>
@@ -148,7 +148,8 @@ export default function TimestampToolsPage() {
             {timestampTools.map((tool, index) => {
               const IconComponent = tool.icon;
               return (
-                <Card key={index} className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <React.Fragment key={index}>
+                  <Card className="group relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <div className="absolute inset-0 bg-gradient-to-br from-background to-muted/30" />
                   <div className="relative">
                     {tool.popular && (
@@ -185,6 +186,19 @@ export default function TimestampToolsPage() {
                     </CardContent>
                   </div>
                 </Card>
+                
+                {/* Strategic ad placement after every 3rd tool */}
+                {shouldDisplayAds() && (index + 1) % 3 === 0 && index < timestampTools.length - 1 && (
+                  <div className="md:col-span-2 lg:col-span-3 flex justify-center py-8">
+                    <AdSensePlaceholder 
+                      size="banner" 
+                      adClient={ADSENSE_CONFIG.publisherId}
+                      adSlot={getAdUnitId('categoryInline')}
+                      responsive={true}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
               );
             })}
           </div>
@@ -232,14 +246,19 @@ export default function TimestampToolsPage() {
         </div>
       </section>
 
-      {/* AdSense Placeholder */}
-      <section className="py-8 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="bg-muted/50 border-2 border-dashed border-muted-foreground/20 rounded-lg p-8 text-center">
-            <p className="text-muted-foreground text-sm">Advertisement Space</p>
+      {/* Footer Ad Section */}
+      {shouldDisplayAds() && (
+        <section className="py-12 bg-muted/20">
+          <div className="container mx-auto px-4 text-center">
+            <AdSensePlaceholder 
+              size="large-rectangle" 
+              adClient={ADSENSE_CONFIG.publisherId}
+              adSlot={getAdUnitId('categoryFooter')}
+              responsive={true}
+            />
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

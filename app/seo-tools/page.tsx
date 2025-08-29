@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Metadata } from "next"
+import { AdSensePlaceholder } from "@/components/adsense-placeholder"
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
+import React from "react"
 
 export const metadata: Metadata = {
   title: 'Free SEO Tools - Meta Tags, Keywords, Robots.txt & More | ToolHub',
@@ -71,36 +74,24 @@ export default function SEOToolsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              ToolHub
+            <Link href="/" className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
+                  <Search className="h-5 w-5 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
+              </div>
+              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
             </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 Home
               </Link>
-              <Link href="/image-tools" className="text-muted-foreground hover:text-primary transition-colors">
-                Image Tools
-              </Link>
-              <Link href="/pdf-tools" className="text-muted-foreground hover:text-primary transition-colors">
-                PDF Tools
-              </Link>
-              <Link href="/text-utilities" className="text-muted-foreground hover:text-primary transition-colors">
-                Text Tools
-              </Link>
-              <Link href="/calculators" className="text-muted-foreground hover:text-primary transition-colors">
-                Calculators
-              </Link>
-              <Link href="/converters" className="text-muted-foreground hover:text-primary transition-colors">
-                Converters
-              </Link>
-              <Link href="/developer-tools" className="text-muted-foreground hover:text-primary transition-colors">
-                Developer
-              </Link>
-              <Link href="/seo-tools" className="text-primary font-medium">
-                SEO Tools
+              <Link href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
+                All Tools
               </Link>
             </nav>
           </div>
@@ -160,10 +151,11 @@ export default function SEOToolsPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {seoTools.map((tool) => {
+            {seoTools.map((tool, index) => {
               const IconComponent = tool.icon
               return (
-                <Link key={tool.title} href={tool.href} className="group block">
+                <React.Fragment key={tool.title}>
+                  <Link href={tool.href} className="group block">
                   <Card className="h-full transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border-0 bg-card/50 backdrop-blur-sm hover:bg-card/80 overflow-hidden relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <CardHeader className="relative z-10 text-center pb-4">
@@ -198,6 +190,19 @@ export default function SEOToolsPage() {
                     </CardContent>
                   </Card>
                 </Link>
+                
+                {/* Strategic ad placement after every 3rd tool */}
+                {shouldDisplayAds() && (index + 1) % 3 === 0 && index < seoTools.length - 1 && (
+                  <div className="md:col-span-2 lg:col-span-3 flex justify-center py-8">
+                    <AdSensePlaceholder 
+                      size="banner" 
+                      adClient={ADSENSE_CONFIG.publisherId}
+                      adSlot={getAdUnitId('categoryInline')}
+                      responsive={true}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
               )
             })}
           </div>
@@ -251,6 +256,20 @@ export default function SEOToolsPage() {
           </div>
         </div>
       </section>
+
+      {/* Footer Ad Section */}
+      {shouldDisplayAds() && (
+        <section className="py-12 bg-muted/20">
+          <div className="container mx-auto px-4 text-center">
+            <AdSensePlaceholder 
+              size="large-rectangle" 
+              adClient={ADSENSE_CONFIG.publisherId}
+              adSlot={getAdUnitId('categoryFooter')}
+              responsive={true}
+            />
+          </div>
+        </section>
+      )}
     </div>
   )
 }

@@ -1,8 +1,9 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Metadata } from 'next'
+import Link from 'next/link'
+import React from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { 
   FileText, 
   GitCompare, 
@@ -14,8 +15,10 @@ import {
   AlignLeft,
   ArrowRight,
   Zap,
-  Shield
-} from 'lucide-react';
+  Shield,
+  Clock
+} from 'lucide-react'
+import { AdSensePlaceholder } from '@/components/adsense-placeholder'
 
 export const metadata: Metadata = {
   title: 'Text Utilities - Micro SaaS Tools',
@@ -85,47 +88,40 @@ const getBadgeVariant = (badge: string) => {
 
 export default function TextUtilitiesPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <Link href="/" className="text-2xl font-bold text-gray-900">
-                ToolHub
-              </Link>
-            </div>
-            <nav className="hidden md:flex space-x-8">
-              <Link href="/" className="text-gray-500 hover:text-gray-900">
+      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-5">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
+                  <Type className="h-5 w-5 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
+              </div>
+              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
+            </Link>
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 Home
               </Link>
-              <Link href="/calculators" className="text-gray-500 hover:text-gray-900">
-                Calculators
+              <Link href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
+                All Tools
               </Link>
-              <Link href="/converters" className="text-gray-500 hover:text-gray-900">
-                Converters
-              </Link>
-              <Link href="/text-utilities" className="text-gray-900 font-medium">
-                Text Tools
-              </Link>
-              <Link href="/image-tools" className="text-gray-500 hover:text-gray-900">
-                Image Tools
-              </Link>
-              <Link href="/pdf-tools" className="text-gray-500 hover:text-gray-900">
-                PDF Tools
-              </Link>
+              <span className="text-accent font-medium text-sm">Text Tools</span>
             </nav>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container mx-auto px-6 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl font-bold text-foreground mb-6">
             Text Processing Tools
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Comprehensive text utilities for developers, writers, and content creators. Process, analyze, and transform text with our powerful suite of tools.
           </p>
         </div>
@@ -136,42 +132,53 @@ export default function TextUtilitiesPage() {
             {textTools.map((tool, index) => {
               const IconComponent = tool.icon;
               return (
-                <Card key={index} className="group bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl group-hover:from-blue-600 group-hover:to-purple-700 transition-all duration-300">
-                        <IconComponent className="h-6 w-6 text-white" />
+                <React.Fragment key={index}>
+                  <Card className="group bg-card border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-gradient-to-br from-accent to-accent/80 rounded-xl transition-all duration-300">
+                          <IconComponent className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge variant="secondary" className="bg-accent/10 text-accent border-accent/20">
+                          {tool.badge}
+                        </Badge>
                       </div>
-                      <Badge variant={getBadgeVariant(tool.badge)} className="bg-gradient-to-r from-green-400 to-blue-500 text-white border-0">
-                        {tool.badge}
-                      </Badge>
-                    </div>
-                    <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors mb-2">
-                      {tool.title}
-                    </CardTitle>
-                    <CardDescription className="text-gray-600 leading-relaxed">
-                      {tool.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-6">
-                      <div className="space-y-3">
-                        {tool.features.map((feature, featureIndex) => (
-                          <div key={featureIndex} className="flex items-center text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 flex-shrink-0"></div>
-                            {feature}
-                          </div>
-                        ))}
+                      <CardTitle className="text-xl font-bold text-foreground transition-colors mb-2">
+                        {tool.title}
+                      </CardTitle>
+                      <CardDescription className="text-muted-foreground leading-relaxed">
+                        {tool.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="space-y-6">
+                        <div className="space-y-3">
+                          {tool.features.map((feature, featureIndex) => (
+                            <div key={featureIndex} className="flex items-center text-sm text-muted-foreground">
+                              <div className="w-2 h-2 bg-accent rounded-full mr-3 flex-shrink-0"></div>
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
+                        <Link href={tool.href}>
+                          <Button className="w-full bg-accent hover:bg-accent/90 text-white transition-all duration-300">
+                            Use Tool
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
                       </div>
-                      <Link href={tool.href}>
-                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
-                          Use Tool
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                      </Link>
+                    </CardContent>
+                  </Card>
+                  {/* Strategic AdSense placement after every 3rd tool */}
+                  {(index + 1) % 3 === 0 && index < textTools.length - 1 && (
+                    <div className="col-span-full">
+                      <AdSensePlaceholder 
+                        size="rectangle" 
+                        className="my-8"
+                      />
                     </div>
-                  </CardContent>
-                </Card>
+                  )}
+                </React.Fragment>
               );
             })}
           </div>
@@ -180,107 +187,49 @@ export default function TextUtilitiesPage() {
         {/* Features Section */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Why Choose Our Text Tools?
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Professional-grade text processing with advanced features and intuitive interfaces.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="text-center bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <Card className="text-center bg-card border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardContent className="pt-8 pb-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Scissors className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Advanced Processing</h3>
-                <p className="text-gray-600 leading-relaxed">Sophisticated text manipulation tools with precision formatting, encoding, and transformation capabilities</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <CardContent className="pt-8 pb-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <GitCompare className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Smart Comparison</h3>
-                <p className="text-gray-600 leading-relaxed">Intelligent text comparison with visual highlighting and detailed change tracking for better content management</p>
-              </CardContent>
-            </Card>
-            <Card className="text-center bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <CardContent className="pt-8 pb-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent/80 rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <Zap className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">Instant Results</h3>
-                <p className="text-gray-600 leading-relaxed">Real-time processing and live preview capabilities for immediate feedback and seamless workflow</p>
+                <h3 className="text-xl font-bold text-foreground mb-3">Advanced Processing</h3>
+                <p className="text-muted-foreground leading-relaxed">Sophisticated text manipulation tools with precision formatting, encoding, and transformation capabilities</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center bg-card border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent/80 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Shield className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">Smart Comparison</h3>
+                <p className="text-muted-foreground leading-relaxed">Intelligent text comparison with visual highlighting and detailed change tracking for better content management</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center bg-card border-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent/80 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Clock className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">Instant Results</h3>
+                <p className="text-muted-foreground leading-relaxed">Real-time processing and live preview capabilities for immediate feedback and seamless workflow</p>
               </CardContent>
             </Card>
           </div>
         </section>
 
-        {/* Use Cases Section */}
-        <section className="mb-16">
-          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-            <CardHeader className="text-center pb-8">
-              <CardTitle className="text-2xl font-bold text-gray-900">Common Use Cases</CardTitle>
-              <CardDescription className="text-lg text-gray-600">
-                Discover how our text utilities can streamline your workflow
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <h4 className="text-xl font-bold text-gray-900 flex items-center">
-                    <Code className="h-5 w-5 mr-2 text-blue-600" />
-                    For Developers
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Encode/decode URLs and HTML for web development</span>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Compare code changes and configuration files</span>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Format and validate text data</span>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Generate documentation with Markdown</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <h4 className="text-xl font-bold text-gray-900 flex items-center">
-                    <FileText className="h-5 w-5 mr-2 text-purple-600" />
-                    For Content Creators
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Write and preview Markdown content</span>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Analyze text statistics and readability</span>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Convert text cases for different formats</span>
-                    </div>
-                    <div className="flex items-start">
-                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
-                      <span className="text-gray-600">Compare document versions and revisions</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+        {/* Footer ad for category page */}
+        <AdSensePlaceholder 
+          size="large-rectangle" 
+          className="mb-16"
+        />
       </div>
     </div>
   );

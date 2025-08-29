@@ -16,6 +16,9 @@ import {
   Zap,
   Shield
 } from 'lucide-react'
+import { AdSensePlaceholder } from '@/components/adsense-placeholder'
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from '@/lib/adsense-config'
+import React from 'react'
 
 export const metadata: Metadata = {
   title: 'Developer Tools - ToolHub',
@@ -90,18 +93,25 @@ export default function DeveloperToolsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <Zap className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-serif font-bold text-primary">ToolHub</h1>
+            <Link href="/" className="flex items-center space-x-4">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
+                  <Code2 className="h-5 w-5 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
+              </div>
+              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
             </Link>
-            <nav className="flex items-center space-x-4">
-              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 Home
               </Link>
-              <span className="text-primary font-medium">Developer Tools</span>
+              <Link href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
+                All Tools
+              </Link>
             </nav>
           </div>
         </div>
@@ -146,7 +156,8 @@ export default function DeveloperToolsPage() {
               {developerTools.map((tool, index) => {
                 const IconComponent = tool.icon
                 return (
-                  <Card key={index} className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+                  <React.Fragment key={index}>
+                    <Card className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <CardHeader className="relative pb-4">
                       <div className="flex items-center justify-between mb-4">
@@ -175,6 +186,19 @@ export default function DeveloperToolsPage() {
                       </Button>
                     </CardContent>
                   </Card>
+                  
+                  {/* Strategic ad placement after every 3rd tool */}
+                  {shouldDisplayAds() && (index + 1) % 3 === 0 && index < developerTools.length - 1 && (
+                    <div className="md:col-span-2 lg:col-span-3 flex justify-center py-8">
+                      <AdSensePlaceholder 
+                        size="banner" 
+                        adClient={ADSENSE_CONFIG.publisherId}
+                        adSlot={getAdUnitId('categoryInline')}
+                        responsive={true}
+                      />
+                    </div>
+                  )}
+                </React.Fragment>
                 )
               })}
             </div>
@@ -280,14 +304,21 @@ export default function DeveloperToolsPage() {
               </Card>
             </section>
 
-            {/* AdSense Placeholder */}
-            <section className="mb-8">
-              <Card className="border-2 border-dashed border-muted-foreground/20 bg-muted/20">
-                <CardContent className="py-12 text-center">
-                  <p className="text-muted-foreground text-lg">Advertisement Space</p>
-                </CardContent>
-              </Card>
-            </section>
+            {/* Footer ad for category page */}
+            {shouldDisplayAds() && (
+              <section className="py-12">
+                <div className="container mx-auto px-4">
+                  <div className="flex justify-center">
+                    <AdSensePlaceholder 
+                      size="large-rectangle" 
+                      adClient={ADSENSE_CONFIG.publisherId}
+                      adSlot={getAdUnitId('categoryFooter')}
+                      responsive={true}
+                    />
+                  </div>
+                </div>
+              </section>
+            )}
           </div>
         </div>
       </section>

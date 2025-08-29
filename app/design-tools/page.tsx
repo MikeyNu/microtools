@@ -1,90 +1,86 @@
 import React from 'react';
 import Link from 'next/link';
-import { Palette, Droplets, Sparkles, Eye, Shuffle, Zap, Shield, ArrowRight, Clock } from 'lucide-react';
+import { Palette, Droplets, Sparkles, Eye, Shuffle, Zap, Shield, ArrowRight, Clock, QrCode, Image } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
+import { AdSensePlaceholder } from "@/components/adsense-placeholder";
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config";
 
 export const metadata: Metadata = {
-  title: 'Free Color Tools - Color Picker, Gradient Generator & Palette Creator | ToolHub',
-  description: 'Professional color tools including advanced color picker, gradient generator, color palette creator, and color conversion utilities for designers and developers.',
+  title: 'Free Design Tools - Color Picker, QR Generator, Favicon Creator & More | ToolHub',
+  description: 'Professional design tools including color picker, gradient generator, QR code generator, favicon creator, and design utilities for designers and developers.',
 };
 
-const colorTools = [
+const designTools = [
   {
     title: 'Advanced Color Picker',
     description: 'Professional color picker with multiple formats and accessibility features',
-    href: '/color-tools/color-picker',
+    href: '/design-tools/color-picker',
     icon: Droplets,
     features: ['HEX, RGB, HSL, HSV', 'Color Blindness Simulation', 'Contrast Checker', 'Color History']
   },
   {
     title: 'Gradient Generator',
     description: 'Create beautiful CSS gradients with live preview and export options',
-    href: '/color-tools/gradient-generator',
+    href: '/design-tools/gradient-generator',
     icon: Sparkles,
     features: ['Linear & Radial', 'Multiple Color Stops', 'CSS Export', 'Preset Gradients']
   },
   {
     title: 'Color Palette Generator',
     description: 'Generate harmonious color palettes using color theory principles',
-    href: '/color-tools/palette-generator',
+    href: '/design-tools/palette-generator',
     icon: Palette,
     features: ['Complementary', 'Triadic', 'Analogous', 'Monochromatic']
   },
   {
+    title: 'QR Code Generator',
+    description: 'Generate customizable QR codes for URLs, text, and more',
+    href: '/design-tools/qr-generator',
+    icon: QrCode,
+    features: ['Custom URLs', 'Text Encoding', 'Logo Embedding', 'Multiple Formats']
+  },
+  {
+    title: 'Favicon Generator',
+    description: 'Create favicons and app icons from images or text',
+    href: '/design-tools/favicon-generator',
+    icon: Image,
+    features: ['Multiple Sizes', 'ICO Format', 'PNG Export', 'Browser Compatible']
+  },
+  {
     title: 'Color Contrast Checker',
     description: 'Check color contrast ratios for WCAG accessibility compliance',
-    href: '/color-tools/contrast-checker',
+    href: '/design-tools/contrast-checker',
     icon: Eye,
     features: ['WCAG AA/AAA', 'Text & Background', 'Accessibility Score', 'Suggestions']
-  },
-  {
-    title: 'Color Converter',
-    description: 'Convert colors between different formats and color spaces',
-    href: '/color-tools/color-converter',
-    icon: Shuffle,
-    features: ['HEX ↔ RGB ↔ HSL', 'CMYK Support', 'Color Names', 'Batch Convert']
-  },
-  {
-    title: 'Color Extractor',
-    description: 'Extract dominant colors from images and create palettes',
-    href: '/color-tools/color-extractor',
-    icon: Zap,
-    features: ['Image Upload', 'Dominant Colors', 'Palette Export', 'Color Analysis']
   }
 ];
 
-export default function ColorToolsPage() {
+export default function DesignToolsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2 group">
+            <Link href="/" className="flex items-center space-x-4">
               <div className="relative">
-                <Palette className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
+                  <Palette className="h-5 w-5 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
               </div>
-              <h1 className="text-2xl font-serif font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                ToolHub
-              </h1>
+              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
             </Link>
-            <nav className="flex items-center space-x-6">
-              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 Home
               </Link>
-              <Link href="/calculators" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                Calculators
+              <Link href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
+                All Tools
               </Link>
-              <Link href="/converters" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                Converters
-              </Link>
-              <span className="text-primary font-semibold px-3 py-1 bg-primary/10 rounded-full">
-                Color Tools
-              </span>
             </nav>
           </div>
         </div>
@@ -97,11 +93,11 @@ export default function ColorToolsPage() {
         <div className="container mx-auto px-4 text-center relative">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary font-medium mb-6">
             <Palette className="h-4 w-4" />
-            <span>Professional Color Tools</span>
+            <span>Professional Design Tools</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6">
             <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
-              Color Design
+              Design Tools
             </span>
             <br />
             <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
@@ -109,8 +105,8 @@ export default function ColorToolsPage() {
             </span>
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            Create stunning color palettes, generate gradients, check accessibility, and work with colors in multiple formats. 
-            Perfect for designers and developers.
+            Create stunning designs with our comprehensive toolkit. From color palettes and gradients to QR codes and favicons. 
+            Perfect for designers, developers, and creative professionals.
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             <div className="flex items-center gap-2 px-4 py-2 bg-card rounded-full border">
@@ -133,24 +129,25 @@ export default function ColorToolsPage() {
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-serif font-bold mb-4">Choose Your Color Tool</h2>
+            <h2 className="text-3xl font-serif font-bold mb-4">Choose Your Design Tool</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Professional color tools for designers, developers, and creative professionals
+              Professional design tools for creating stunning visuals, branding assets, and digital content
             </p>
           </div>
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {colorTools.map((tool, index) => {
+              {designTools.map((tool, index) => {
                 const IconComponent = tool.icon;
                 return (
-                  <Card key={index} className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80">
+                  <React.Fragment key={index}>
+                    <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80">
                     <CardHeader className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="p-3 bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl group-hover:from-primary/20 group-hover:to-accent/20 transition-all duration-300">
                           <IconComponent className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
                         </div>
                         <Badge variant="secondary" className="text-xs font-medium">
-                          Color Tool
+                          Design Tool
                         </Badge>
                       </div>
                       <div className="space-y-2">
@@ -184,6 +181,19 @@ export default function ColorToolsPage() {
                       </div>
                     </CardContent>
                   </Card>
+                  
+                  {/* Strategic ad placement after every 3rd tool */}
+                  {shouldDisplayAds() && (index + 1) % 3 === 0 && index < designTools.length - 1 && (
+                    <div className="md:col-span-2 lg:col-span-3 flex justify-center py-8">
+                      <AdSensePlaceholder 
+                        size="banner" 
+                        adClient={ADSENSE_CONFIG.publisherId}
+                        adSlot={getAdUnitId('categoryInline')}
+                        responsive={true}
+                      />
+                    </div>
+                  )}
+                </React.Fragment>
                 );
               })}
         </div>
@@ -192,14 +202,14 @@ export default function ColorToolsPage() {
         </div>
       </section>
 
-      {/* Color Theory Section */}
+      {/* Design Fundamentals Section */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Color Theory & Design</h2>
+              <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Design Fundamentals & Best Practices</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Master the fundamentals of color theory with our comprehensive tools and resources.
+                Master the fundamentals of design with our comprehensive tools and professional resources.
               </p>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -208,12 +218,12 @@ export default function ColorToolsPage() {
                   <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg w-fit">
                     <Palette className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-lg font-serif">Color Harmony</CardTitle>
+                  <CardTitle className="text-lg font-serif">Color & Branding</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Create visually pleasing color combinations using complementary, triadic, 
-                    analogous, and monochromatic color schemes based on color wheel relationships.
+                    Create cohesive brand identities with harmonious color palettes, custom QR codes, 
+                    and professional favicons that work across all platforms and devices.
                   </p>
                 </CardContent>
               </Card>
@@ -250,12 +260,12 @@ export default function ColorToolsPage() {
                   <div className="p-2 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg w-fit">
                     <Zap className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-lg font-serif">Professional Tools</CardTitle>
+                  <CardTitle className="text-lg font-serif">Professional Assets</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Industry-standard color tools with features like gradient generation, 
-                    palette extraction from images, and color blindness simulation for comprehensive design testing.
+                    Generate professional design assets including custom QR codes with logo embedding, 
+                    multi-format favicons, and stunning gradients for modern web and print design.
                   </p>
                 </CardContent>
               </Card>
@@ -264,14 +274,14 @@ export default function ColorToolsPage() {
         </div>
       </section>
 
-      {/* Popular Color Palettes Preview */}
+      {/* Design Inspiration Preview */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Popular Color Palettes</h2>
+              <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Design Inspiration</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Explore trending color combinations for your next design project.
+                Explore trending color palettes and design elements for your next creative project.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -336,9 +346,9 @@ export default function ColorToolsPage() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Color Design Tips</h2>
+              <h2 className="text-3xl font-serif font-bold text-foreground mb-4">Design Best Practices</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Master professional color design with these essential tips and best practices.
+                Master professional design with these essential tips and industry best practices.
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
@@ -357,10 +367,10 @@ export default function ColorToolsPage() {
                     </p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-foreground mb-2">Color Psychology</h3>
+                    <h3 className="font-semibold text-foreground mb-2">Brand Consistency</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Consider the emotional impact of colors: blue for trust, green for growth, 
-                      red for urgency, and purple for creativity.
+                      Maintain consistent visual identity across all touchpoints: use matching colors, 
+                      standardized favicons, and cohesive QR code designs.
                     </p>
                   </div>
                 </CardContent>
@@ -393,6 +403,20 @@ export default function ColorToolsPage() {
           </div>
         </div>
       </section>
+
+      {/* Footer Ad Section */}
+      {shouldDisplayAds() && (
+        <section className="py-12 bg-muted/20">
+          <div className="container mx-auto px-4 text-center">
+            <AdSensePlaceholder 
+              size="large-rectangle" 
+              adClient={ADSENSE_CONFIG.publisherId}
+              adSlot={getAdUnitId('categoryFooter')}
+              responsive={true}
+            />
+          </div>
+        </section>
+      )}
     </div>
   );
 }

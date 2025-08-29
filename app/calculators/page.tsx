@@ -80,30 +80,18 @@ export default function CalculatorsPage() {
             <Link href="/" className="text-2xl font-bold text-primary">
               ToolHub
             </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+            <nav className="flex items-center space-x-6">
+              <Link
+                href="/"
+                className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium"
+              >
                 Home
               </Link>
-              <Link href="/image-tools" className="text-muted-foreground hover:text-primary transition-colors">
-                Image Tools
-              </Link>
-              <Link href="/pdf-tools" className="text-muted-foreground hover:text-primary transition-colors">
-                PDF Tools
-              </Link>
-              <Link href="/text-utilities" className="text-muted-foreground hover:text-primary transition-colors">
-                Text Tools
-              </Link>
-              <Link href="/calculators" className="text-primary font-medium">
-                Calculators
-              </Link>
-              <Link href="/converters" className="text-muted-foreground hover:text-primary transition-colors">
-                Converters
-              </Link>
-              <Link href="/developer-tools" className="text-muted-foreground hover:text-primary transition-colors">
-                Developer
-              </Link>
-              <Link href="/color-tools" className="text-muted-foreground hover:text-primary transition-colors">
-                Colors
+              <Link
+                href="/tools"
+                className="text-foreground hover:text-foreground transition-colors text-sm font-medium border-b-2 border-accent"
+              >
+                All Tools
               </Link>
             </nav>
           </div>

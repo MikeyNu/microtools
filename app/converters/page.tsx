@@ -78,11 +78,19 @@ export default function ConvertersPage() {
               <Zap className="h-8 w-8 text-primary" />
               <h1 className="text-2xl font-serif font-bold text-primary">ToolHub</h1>
             </Link>
-            <nav className="flex items-center space-x-4">
-              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+            <nav className="flex items-center space-x-6">
+              <Link
+                href="/"
+                className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium"
+              >
                 Home
               </Link>
-              <span className="text-primary font-medium">Converters</span>
+              <Link
+                href="/tools"
+                className="text-foreground hover:text-foreground transition-colors text-sm font-medium border-b-2 border-accent"
+              >
+                All Tools
+              </Link>
             </nav>
           </div>
         </div>

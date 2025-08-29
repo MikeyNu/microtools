@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Metadata } from "next"
+import { AdSensePlaceholder } from "@/components/adsense-placeholder"
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
+import React from "react"
 
 export const metadata: Metadata = {
   title: 'Free Text Tools - Word Counter, Case Converter, Password Generator | ToolHub',
@@ -71,31 +74,25 @@ export default function TextToolsPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
+      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2 group">
+            <Link href="/" className="flex items-center space-x-4">
               <div className="relative">
-                <Type className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
-                <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
+                  <Type className="h-5 w-5 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
               </div>
-              <h1 className="text-2xl font-serif font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                ToolHub
-              </h1>
+              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
             </Link>
-            <nav className="flex items-center space-x-6">
-              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+            <nav className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
                 Home
               </Link>
-              <Link href="/calculators" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                Calculators
+              <Link href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
+                All Tools
               </Link>
-              <Link href="/converters" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                Converters
-              </Link>
-              <span className="text-primary font-semibold px-3 py-1 bg-primary/10 rounded-full">
-                Text Tools
-              </span>
             </nav>
           </div>
         </div>
@@ -150,10 +147,11 @@ export default function TextToolsPage() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {textTools.map((tool) => {
+            {textTools.map((tool, index) => {
               const IconComponent = tool.icon
               return (
-                <Card key={tool.title} className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80">
+                <React.Fragment key={tool.title}>
+                  <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80">
                   {tool.popular && (
                     <Badge className="absolute top-4 right-4 bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">
                       Popular
@@ -186,6 +184,19 @@ export default function TextToolsPage() {
                     </Link>
                   </CardContent>
                 </Card>
+                
+                {/* Strategic ad placement after every 3rd tool */}
+                {shouldDisplayAds() && (index + 1) % 3 === 0 && index < textTools.length - 1 && (
+                  <div className="md:col-span-2 lg:col-span-3 flex justify-center py-8">
+                    <AdSensePlaceholder 
+                      size="banner" 
+                      adClient={ADSENSE_CONFIG.publisherId}
+                      adSlot={getAdUnitId('categoryInline')}
+                      responsive={true}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
               )
             })}
           </div>
@@ -239,19 +250,19 @@ export default function TextToolsPage() {
         </div>
       </section>
 
-      {/* AdSense Placeholder */}
-      <section className="py-8 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <Card className="border-dashed border-2 border-muted-foreground/20">
-            <CardContent className="flex items-center justify-center py-8">
-              <div className="text-center text-muted-foreground">
-                <div className="text-sm font-medium mb-1">Advertisement</div>
-                <div className="text-xs">AdSense Placeholder - 728x90</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+      {/* Footer Ad Section */}
+      {shouldDisplayAds() && (
+        <section className="py-12 bg-muted/20">
+          <div className="container mx-auto px-4 text-center">
+            <AdSensePlaceholder 
+              size="large-rectangle" 
+              adClient={ADSENSE_CONFIG.publisherId}
+              adSlot={getAdUnitId('categoryFooter')}
+              responsive={true}
+            />
+          </div>
+        </section>
+      )}
     </div>
   )
 }

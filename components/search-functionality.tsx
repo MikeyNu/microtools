@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, X, Calculator, Wrench, Type, Palette, Globe, BarChart3, FileText, Image, Code2 } from 'lucide-react';
+import { Search, X, Calculator, Wrench, Type, Palette, Globe, BarChart3, FileText, Image, Code2, QrCode } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,10 +37,12 @@ const TOOLS_DATABASE = [
   { id: 'url-encoder', name: 'URL Encoder/Decoder', description: 'Encode and decode URLs with support for different encoding types', category: 'text-tools', href: '/text-utilities/url-encoder', icon: Type, keywords: ['url', 'encode', 'decode', 'web', 'percent-encoding'] },
   { id: 'html-encoder', name: 'HTML Encoder/Decoder', description: 'Encode and decode HTML entities with support for named, decimal, and hex formats', category: 'text-tools', href: '/text-utilities/html-encoder', icon: Type, keywords: ['html', 'encode', 'decode', 'entities', 'web'] },
   
-  // Color Tools
-  { id: 'color-picker', name: 'Color Picker', description: 'Advanced color picker with format conversion and harmony generation', category: 'color-tools', href: '/color-tools/color-picker', icon: Palette, keywords: ['color', 'picker', 'hex', 'rgb', 'hsl', 'harmony', 'palette'] },
-  { id: 'gradient-generator', name: 'Gradient Generator', description: 'Create beautiful CSS gradients with live preview and code generation', category: 'color-tools', href: '/color-tools/gradient-generator', icon: Palette, keywords: ['gradient', 'css', 'linear', 'radial', 'conic', 'background'] },
-  { id: 'palette-generator', name: 'Color Palette Generator', description: 'Generate harmonious color palettes using color theory principles', category: 'color-tools', href: '/color-tools/palette-generator', icon: Palette, keywords: ['palette', 'color', 'harmony', 'monochromatic', 'analogous', 'complementary', 'triadic'] },
+  // Design Tools
+  { id: 'color-picker', name: 'Color Picker', description: 'Advanced color picker with format conversion and harmony generation', category: 'design-tools', href: '/design-tools/color-picker', icon: Palette, keywords: ['color', 'picker', 'hex', 'rgb', 'hsl', 'harmony', 'palette'] },
+  { id: 'gradient-generator', name: 'Gradient Generator', description: 'Create beautiful CSS gradients with live preview and code generation', category: 'design-tools', href: '/design-tools/gradient-generator', icon: Palette, keywords: ['gradient', 'css', 'linear', 'radial', 'conic', 'background'] },
+  { id: 'palette-generator', name: 'Color Palette Generator', description: 'Generate harmonious color palettes using color theory principles', category: 'design-tools', href: '/design-tools/palette-generator', icon: Palette, keywords: ['palette', 'color', 'harmony', 'monochromatic', 'analogous', 'complementary', 'triadic'] },
+  { id: 'qr-generator', name: 'QR Code Generator', description: 'Generate customizable QR codes for URLs, text, and more with logo embedding', category: 'design-tools', href: '/design-tools/qr-generator', icon: QrCode, keywords: ['qr', 'code', 'generator', 'url', 'text', 'logo', 'barcode'] },
+  { id: 'favicon-generator', name: 'Favicon Generator', description: 'Create favicons and app icons from images or text in multiple formats', category: 'design-tools', href: '/design-tools/favicon-generator', icon: Image, keywords: ['favicon', 'icon', 'app', 'ico', 'png', 'browser', 'website'] },
 
   // Timestamp Tools
   { id: 'unix-converter', name: 'Unix Timestamp Converter', description: 'Convert between Unix timestamps and human-readable dates', category: 'timestamp-tools', href: '/timestamp-tools/unix-converter', icon: Globe, keywords: ['unix', 'timestamp', 'epoch', 'date', 'time', 'converter'] },
@@ -89,7 +91,6 @@ const CATEGORY_ICONS = {
   calculators: Calculator,
   converters: Wrench,
   'text-tools': Type,
-  'color-tools': Palette,
   'timestamp-tools': Globe,
   'design-tools': Palette,
   'web-tools': Globe,
@@ -103,7 +104,6 @@ const CATEGORY_COLORS = {
   calculators: 'bg-blue-100 text-blue-800',
   converters: 'bg-green-100 text-green-800',
   'text-tools': 'bg-purple-100 text-purple-800',
-  'color-tools': 'bg-pink-100 text-pink-800',
   'timestamp-tools': 'bg-yellow-100 text-yellow-800',
   'design-tools': 'bg-pink-100 text-pink-800',
   'web-tools': 'bg-orange-100 text-orange-800',
