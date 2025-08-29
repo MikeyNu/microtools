@@ -270,13 +270,13 @@ export const SearchComponent = React.forwardRef<SearchComponentRef, { className?
 
       {/* Search Results Dropdown */}
       {isOpen && query.trim() && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 rounded-xl shadow-2xl z-50 max-h-[500px] overflow-y-auto before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/10 before:to-transparent before:pointer-events-none">
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border border-white/30 dark:border-gray-700/40 rounded-xl shadow-2xl z-[9999] max-h-[400px] sm:max-h-[450px] md:max-h-[500px] overflow-y-auto before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none w-[95vw] sm:w-[600px] md:w-[700px] lg:w-[800px] max-w-[95vw]">
           {searchResults.length > 0 ? (
             <div className="p-4">
               <div className="text-xs text-muted-foreground mb-4 px-2">
                 {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {searchResults.map((tool, index) => {
                   const IconComponent = tool.icon;
                   const isSelected = index === selectedIndex;
@@ -285,18 +285,18 @@ export const SearchComponent = React.forwardRef<SearchComponentRef, { className?
                     <Link
                       key={tool.id}
                       href={tool.href}
-                      className={`block p-4 rounded-lg transition-all duration-200 ${
+                      className={`block p-5 rounded-lg transition-all duration-200 ${
                         isSelected ? 'bg-white/30 dark:bg-gray-800/40 shadow-lg backdrop-blur-sm' : 'hover:bg-white/20 dark:hover:bg-gray-800/30 hover:shadow-md hover:backdrop-blur-sm'
                       }`}
                       onClick={() => setIsOpen(false)}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg shadow-sm backdrop-blur-sm flex-shrink-0">
-                            <IconComponent className="h-5 w-5 text-primary drop-shadow-sm" />
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg shadow-sm backdrop-blur-sm flex-shrink-0">
+                            <IconComponent className="h-6 w-6 text-primary drop-shadow-sm" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-medium text-sm truncate">{tool.name}</h4>
+                          <div className="flex items-start flex-col gap-2 mb-3">
+                            <h4 className="font-medium text-sm leading-tight">{tool.name}</h4>
                             <Badge 
                               variant="secondary" 
                               className={`text-xs ${CATEGORY_COLORS[tool.category as keyof typeof CATEGORY_COLORS]}`}
@@ -304,7 +304,7 @@ export const SearchComponent = React.forwardRef<SearchComponentRef, { className?
                               {tool.category.replace('-', ' ')}
                             </Badge>
                           </div>
-                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-muted-foreground leading-relaxed">
                             {tool.description}
                           </p>
                         </div>
@@ -315,12 +315,12 @@ export const SearchComponent = React.forwardRef<SearchComponentRef, { className?
               </div>
             </div>
           ) : (
-            <div className="p-6 text-center text-muted-foreground">
-              <div className="p-3 bg-gradient-to-br from-gray-100/50 to-gray-200/30 dark:from-gray-800/50 dark:to-gray-700/30 rounded-full w-fit mx-auto mb-3 backdrop-blur-sm">
-                <Search className="h-8 w-8 opacity-60" />
+            <div className="p-8 text-center text-muted-foreground">
+              <div className="p-4 bg-gradient-to-br from-gray-100/50 to-gray-200/30 dark:from-gray-800/50 dark:to-gray-700/30 rounded-full w-fit mx-auto mb-4 backdrop-blur-sm">
+                <Search className="h-10 w-10 opacity-60" />
               </div>
-              <p className="text-sm font-medium">No tools found for "{query}"</p>
-              <p className="text-xs mt-1 opacity-75">Try searching for calculators, converters, or text tools</p>
+              <p className="text-base font-medium mb-2">No tools found for "{query}"</p>
+              <p className="text-sm opacity-75">Try searching for calculators, converters, or text tools</p>
             </div>
           )}
         </div>

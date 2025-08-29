@@ -6,6 +6,7 @@ import { SEO_CONFIG } from "@/lib/seo-config"
 import { AnalyticsProvider } from "@/components/analytics-provider"
 import { AdSenseProvider } from "@/components/adsense-provider"
 import { StructuredData } from "@/components/structured-data"
+import { Navbar } from "@/components/navbar"
 
 const workSans = Work_Sans({
   subsets: ["latin"],
@@ -105,6 +106,7 @@ export default function RootLayout({
         <StructuredData />
         <AnalyticsProvider>
           <AdSenseProvider>
+            <Navbar />
             {children}
           </AdSenseProvider>
         </AnalyticsProvider>

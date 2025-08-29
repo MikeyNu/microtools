@@ -48,22 +48,6 @@ const securityTools = [
     icon: Fingerprint,
     badge: 'Developer',
     features: ['Multiple algorithms', 'File hashing', 'Verification', 'Batch processing']
-  },
-  {
-    title: 'Password Generator',
-    description: 'Create secure passwords with customizable options',
-    href: '/security-tools/password-generator',
-    icon: Eye,
-    badge: 'Utility',
-    features: ['Custom length', 'Character sets', 'Pronounceable', 'Bulk generation']
-  },
-  {
-    title: 'Security Audit',
-    description: 'Comprehensive security assessment and recommendations',
-    href: '/security-tools/security-audit',
-    icon: AlertTriangle,
-    badge: 'Advanced',
-    features: ['Vulnerability scan', 'Best practices', 'Compliance check', 'Risk assessment']
   }
 ]
 

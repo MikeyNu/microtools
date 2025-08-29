@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { AdSensePlaceholder } from "@/components/adsense-placeholder"
 import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
-import { SearchComponent, PopularSearches } from "@/components/search-functionality"
-import { useRef } from "react"
+
 
 const toolCategories = [
   {
@@ -149,85 +148,38 @@ const toolCategories = [
 ]
 
 export default function HomePage() {
-  const searchRef = useRef<{ setQuery: (query: string) => void }>(null);
-
-  const handlePopularSearchSelect = (query: string) => {
-    if (searchRef.current) {
-      searchRef.current.setQuery(query);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
-                  <Wrench className="h-5 w-5 text-white" />
-                </div>
-                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
-              </div>
-              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
-            </div>
 
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
-                Home
-              </Link>
-              <Link
-                href="/tools"
-                className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium"
-              >
-                All Tools
-              </Link>
-              <Link
-                href="/about"
-                className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium"
-              >
-                About
-              </Link>
-            </nav>
 
-            <div className="flex items-center space-x-4">
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <section className="relative py-28 md:py-36 overflow-hidden">
+      <section className="relative py-20 sm:py-28 md:py-36 lg:py-40 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-card/20"></div>
         <div className="absolute inset-0 geometric-bg"></div>
 
-        <div className="absolute top-20 left-[10%] w-40 h-40 border border-accent/10 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-32 right-[15%] w-28 h-28 border border-accent/15 rounded-full animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-[20%] w-3 h-3 bg-accent/30 rounded-full animate-ping delay-500"></div>
-        <div className="absolute top-1/3 right-[25%] w-2 h-2 bg-accent/40 rounded-full animate-ping delay-700"></div>
+        {/* Responsive decorative elements */}
+        <div className="absolute top-16 sm:top-20 left-[5%] sm:left-[10%] w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 border border-accent/10 rounded-full animate-pulse"></div>
+        <div className="absolute bottom-20 sm:bottom-32 right-[10%] sm:right-[15%] w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 border border-accent/15 rounded-full animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-[15%] sm:left-[20%] w-2 h-2 sm:w-3 sm:h-3 bg-accent/30 rounded-full animate-ping delay-500"></div>
+        <div className="absolute top-1/3 right-[20%] sm:right-[25%] w-1.5 h-1.5 sm:w-2 sm:h-2 bg-accent/40 rounded-full animate-ping delay-700"></div>
 
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <div className="max-w-5xl mx-auto">
-            <h2 className="text-6xl md:text-8xl font-sans font-bold text-foreground mb-10 leading-[0.9] tracking-tight">
+        <div className="container mx-auto px-4 sm:px-6 text-center relative z-10">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-sans font-bold text-foreground mb-8 sm:mb-10 leading-[0.9] tracking-tight">
               Your digital toolkit for
-              <span className="block text-transparent bg-gradient-to-r from-accent via-accent/80 to-accent/60 bg-clip-text mt-2">
+              <span className="block text-transparent bg-gradient-to-r from-accent via-accent/80 to-accent/60 bg-clip-text mt-1 sm:mt-2">
                 smarter productivity
               </span>
             </h2>
-            <p className="text-xl md:text-2xl text-foreground/60 mb-14 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-lg sm:text-xl md:text-2xl lg:text-2xl text-foreground/60 mb-10 sm:mb-12 md:mb-14 max-w-5xl mx-auto leading-relaxed font-light px-4">
               Access hundreds of professional-grade online tools designed for developers, designers, and digital
               professionals. Everything you need to boost productivity in one elegant platform.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
-              <div className="relative w-full sm:w-96">
-                <SearchComponent ref={searchRef} className="w-full" />
-                <div className="mt-4">
-                  <PopularSearches onSearchSelect={handlePopularSearchSelect} />
-                </div>
-              </div>
+            <div className="flex justify-center mb-16 sm:mb-20">
               <Link href="/tools">
                 <Button
                   size="lg"
-                  className="h-16 px-10 bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-xl shadow-lg shadow-accent/20"
+                  className="h-12 sm:h-14 md:h-16 px-8 sm:px-10 md:px-12 bg-accent hover:bg-accent/90 text-accent-foreground font-medium rounded-xl shadow-lg shadow-accent/20 text-base sm:text-lg"
                 >
                   Explore Tools
                 </Button>
@@ -253,18 +205,18 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="py-24 relative">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-20">
-            <h3 className="text-5xl md:text-6xl font-sans font-bold text-foreground mb-8 tracking-tight">
+      <section className="py-16 sm:py-20 md:py-24 relative">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-16 sm:mb-20">
+            <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-bold text-foreground mb-6 sm:mb-8 tracking-tight">
               Professional Tools
             </h3>
-            <p className="text-foreground/60 text-xl max-w-3xl mx-auto leading-relaxed">
+            <p className="text-foreground/60 text-lg sm:text-xl max-w-4xl mx-auto leading-relaxed px-4">
               Carefully crafted tools designed for professionals and enthusiasts who demand excellence
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
             {toolCategories.map((category, index) => {
               const IconComponent = category.icon
               return (
@@ -330,14 +282,14 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="py-20 bg-card/20 relative">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h3 className="text-4xl font-sans font-bold text-foreground mb-6">Most Popular</h3>
-            <p className="text-foreground/60 text-xl">Tools that professionals use every day</p>
+      <section className="py-16 sm:py-20 bg-card/20 relative">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12 sm:mb-16">
+            <h3 className="text-3xl sm:text-4xl font-sans font-bold text-foreground mb-4 sm:mb-6">Most Popular</h3>
+            <p className="text-foreground/60 text-lg sm:text-xl">Tools that professionals use every day</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
             {[
               "Password Generator",
               "QR Code Generator",
@@ -365,19 +317,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 relative geometric-bg">
-        <div className="container mx-auto px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h3 className="text-4xl font-sans font-bold text-foreground mb-6">Stay in the Loop</h3>
-            <p className="text-foreground/60 text-xl mb-10 leading-relaxed">
+      <section className="py-16 sm:py-20 relative geometric-bg">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto text-center">
+            <h3 className="text-3xl sm:text-4xl font-sans font-bold text-foreground mb-4 sm:mb-6">Stay in the Loop</h3>
+            <p className="text-foreground/60 text-lg sm:text-xl mb-8 sm:mb-10 leading-relaxed px-4">
               Get notified about new tools, features, and productivity tips
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center max-w-lg mx-auto">
               <Input
                 placeholder="Enter your email address"
-                className="w-full sm:w-80 h-12 bg-card/50 border-border/40 backdrop-blur-sm focus:border-accent/50 focus:ring-accent/20"
+                className="w-full sm:flex-1 h-11 sm:h-12 bg-card/50 border-border/40 backdrop-blur-sm focus:border-accent/50 focus:ring-accent/20"
               />
-              <Button size="lg" className="h-12 px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-medium">
+              <Button size="lg" className="w-full sm:w-auto h-11 sm:h-12 px-6 sm:px-8 bg-accent hover:bg-accent/90 text-accent-foreground font-medium">
                 Subscribe
               </Button>
             </div>

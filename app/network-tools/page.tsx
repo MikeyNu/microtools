@@ -41,30 +41,6 @@ const networkTools = [
     icon: Shield,
     badge: 'New',
     color: 'bg-red-500'
-  },
-  {
-    title: 'Ping Test',
-    description: 'Test network connectivity and measure latency to any host',
-    href: '/network-tools/ping-test',
-    icon: Zap,
-    badge: 'New',
-    color: 'bg-yellow-500'
-  },
-  {
-    title: 'Whois Lookup',
-    description: 'Get domain registration and ownership information',
-    href: '/network-tools/whois-lookup',
-    icon: Server,
-    badge: 'New',
-    color: 'bg-purple-500'
-  },
-  {
-    title: 'Network Speed Test',
-    description: 'Test your internet connection speed and bandwidth',
-    href: '/network-tools/speed-test',
-    icon: Wifi,
-    badge: 'New',
-    color: 'bg-indigo-500'
   }
 ]
 

@@ -52,33 +52,6 @@ const webTools = [
     features: ["Syntax validation", "Pretty printing", "Error detection"]
   },
   {
-    title: "Image Resizer",
-    description: "Resize images and convert between formats while maintaining quality",
-    icon: ImageIcon,
-    href: "/web-tools/image-resizer",
-    popular: false,
-    color: "bg-pink-500",
-    features: ["Quality control", "Format conversion", "Batch resize"]
-  },
-  {
-    title: "CSS Minifier",
-    description: "Minify and compress CSS code to reduce file size and improve performance",
-    icon: Minimize,
-    href: "/web-tools/css-minifier",
-    popular: false,
-    color: "bg-indigo-500",
-    features: ["Size reduction", "Comment removal", "Whitespace optimization"]
-  },
-  {
-    title: "HTML Encoder",
-    description: "Encode and decode HTML entities for safe web content display",
-    icon: Globe,
-    href: "/web-tools/html-encoder",
-    popular: false,
-    color: "bg-teal-500",
-    features: ["Entity conversion", "Safe encoding", "Bulk processing"]
-  },
-  {
     title: "UUID Generator",
     description: "Generate unique identifiers (UUIDs) in various formats for applications",
     icon: Zap,
