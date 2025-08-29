@@ -175,8 +175,6 @@ export default function TextUtilitiesPage() {
               );
             })}
           </div>
-      </div>
-
         </section>
 
         {/* Features Section */}

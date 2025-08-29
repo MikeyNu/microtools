@@ -1,4 +1,4 @@
-import { Globe, LinkIcon, Code, QrCode, ImageIcon, Minimize, FileCode, Zap, ArrowRight, Clock, Shield, Button, Badge } from "lucide-react"
+import { Globe, LinkIcon, Code, QrCode, ImageIcon, Minimize, FileCode, Zap, ArrowRight, Clock, Shield } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

@@ -153,8 +153,6 @@ export default function PDFToolsPage() {
               )
             })}
           </div>
-        </div>
-
         </section>
 
         {/* Features Section */}
