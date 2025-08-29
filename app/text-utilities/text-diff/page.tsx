@@ -180,7 +180,7 @@ console.log('Total with tax:', calculateTotal(items, taxRate));`;
     const lcs = calculateLCS(originalWords, modifiedWords);
     
     let i = 0, j = 0;
-    let currentLine = { type: 'unchanged' as const, content: '', oldContent: '', newContent: '' };
+    let currentLine: DiffLine = { type: 'unchanged', content: '', oldContent: '', newContent: '' };
     
     while (i < originalWords.length || j < modifiedWords.length) {
       if (i < originalWords.length && j < modifiedWords.length && originalWords[i] === modifiedWords[j]) {
@@ -221,7 +221,7 @@ console.log('Total with tax:', calculateTotal(items, taxRate));`;
     const lcs = calculateLCS(originalChars, modifiedChars);
     
     let i = 0, j = 0;
-    let currentLine = { type: 'unchanged' as const, content: '' };
+    let currentLine: DiffLine = { type: 'unchanged', content: '' };
     
     while (i < originalChars.length || j < modifiedChars.length) {
       if (i < originalChars.length && j < modifiedChars.length && originalChars[i] === modifiedChars[j]) {

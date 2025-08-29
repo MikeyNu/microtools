@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Upload, Download, FileText, Compress, CheckCircle, AlertCircle, X } from 'lucide-react'
+import { Upload, Download, FileText, Shrink, CheckCircle, AlertCircle, X, Settings } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 
 interface CompressedFile {
@@ -178,7 +178,7 @@ export default function PDFCompressorPage() {
                   
                   <div className="flex gap-3 mt-6">
                     <Button onClick={compressFiles} disabled={compressing} className="flex-1">
-                      <Compress className="h-4 w-4 mr-2" />
+                      <Shrink className="h-4 w-4 mr-2" />
                       {compressing ? 'Compressing...' : 'Compress Files'}
                     </Button>
                     <Button variant="outline" onClick={reset}>
@@ -268,7 +268,7 @@ export default function PDFCompressorPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Compress className="h-6 w-6 text-blue-600" />
+                <Shrink className="h-6 w-6 text-blue-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Smart Compression</h3>
               <p className="text-gray-600 text-sm">Advanced algorithms reduce file size while preserving quality</p>

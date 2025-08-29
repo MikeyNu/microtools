@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Upload, Download, Image, Compress, CheckCircle, AlertCircle, X, Settings } from 'lucide-react'
+import { Upload, Download, Image, Shrink, CheckCircle, AlertCircle, X, Settings } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 
 interface CompressedImage {
@@ -227,7 +227,7 @@ export default function ImageCompressorPage() {
                   
                   <div className="flex gap-3 mt-6">
                     <Button onClick={compressImages} disabled={compressing} className="flex-1">
-                      <Compress className="h-4 w-4 mr-2" />
+                      <Shrink className="h-4 w-4 mr-2" />
                       {compressing ? 'Compressing...' : 'Compress Images'}
                     </Button>
                     <Button variant="outline" onClick={reset}>
@@ -323,7 +323,7 @@ export default function ImageCompressorPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <div className="bg-purple-100 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Compress className="h-6 w-6 text-purple-600" />
+                <Shrink className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Smart Compression</h3>
               <p className="text-gray-600 text-sm">Advanced algorithms optimize file size while preserving quality</p>

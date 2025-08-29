@@ -12,7 +12,9 @@ import {
   Hash, 
   Scissors, 
   AlignLeft,
-  ArrowRight
+  ArrowRight,
+  Zap,
+  Shield
 } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -83,141 +85,205 @@ const getBadgeVariant = (badge: string) => {
 
 export default function TextUtilitiesPage() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Text Utilities</h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Comprehensive text processing tools for developers, writers, and content creators. 
-          Process, analyze, and transform text with our powerful utilities.
-        </p>
-      </div>
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-bold text-gray-900">
+                ToolHub
+              </Link>
+            </div>
+            <nav className="hidden md:flex space-x-8">
+              <Link href="/" className="text-gray-500 hover:text-gray-900">
+                Home
+              </Link>
+              <Link href="/calculators" className="text-gray-500 hover:text-gray-900">
+                Calculators
+              </Link>
+              <Link href="/converters" className="text-gray-500 hover:text-gray-900">
+                Converters
+              </Link>
+              <Link href="/text-utilities" className="text-gray-900 font-medium">
+                Text Tools
+              </Link>
+              <Link href="/image-tools" className="text-gray-500 hover:text-gray-900">
+                Image Tools
+              </Link>
+              <Link href="/pdf-tools" className="text-gray-500 hover:text-gray-900">
+                PDF Tools
+              </Link>
+            </nav>
+          </div>
+        </div>
+      </header>
 
-      {/* Tools Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {textTools.map((tool, index) => {
-          const IconComponent = tool.icon;
-          return (
-            <Card key={index} className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                      <IconComponent className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{tool.title}</CardTitle>
-                      <Badge variant={getBadgeVariant(tool.badge)} className="mt-1">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Hero Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            Text Processing Tools
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Comprehensive text utilities for developers, writers, and content creators. Process, analyze, and transform text with our powerful suite of tools.
+          </p>
+        </div>
+
+        {/* Tools Grid */}
+        <section className="mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {textTools.map((tool, index) => {
+              const IconComponent = tool.icon;
+              return (
+                <Card key={index} className="group bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl group-hover:from-blue-600 group-hover:to-purple-700 transition-all duration-300">
+                        <IconComponent className="h-6 w-6 text-white" />
+                      </div>
+                      <Badge variant={getBadgeVariant(tool.badge)} className="bg-gradient-to-r from-green-400 to-blue-500 text-white border-0">
                         {tool.badge}
                       </Badge>
                     </div>
-                  </div>
+                    <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors mb-2">
+                      {tool.title}
+                    </CardTitle>
+                    <CardDescription className="text-gray-600 leading-relaxed">
+                      {tool.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        {tool.features.map((feature, featureIndex) => (
+                          <div key={featureIndex} className="flex items-center text-sm text-gray-600">
+                            <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 flex-shrink-0"></div>
+                            {feature}
+                          </div>
+                        ))}
+                      </div>
+                      <Link href={tool.href}>
+                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md hover:shadow-lg transition-all duration-300">
+                          Use Tool
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+      </div>
+
+        </section>
+
+        {/* Features Section */}
+        <section className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Why Choose Our Text Tools?
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Professional-grade text processing with advanced features and intuitive interfaces.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="text-center bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Scissors className="h-8 w-8 text-white" />
                 </div>
-                <CardDescription className="text-sm leading-relaxed">
-                  {tool.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex flex-wrap gap-1">
-                    {tool.features.map((feature, featureIndex) => (
-                      <Badge key={featureIndex} variant="outline" className="text-xs">
-                        {feature}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Link href={tool.href}>
-                    <Button className="w-full group/button">
-                      Use Tool
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover/button:translate-x-1 transition-transform" />
-                    </Button>
-                  </Link>
-                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Advanced Processing</h3>
+                <p className="text-gray-600 leading-relaxed">Sophisticated text manipulation tools with precision formatting, encoding, and transformation capabilities</p>
               </CardContent>
             </Card>
-          );
-        })}
-      </div>
-
-      {/* Features Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Scissors className="h-5 w-5 text-primary" />
-              <span>Text Processing</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Advanced text manipulation tools for formatting, encoding, and transforming content 
-              with precision and efficiency.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <GitCompare className="h-5 w-5 text-primary" />
-              <span>Comparison Tools</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Compare and analyze text differences with visual highlighting and 
-              detailed change tracking for better content management.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <AlignLeft className="h-5 w-5 text-primary" />
-              <span>Content Creation</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Create and edit content with markdown support, live preview, 
-              and export capabilities for seamless workflow integration.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Use Cases */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Common Use Cases</CardTitle>
-          <CardDescription>
-            Discover how our text utilities can streamline your workflow
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-3">For Developers</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Encode/decode URLs and HTML for web development</li>
-                <li>• Compare code changes and configuration files</li>
-                <li>• Format and validate text data</li>
-                <li>• Generate documentation with Markdown</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3">For Content Creators</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>• Write and preview Markdown content</li>
-                <li>• Analyze text statistics and readability</li>
-                <li>• Convert text cases for different formats</li>
-                <li>• Compare document versions and revisions</li>
-              </ul>
-            </div>
+            <Card className="text-center bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <GitCompare className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Smart Comparison</h3>
+                <p className="text-gray-600 leading-relaxed">Intelligent text comparison with visual highlighting and detailed change tracking for better content management</p>
+              </CardContent>
+            </Card>
+            <Card className="text-center bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              <CardContent className="pt-8 pb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Zap className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Instant Results</h3>
+                <p className="text-gray-600 leading-relaxed">Real-time processing and live preview capabilities for immediate feedback and seamless workflow</p>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+        </section>
+
+        {/* Use Cases Section */}
+        <section className="mb-16">
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+            <CardHeader className="text-center pb-8">
+              <CardTitle className="text-2xl font-bold text-gray-900">Common Use Cases</CardTitle>
+              <CardDescription className="text-lg text-gray-600">
+                Discover how our text utilities can streamline your workflow
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <h4 className="text-xl font-bold text-gray-900 flex items-center">
+                    <Code className="h-5 w-5 mr-2 text-blue-600" />
+                    For Developers
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Encode/decode URLs and HTML for web development</span>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Compare code changes and configuration files</span>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Format and validate text data</span>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Generate documentation with Markdown</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="text-xl font-bold text-gray-900 flex items-center">
+                    <FileText className="h-5 w-5 mr-2 text-purple-600" />
+                    For Content Creators
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Write and preview Markdown content</span>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Analyze text statistics and readability</span>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Convert text cases for different formats</span>
+                    </div>
+                    <div className="flex items-start">
+                      <div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <span className="text-gray-600">Compare document versions and revisions</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+      </div>
     </div>
   );
 }

@@ -453,7 +453,7 @@ export default function AllToolsPage() {
           <div className="mb-12">
             <AdSensePlaceholder
               size="leaderboard"
-              adSlot={getAdUnitId('tools', 'header')}
+              adSlot={getAdUnitId('headerBanner')}
               adClient={ADSENSE_CONFIG.publisherId}
               className="mx-auto"
             />
@@ -547,7 +547,7 @@ export default function AllToolsPage() {
           <div className="mb-12">
             <AdSensePlaceholder
               size="rectangle"
-              adSlot={getAdUnitId('tools', 'content')}
+              adSlot={getAdUnitId('toolContent')}
               adClient={ADSENSE_CONFIG.publisherId}
               className="mx-auto"
             />
@@ -632,7 +632,7 @@ export default function AllToolsPage() {
         <div className="container mx-auto px-6 py-8">
           <AdSensePlaceholder
             size="leaderboard"
-            adSlot={getAdUnitId('tools', 'footer')}
+            adSlot={getAdUnitId('toolFooter')}
             adClient={ADSENSE_CONFIG.publisherId}
             className="mx-auto"
           />

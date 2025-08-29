@@ -12,7 +12,7 @@ interface AdSenseProps {
 }
 
 export function AdSensePlaceholder({ size, className = "", adSlot, adClient, responsive = true }: AdSenseProps) {
-  const adRef = useRef<HTMLElement>(null)
+  const adRef = useRef<HTMLModElement>(null)
   const hasInitialized = useRef(false)
   
   const adSizes = {

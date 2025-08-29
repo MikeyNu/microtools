@@ -114,7 +114,7 @@ Check out [Markdown Guide](https://www.markdownguide.org/) for more information.
       .replace(/^## (.*$)/gim, '<h2>$1</h2>')
       .replace(/^# (.*$)/gim, '<h1>$1</h1>')
       // Bold
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       // Italic
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       // Code inline
@@ -141,11 +141,11 @@ Check out [Markdown Guide](https://www.markdownguide.org/) for more information.
     // Lists
     html = html.replace(/^\* (.*$)/gim, '<li>$1</li>');
     html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    html = html.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
 
     // Tables
     const tableRegex = /\|(.+)\|\n\|[-\s|]+\|\n((\|.+\|\n?)+)/g;
-    html = html.replace(tableRegex, (match, header, body) => {
+    html = html.replace(tableRegex, (match: string, header: string, body: string) => {
       const headerCells = header.split('|').map((cell: string) => cell.trim()).filter((cell: string) => cell);
       const bodyRows = body.trim().split('\n').map((row: string) => 
         row.split('|').map((cell: string) => cell.trim()).filter((cell: string) => cell)

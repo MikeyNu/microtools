@@ -12,7 +12,9 @@ import {
   Binary, 
   Link as LinkIcon,
   Braces,
-  ArrowRight
+  ArrowRight,
+  Zap,
+  Shield
 } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -86,170 +88,209 @@ const developerTools = [
 
 export default function DeveloperToolsPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Developer Tools
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b bg-card/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center space-x-2">
+              <Zap className="h-8 w-8 text-primary" />
+              <h1 className="text-2xl font-serif font-bold text-primary">ToolHub</h1>
+            </Link>
+            <nav className="flex items-center space-x-4">
+              <Link href="/" className="text-muted-foreground hover:text-primary transition-colors">
+                Home
+              </Link>
+              <span className="text-primary font-medium">Developer Tools</span>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="py-16 bg-gradient-to-br from-background via-muted/30 to-background">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-5xl font-serif font-bold text-foreground mb-6">
+            Developer Tools & Utilities
+          </h2>
+          <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
             Essential utilities for developers including JSON formatting, regex testing, 
-            encoding/decoding tools, and hash generators.
+            encoding/decoding tools, and hash generators. All tools run locally in your browser.
           </p>
         </div>
+      </section>
 
-        {/* Popular Tools Banner */}
-        <Card className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-          <CardContent className="pt-6">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Most Popular Developer Tools</h2>
-              <p className="text-gray-600 mb-4">JSON Formatter, Regex Tester, Base64 Encoder, and Hash Generator</p>
-              <div className="flex flex-wrap justify-center gap-2">
-                <Badge variant="secondary" className="bg-blue-100 text-blue-800">JSON</Badge>
-                <Badge variant="secondary" className="bg-green-100 text-green-800">Regex</Badge>
-                <Badge variant="secondary" className="bg-purple-100 text-purple-800">Base64</Badge>
-                <Badge variant="secondary" className="bg-red-100 text-red-800">Hash</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Tools Grid */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
 
-        {/* Tools Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {developerTools.map((tool, index) => {
-            const IconComponent = tool.icon
-            return (
-              <Card key={index} className="group hover:shadow-lg transition-all duration-200 border-2 hover:border-blue-200">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className={`p-3 rounded-lg ${tool.color} bg-opacity-10`}>
-                      <IconComponent className={`h-6 w-6 ${tool.color.replace('bg-', 'text-')}`} />
-                    </div>
-                    {tool.popular && (
-                      <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs">
-                        Popular
-                      </Badge>
-                    )}
+            {/* Popular Tools Banner */}
+            <Card className="mb-12 bg-gradient-to-r from-primary/5 via-accent/5 to-primary/5 border-primary/20">
+              <CardContent className="pt-8 pb-8">
+                <div className="text-center">
+                  <h3 className="text-2xl font-serif font-bold text-foreground mb-3">Most Popular Developer Tools</h3>
+                  <p className="text-muted-foreground mb-6">JSON Formatter, Regex Tester, Base64 Encoder, and Hash Generator</p>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">JSON</Badge>
+                    <Badge variant="secondary" className="bg-accent/10 text-accent-foreground border-accent/20">Regex</Badge>
+                    <Badge variant="secondary" className="bg-secondary/10 text-secondary-foreground border-secondary/20">Base64</Badge>
+                    <Badge variant="secondary" className="bg-destructive/10 text-destructive border-destructive/20">Hash</Badge>
                   </div>
-                  <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                    {tool.title}
-                  </CardTitle>
-                  <CardDescription className="text-sm text-gray-600">
-                    {tool.description}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tools Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {developerTools.map((tool, index) => {
+                const IconComponent = tool.icon
+                return (
+                  <Card key={index} className="group relative overflow-hidden border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <CardHeader className="relative pb-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className={`p-3 rounded-xl ${tool.color} bg-opacity-10 group-hover:scale-110 transition-transform duration-300`}>
+                          <IconComponent className={`h-6 w-6 ${tool.color.replace('bg-', 'text-')}`} />
+                        </div>
+                        {tool.popular && (
+                          <Badge variant="secondary" className="bg-accent/10 text-accent-foreground border-accent/20">
+                            Popular
+                          </Badge>
+                        )}
+                      </div>
+                      <CardTitle className="text-xl font-serif group-hover:text-primary transition-colors duration-300">
+                        {tool.title}
+                      </CardTitle>
+                      <CardDescription className="text-muted-foreground leading-relaxed">
+                        {tool.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="relative pt-0">
+                      <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground group-hover:shadow-lg transition-all duration-300">
+                        <Link href={tool.href} className="flex items-center justify-center gap-2">
+                          Use Tool
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+
+            {/* Features Section */}
+            <section className="mb-16">
+              <div className="text-center mb-12">
+                <h3 className="text-3xl font-serif font-bold text-foreground mb-4">Developer Tool Categories</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">Comprehensive tools for every aspect of development</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <Card className="group text-center border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+                  <CardContent className="pt-8 pb-8">
+                    <div className="bg-primary/10 p-4 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Code2 className="h-10 w-10 text-primary" />
+                    </div>
+                    <h4 className="text-xl font-serif font-semibold text-foreground mb-3">Code Processing</h4>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Format, validate, and process various code formats and data structures with precision.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="group text-center border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+                  <CardContent className="pt-8 pb-8">
+                    <div className="bg-accent/10 p-4 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Shield className="h-10 w-10 text-accent-foreground" />
+                    </div>
+                    <h4 className="text-xl font-serif font-semibold text-foreground mb-3">Security Tools</h4>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Generate hashes, encode/decode data, and work with security tokens safely.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="group text-center border-2 border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5">
+                  <CardContent className="pt-8 pb-8">
+                    <div className="bg-secondary/10 p-4 rounded-2xl w-20 h-20 mx-auto mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Search className="h-10 w-10 text-secondary-foreground" />
+                    </div>
+                    <h4 className="text-xl font-serif font-semibold text-foreground mb-3">Testing & Debugging</h4>
+                    <p className="text-muted-foreground leading-relaxed">
+                      Test regular expressions, APIs, and debug various data formats efficiently.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </section>
+
+            {/* Why Use Our Developer Tools */}
+            <section className="mb-16">
+              <Card className="border-2 border-border/50 bg-gradient-to-br from-card via-card/50 to-muted/20">
+                <CardHeader className="text-center pb-8">
+                  <CardTitle className="text-3xl font-serif font-bold text-foreground mb-3">Why Choose Our Developer Tools?</CardTitle>
+                  <CardDescription className="text-lg text-muted-foreground">
+                    Built by developers, for developers
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <Button asChild className="w-full group-hover:bg-blue-600 transition-colors">
-                    <Link href={tool.href} className="flex items-center justify-center gap-2">
-                      Use Tool
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <div className="flex items-start gap-4">
+                        <div className="bg-primary/10 p-3 rounded-xl">
+                          <Zap className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-serif font-semibold text-foreground mb-2">No Installation Required</h4>
+                          <p className="text-muted-foreground leading-relaxed">All tools run in your browser - no downloads or setup needed</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <div className="bg-accent/10 p-3 rounded-xl">
+                          <Shield className="h-6 w-6 text-accent-foreground" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-serif font-semibold text-foreground mb-2">Privacy Focused</h4>
+                          <p className="text-muted-foreground leading-relaxed">All processing happens locally - your data never leaves your browser</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="flex items-start gap-4">
+                        <div className="bg-secondary/10 p-3 rounded-xl">
+                          <Code2 className="h-6 w-6 text-secondary-foreground" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-serif font-semibold text-foreground mb-2">Developer Friendly</h4>
+                          <p className="text-muted-foreground leading-relaxed">Clean interfaces designed for productivity and ease of use</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <div className="bg-destructive/10 p-3 rounded-xl">
+                          <Search className="h-6 w-6 text-destructive" />
+                        </div>
+                        <div>
+                          <h4 className="text-lg font-serif font-semibold text-foreground mb-2">Always Updated</h4>
+                          <p className="text-muted-foreground leading-relaxed">Regular updates with new features and improvements</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-            )
-          })}
-        </div>
+            </section>
 
-        {/* Features Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="bg-blue-100 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Code2 className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Code Processing</h3>
-              <p className="text-sm text-gray-600">
-                Format, validate, and process various code formats and data structures.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="bg-green-100 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Lock className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Security Tools</h3>
-              <p className="text-sm text-gray-600">
-                Generate hashes, encode/decode data, and work with security tokens.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card className="text-center">
-            <CardContent className="pt-6">
-              <div className="bg-purple-100 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <Search className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Testing & Debugging</h3>
-              <p className="text-sm text-gray-600">
-                Test regular expressions, APIs, and debug various data formats.
-              </p>
-            </CardContent>
-          </Card>
+            {/* AdSense Placeholder */}
+            <section className="mb-8">
+              <Card className="border-2 border-dashed border-muted-foreground/20 bg-muted/20">
+                <CardContent className="py-12 text-center">
+                  <p className="text-muted-foreground text-lg">Advertisement Space</p>
+                </CardContent>
+              </Card>
+            </section>
+          </div>
         </div>
-
-        {/* Why Use Our Developer Tools */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Why Choose Our Developer Tools?</CardTitle>
-            <CardDescription>
-              Built by developers, for developers
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="bg-blue-100 p-2 rounded-lg">
-                    <ArrowRight className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">No Installation Required</h4>
-                    <p className="text-sm text-gray-600">All tools run in your browser - no downloads or setup needed</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="bg-green-100 p-2 rounded-lg">
-                    <Lock className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Privacy Focused</h4>
-                    <p className="text-sm text-gray-600">All processing happens locally - your data never leaves your browser</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="bg-purple-100 p-2 rounded-lg">
-                    <Code2 className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Developer Friendly</h4>
-                    <p className="text-sm text-gray-600">Clean interfaces designed for productivity and ease of use</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="bg-orange-100 p-2 rounded-lg">
-                    <Search className="h-5 w-5 text-orange-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-gray-900">Always Updated</h4>
-                    <p className="text-sm text-gray-600">Regular updates with new features and improvements</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* AdSense Placeholder */}
-        <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-          <p className="text-gray-500">Advertisement Space</p>
-        </div>
-      </div>
+      </section>
     </div>
   )
 }
