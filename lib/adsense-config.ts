@@ -3,7 +3,10 @@
 
 export const ADSENSE_CONFIG = {
   // Your AdSense Publisher ID (from environment variables)
-  publisherId: process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || "ca-pub-4745112150588316",
+  publisherId: `ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || "pub-4745112150588316"}`,
+  
+  // Customer ID for support
+  customerId: "962207481",
   
   // Ad Unit IDs for different placements (replace with actual IDs)
   adUnits: {
@@ -117,7 +120,12 @@ export function shouldDisplayAds(): boolean {
     return process.env.NEXT_PUBLIC_SHOW_ADS === 'true'
   }
   
-  // Always show in production
+  // Don't show ads if using placeholder publisher ID
+  if (ADSENSE_CONFIG.publisherId === 'ca-pub-4745112150588316') {
+    return false
+  }
+  
+  // Always show in production with valid publisher ID
   return true
 }
 

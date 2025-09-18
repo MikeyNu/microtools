@@ -98,7 +98,7 @@ export default function RootLayout({
         {/* AdSense Auto Ads */}
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4745112150588316"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || "pub-4745112150588316"}`}
           crossOrigin="anonymous"
         />
       </head>

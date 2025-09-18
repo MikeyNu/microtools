@@ -2,9 +2,6 @@ import type React from "react"
 import { BreadcrumbNav } from "./breadcrumb-nav"
 import { AdSensePlaceholder } from "./adsense-placeholder"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Share2, Bookmark, ArrowLeft } from "lucide-react"
-import Link from "next/link"
 import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
 
 interface ToolLayoutProps {
@@ -26,27 +23,6 @@ export function ToolLayout({
 }: ToolLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header with navigation */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <ArrowLeft className="h-5 w-5" />
-              <span className="font-medium">Back to Tools</span>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                <Bookmark className="h-4 w-4 mr-2" />
-                Save
-              </Button>
-              <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
