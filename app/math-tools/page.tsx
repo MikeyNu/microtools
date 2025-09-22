@@ -3,6 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { Metadata } from 'next'
+import { AdSensePlaceholder } from '@/components/adsense-placeholder'
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from '@/lib/adsense-config'
 
 export const metadata: Metadata = {
   title: 'Math Tools - Free Online Mathematical Calculators and Utilities',
@@ -315,3 +317,18 @@ export default function MathToolsPage() {
     </div>
   )
 }
+
+{shouldDisplayAds() && (
+  <section className="py-8 bg-background">
+    <div className="container mx-auto px-4">
+      <div className="flex justify-center">
+        <AdSensePlaceholder 
+          size="large-rectangle" 
+          adClient={ADSENSE_CONFIG.publisherId}
+          adSlot={getAdUnitId('categoryFooter')}
+          responsive={true}
+        />
+      </div>
+    </div>
+  </section>
+)}

@@ -2,8 +2,8 @@
 // Replace with your actual AdSense Publisher ID and Ad Unit IDs
 
 export const ADSENSE_CONFIG = {
-  // Your AdSense Publisher ID (from environment variables)
-  publisherId: `ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || "pub-4745112150588316"}`,
+  // Your AdSense Publisher ID (REQUIRED from environment variables)
+  publisherId: `ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`,
   
   // Customer ID for support
   customerId: "962207481",
@@ -11,25 +11,25 @@ export const ADSENSE_CONFIG = {
   // Ad Unit IDs for different placements (replace with actual IDs)
   adUnits: {
     // Header/Navigation area
-    headerBanner: "1234567890",
+    headerBanner: process.env.NEXT_PUBLIC_ADSENSE_HEADER_BANNER || "1234567890",
     
     // Homepage placements
-    homepageHero: "1234567891",
-    homepageMiddle: "1234567892",
-    homepageFooter: "1234567893",
+    homepageHero: process.env.NEXT_PUBLIC_ADSENSE_HOMEPAGE_HERO || "1234567891",
+    homepageMiddle: process.env.NEXT_PUBLIC_ADSENSE_HOMEPAGE_MIDDLE || "1234567892",
+    homepageFooter: process.env.NEXT_PUBLIC_ADSENSE_HOMEPAGE_FOOTER || "1234567893",
     
     // Tool pages
-    toolSidebar: "1234567894",
-    toolContent: "1234567895",
-    toolFooter: "1234567896",
+    toolSidebar: process.env.NEXT_PUBLIC_ADSENSE_TOOL_SIDEBAR || "1234567894",
+    toolContent: process.env.NEXT_PUBLIC_ADSENSE_TOOL_CONTENT || "1234567895",
+    toolFooter: process.env.NEXT_PUBLIC_ADSENSE_TOOL_FOOTER || "1234567896",
     
     // Category pages
-    categoryHeader: "1234567897",
-    categoryGrid: "1234567898",
+    categoryHeader: process.env.NEXT_PUBLIC_ADSENSE_CATEGORY_HEADER || "1234567897",
+    categoryGrid: process.env.NEXT_PUBLIC_ADSENSE_CATEGORY_GRID || "1234567898",
     
     // Mobile specific
-    mobileSticky: "1234567899",
-    mobileInline: "1234567900",
+    mobileSticky: process.env.NEXT_PUBLIC_ADSENSE_MOBILE_STICKY || "1234567899",
+    mobileInline: process.env.NEXT_PUBLIC_ADSENSE_MOBILE_INLINE || "1234567900",
   },
   
   // Ad placement strategy for maximum revenue
@@ -120,8 +120,10 @@ export function shouldDisplayAds(): boolean {
     return process.env.NEXT_PUBLIC_SHOW_ADS === 'true'
   }
   
-  // Don't show ads if using placeholder publisher ID
-  if (ADSENSE_CONFIG.publisherId === 'ca-pub-4745112150588316') {
+  // Don't show ads if using placeholder IDs or if publisher ID is missing
+  const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+  if (!publisherId || publisherId === 'pub-4745112150588316' || 
+      Object.values(ADSENSE_CONFIG.adUnits).some(id => id === '1234567890')) {
     return false
   }
   

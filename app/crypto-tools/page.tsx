@@ -5,6 +5,8 @@ import { Bitcoin, Shield, Calculator, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { BreadcrumbNav } from '@/components/breadcrumb-nav'
 import { StructuredData } from '@/components/structured-data'
+import { AdSensePlaceholder } from '@/components/adsense-placeholder'
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from '@/lib/adsense-config'
 
 export const metadata: Metadata = {
   title: 'Crypto Tools - Bitcoin & Cryptocurrency Utilities | MicroTools',
@@ -121,6 +123,22 @@ export default function CryptoToolsPage() {
           })}
         </div>
       </div>
+
+      {/* Footer ad placement */}
+      {shouldDisplayAds() && (
+        <section className="py-8 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-center">
+              <AdSensePlaceholder 
+                size="large-rectangle" 
+                adClient={ADSENSE_CONFIG.publisherId}
+                adSlot={getAdUnitId('categoryFooter')}
+                responsive={true}
+              />
+            </div>
+          </div>
+        </section>
+      )}
     </>
   )
 }

@@ -34,21 +34,30 @@ export function AdSenseProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const initializeAdSense = async () => {
+    // Don't initialize if publisher ID is missing
+    const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+    if (!publisherId || publisherId === 'pub-4745112150588316') {
+      console.log('AdSense: Publisher ID not configured, skipping initialization');
+      return;
+    }
+
+    const fullPublisherId = `ca-${publisherId}`;
+
     try {
       // Load AdSense script if not already loaded
       if (!window.adsbygoogle) {
         const script = document.createElement('script');
         script.async = true;
-        script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`;
+        script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${fullPublisherId}`;
         script.crossOrigin = 'anonymous';
         
         script.onload = () => {
           setIsAdSenseLoaded(true);
           
-          // Enable auto ads if configured
-          if (ADSENSE_CONFIG.optimization.autoAds) {
+          // Enable auto ads if configured and not using placeholder IDs
+          if (ADSENSE_CONFIG.optimization.autoAds && ADSENSE_CONFIG.publisherId !== 'ca-pub-4745112150588316') {
             (window.adsbygoogle = window.adsbygoogle || []).push({
-              google_ad_client: ADSENSE_CONFIG.publisherId,
+              google_ad_client: fullPublisherId,
               enable_page_level_ads: true,
               overlays: { bottom: true }
             });
@@ -215,10 +224,17 @@ export function AdSenseScript() {
     return null;
   }
 
+  const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+  if (!publisherId || publisherId === 'pub-4745112150588316') {
+    return null;
+  }
+
+  const fullPublisherId = `ca-${publisherId}`;
+
   return (
     <script
       async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`}
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${fullPublisherId}`}
       crossOrigin="anonymous"
     />
   );
@@ -265,7 +281,7 @@ export function TrackedAd({
     trackAdClick(adUnitId, placement);
   };
 
-  if (isAdBlockerDetected) {
+  if (isAdBlockerDetected || ADSENSE_CONFIG.publisherId === 'ca-pub-4745112150588316' || !process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID) {
     return (
       <div className={`bg-gray-100 border border-gray-300 rounded-lg p-4 text-center ${className}`}>
         <p className="text-sm text-gray-600">Advertisement</p>
@@ -283,7 +299,7 @@ export function TrackedAd({
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
-        data-ad-client={ADSENSE_CONFIG.publisherId}
+        data-ad-client={`ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`}
         data-ad-slot={adUnitId}
         data-ad-format="auto"
         data-full-width-responsive="true"

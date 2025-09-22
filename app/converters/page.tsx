@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { Metadata } from "next"
+import { AdSensePlaceholder } from "@/components/adsense-placeholder"
+import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
 
 export const metadata: Metadata = {
   title: 'Free Online Converters - Currency, Unit, Temperature & More | ToolHub',
@@ -69,34 +71,7 @@ const converters = [
 
 export default function ConvertersPage() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <Zap className="h-8 w-8 text-primary" />
-              <h1 className="text-2xl font-serif font-bold text-primary">ToolHub</h1>
-            </Link>
-            <nav className="flex items-center space-x-6">
-              <Link
-                href="/"
-                className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium"
-              >
-                Home
-              </Link>
-              <Link
-                href="/tools"
-                className="text-foreground hover:text-foreground transition-colors text-sm font-medium border-b-2 border-accent"
-              >
-                All Tools
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
+    <div className="min-h-screen bg-background">      {/* Hero Section */}
       <section className="py-16 bg-gradient-to-br from-background via-muted/30 to-background">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-5xl font-serif font-bold text-foreground mb-6">
@@ -202,17 +177,21 @@ export default function ConvertersPage() {
               </div>
             </section>
 
-            {/* AdSense Placeholder */}
-            <section className="mb-8">
-              <Card className="border-2 border-dashed border-muted-foreground/20 bg-muted/20">
-                <CardContent className="py-12 text-center">
-                  <p className="text-muted-foreground text-lg">Advertisement Space</p>
-                </CardContent>
-              </Card>
-            </section>
+      {/* Footer ad placement */}
+      {shouldDisplayAds() && (
+        <section className="py-8 bg-background">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-center">
+              <AdSensePlaceholder 
+                size="large-rectangle" 
+                adClient={ADSENSE_CONFIG.publisherId}
+                adSlot={getAdUnitId('categoryFooter')}
+                responsive={true}
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }

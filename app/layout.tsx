@@ -94,13 +94,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         
         {/* Structured Data - Moved to prevent hydration mismatch */}
-        
-        {/* AdSense Auto Ads */}
-        <script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || "pub-4745112150588316"}`}
-          crossOrigin="anonymous"
-        />
       </head>
       <body className="font-sans antialiased">
         <StructuredData />
