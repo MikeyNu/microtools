@@ -48,8 +48,14 @@ export const ADSENSE_CONFIG = {
     categoryHeader:
       process.env.NEXT_PUBLIC_ADSENSE_CATEGORY_HEADER ||
       "REPLACE_WITH_REAL_AD_UNIT_ID",
+    categoryInline:
+      process.env.NEXT_PUBLIC_ADSENSE_CATEGORY_INLINE ||
+      "REPLACE_WITH_REAL_AD_UNIT_ID",
     categoryGrid:
       process.env.NEXT_PUBLIC_ADSENSE_CATEGORY_GRID ||
+      "REPLACE_WITH_REAL_AD_UNIT_ID",
+    categoryFooter:
+      process.env.NEXT_PUBLIC_ADSENSE_CATEGORY_FOOTER ||
       "REPLACE_WITH_REAL_AD_UNIT_ID",
 
     // Mobile specific - Create as mobile banner ads (320x50, 300x250)
