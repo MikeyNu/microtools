@@ -226,10 +226,11 @@ export class AnalyticsManager {
     if (typeof window === 'undefined') return;
 
     // Track Core Web Vitals
+    // Note: onFID was replaced with onINP in web-vitals v4+
     if (typeof window !== 'undefined') {
-      import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+      import('web-vitals').then(({ onCLS, onINP, onFCP, onLCP, onTTFB }) => {
         onCLS(this.sendToAnalytics);
-        onFID(this.sendToAnalytics);
+        onINP(this.sendToAnalytics); // Interaction to Next Paint (replaces FID)
         onFCP(this.sendToAnalytics);
         onLCP(this.sendToAnalytics);
         onTTFB(this.sendToAnalytics);

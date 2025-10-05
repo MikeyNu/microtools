@@ -1,4 +1,5 @@
 import type React from "react"
+import Link from "next/link"
 import { BreadcrumbNav } from "./breadcrumb-nav"
 import { AdSensePlaceholder } from "./adsense-placeholder"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

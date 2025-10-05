@@ -1,8 +1,8 @@
 # Micro SaaS Tools Hub
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 ## 🚀 Overview
@@ -116,14 +116,15 @@ A comprehensive collection of free online tools for developers, designers, and c
 
 ## 🏗️ Tech Stack
 
-- **Framework**: Next.js 14 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
+- **Framework**: Next.js 15 with App Router
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4
 - **UI Components**: Radix UI + shadcn/ui
 - **Icons**: Lucide React
-- **Deployment**: Vercel
+- **Deployment**: Vercel / GoDaddy (Static Export)
 - **Analytics**: Google Analytics (optional)
 - **SEO**: Next.js built-in SEO features
+- **Forms**: React Hook Form + Zod
 
 ## 🚀 Getting Started
 

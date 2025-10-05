@@ -1,12 +1,19 @@
 'use client'
 import { Wrench, Menu, X } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { SearchComponent } from "@/components/search-functionality"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 
 export function Navbar() {
   const searchRef = useRef<{ setQuery: (query: string) => void }>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
     <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl sticky top-0 z-50">

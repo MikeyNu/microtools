@@ -18,7 +18,33 @@ export default function BasicCalculatorPage() {
     trackToolStart()
   }, [trackToolStart])
 
+  // Add keyboard support for better accessibility
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Number keys
+      if (e.key >= '0' && e.key <= '9') {
+        inputNumber(e.key)
+      }
+      // Operations
+      else if (e.key === '+') inputOperation('+')
+      else if (e.key === '-') inputOperation('-')
+      else if (e.key === '*' || e.key === '×') inputOperation('×')
+      else if (e.key === '/' || e.key === '÷') inputOperation('÷')
+      // Actions
+      else if (e.key === 'Enter' || e.key === '=') performCalculation()
+      else if (e.key === 'Escape') clear()
+      else if (e.key === 'Backspace') clearEntry()
+      else if (e.key === '.' || e.key === ',') inputDecimal()
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [display, waitingForOperand, operation, previousValue])
+
   const inputNumber = (num: string) => {
+    // Prevent overflow - limit to 15 characters
+    if (display.length >= 15 && !waitingForOperand) return
+    
     if (waitingForOperand) {
       setDisplay(num)
       setWaitingForOperand(false)

@@ -87,13 +87,9 @@ export default function RootLayout({
   return (
     <html lang={SEO_CONFIG.site.language} className={`${workSans.variable} ${openSans.variable} dark`}>
       <head>
-        {/* Preconnect to external domains for performance */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Preconnect to external domains for performance - Next.js handles font preconnect automatically */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
-        
-        {/* Structured Data - Moved to prevent hydration mismatch */}
       </head>
       <body className="font-sans antialiased">
         <StructuredData />
