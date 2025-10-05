@@ -353,11 +353,29 @@ export default function HomePage() {
         </section>
       )}
 
-      <footer className="bg-background border-t border-border/20 py-16">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div className="md:col-span-2">
-              <div className="flex items-center space-x-3 mb-6">
+      <footer className="relative bg-background border-t border-border/20 py-8 overflow-hidden">
+        {/* Animated Storm Background */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-indigo-900/20 animate-gradient"></div>
+          <div className="absolute inset-0 bg-gradient-to-tl from-cyan-900/10 via-blue-900/10 to-purple-900/10 animate-gradient-reverse"></div>
+        </div>
+        
+        {/* Lightning Flash Effect */}
+        <div className="absolute inset-0 bg-white/5 animate-lightning"></div>
+        
+        {/* Floating Particles */}
+        <div className="absolute inset-0">
+          <div className="absolute w-1 h-1 bg-blue-400/40 rounded-full animate-float-1" style={{ top: '20%', left: '10%' }}></div>
+          <div className="absolute w-1 h-1 bg-purple-400/40 rounded-full animate-float-2" style={{ top: '60%', left: '30%' }}></div>
+          <div className="absolute w-1 h-1 bg-cyan-400/40 rounded-full animate-float-3" style={{ top: '40%', left: '70%' }}></div>
+          <div className="absolute w-1 h-1 bg-indigo-400/40 rounded-full animate-float-1" style={{ top: '80%', left: '50%' }}></div>
+          <div className="absolute w-1 h-1 bg-blue-400/40 rounded-full animate-float-2" style={{ top: '30%', left: '85%' }}></div>
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-3 mb-4">
                 <div className="relative">
                   <Wrench className="h-8 w-8 text-accent" />
                   <div className="absolute -inset-1 bg-accent/20 rounded-full blur-sm"></div>
@@ -371,21 +389,80 @@ export default function HomePage() {
             </div>
 
             <div>
-              <h4 className="font-sans font-semibold text-foreground mb-6 text-lg">Categories</h4>
-              <ul className="space-y-3">
-                {["Calculators", "Converters", "Text Tools", "Web Tools"].map((item) => (
-                  <li key={item}>
-                    <Link href="#" className="text-foreground/60 hover:text-accent transition-colors duration-300">
-                      {item}
-                    </Link>
-                  </li>
-                ))}
+              <h4 className="font-sans font-semibold text-foreground mb-4 text-base">Tool Categories</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="/calculators" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Calculators
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/converters" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Converters
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/text-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Text Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/text-utilities" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Text Utilities
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/developer-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Developer Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/web-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Web Tools
+                  </Link>
+                </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-sans font-semibold text-foreground mb-6 text-lg">Company</h4>
-              <ul className="space-y-3">
+              <h4 className="font-sans font-semibold text-foreground mb-4 text-base">More Tools</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="/seo-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    SEO Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/design-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Design Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/image-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Image Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pdf-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    PDF Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/timestamp-tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    Timestamp Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/tools" className="text-foreground/60 hover:text-accent transition-colors duration-300">
+                    All Tools
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-sans font-semibold text-foreground mb-4 text-base">Company</h4>
+              <ul className="space-y-2">
                 {["About", "Privacy", "Terms", "Contact"].map((item) => (
                   <li key={item}>
                     <Link href="#" className="text-foreground/60 hover:text-accent transition-colors duration-300">
@@ -397,7 +474,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="border-t border-border/20 mt-12 pt-8 text-center">
+          <div className="border-t border-border/20 mt-8 pt-6 text-center">
             <p className="text-foreground/40">© 2025 Mikey Nu (Pty) Ltd. All rights reserved.</p>
           </div>
         </div>
