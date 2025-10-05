@@ -163,18 +163,28 @@ export function shouldDisplayAds(): boolean {
 
   // Don't show ads if using placeholder IDs or if publisher ID is missing
   const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
+  const invalidIds = [
+    "pub-4745112150588316",
+    "YOUR_PUBLISHER_ID_HERE",
+    "YOUR_REAL_PUBLISHER_ID_HERE",
+    "pub-XXXXXXXXXX",
+    "XXXXXXXXXX"
+  ];
+  
   if (
     !publisherId ||
-    publisherId === "pub-4745112150588316" ||
-    publisherId === "YOUR_REAL_PUBLISHER_ID_HERE" ||
+    invalidIds.includes(publisherId) ||
+    publisherId.includes("XXXXXX") ||
+    publisherId.includes("YOUR_") ||
     Object.values(ADSENSE_CONFIG.adUnits).some(
       (id) =>
         id.startsWith("1234567890") ||
-        id.startsWith("REPLACE_WITH_REAL_AD_UNIT_ID"),
+        id.startsWith("REPLACE_WITH_REAL_AD_UNIT_ID") ||
+        id.includes("YOUR_"),
     )
   ) {
     console.warn(
-      "AdSense: Using placeholder IDs - ads disabled. Please configure real AdSense IDs.",
+      "AdSense: Using placeholder IDs - ads disabled. Please configure real AdSense IDs in .env.local",
     );
     return false;
   }

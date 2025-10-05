@@ -34,10 +34,19 @@ export function AdSenseProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const initializeAdSense = async () => {
-    // Don't initialize if publisher ID is missing
+    // Don't initialize if publisher ID is missing or is a placeholder
     const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
-    if (!publisherId || publisherId === 'pub-4745112150588316') {
-      console.log('AdSense: Publisher ID not configured, skipping initialization');
+    const invalidIds = [
+      'pub-4745112150588316',
+      'YOUR_PUBLISHER_ID_HERE',
+      'YOUR_REAL_PUBLISHER_ID_HERE',
+      'pub-XXXXXXXXXX',
+      'XXXXXXXXXX'
+    ];
+    
+    if (!publisherId || invalidIds.includes(publisherId) || publisherId.includes('XXXXXX') || publisherId.includes('YOUR_')) {
+      console.log('AdSense: Publisher ID not configured or using placeholder, skipping initialization');
+      console.log('To enable ads: Set NEXT_PUBLIC_ADSENSE_PUBLISHER_ID in your .env.local file with your real AdSense publisher ID');
       return;
     }
 
@@ -225,7 +234,9 @@ export function AdSenseScript() {
   }
 
   const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID;
-  if (!publisherId || publisherId === 'pub-4745112150588316') {
+  const invalidIds = ['pub-4745112150588316', 'YOUR_PUBLISHER_ID_HERE', 'YOUR_REAL_PUBLISHER_ID_HERE', 'pub-XXXXXXXXXX'];
+  
+  if (!publisherId || invalidIds.includes(publisherId) || publisherId.includes('XXXXXX') || publisherId.includes('YOUR_')) {
     return null;
   }
 

@@ -86,37 +86,20 @@ const developerTools = [
     icon: Braces,
     href: '/developer-tools/api-tester',
     color: 'bg-pink-500'
+  },
+  {
+    title: 'CSS Minifier',
+    description: 'Minify and beautify CSS code to reduce file size and improve performance.',
+    icon: Code2,
+    href: '/developer-tools/css-minifier',
+    color: 'bg-cyan-500',
+    popular: true
   }
 ]
 
 export default function DeveloperToolsPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/10 bg-background/95 backdrop-blur-xl">
-        <div className="container mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/60 rounded-lg flex items-center justify-center">
-                  <Code2 className="h-5 w-5 text-white" />
-                </div>
-                <div className="absolute -inset-1 bg-accent/20 rounded-lg blur-sm opacity-75"></div>
-              </div>
-              <h1 className="text-2xl font-sans font-bold text-foreground tracking-tight">ToolHub</h1>
-            </Link>
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
-                Home
-              </Link>
-              <Link href="/tools" className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium">
-                All Tools
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-br from-background via-muted/30 to-background">
         <div className="container mx-auto px-4 text-center">

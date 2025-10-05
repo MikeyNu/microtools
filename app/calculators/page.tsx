@@ -68,36 +68,29 @@ const calculators = [
     color: "bg-gray",
     features: ["Monthly payments", "Total interest", "Payment schedule"]
   },
+  {
+    title: "Age Calculator",
+    description: "Calculate your exact age in years, months, days and more",
+    icon: Calculator,
+    href: "/calculators/age",
+    popular: true,
+    color: "bg-pink",
+    features: ["Exact age", "Days lived", "Next birthday"]
+  },
+  {
+    title: "Date Calculator",
+    description: "Calculate differences between dates or add/subtract time",
+    icon: Calculator,
+    href: "/calculators/date",
+    popular: true,
+    color: "bg-indigo",
+    features: ["Date difference", "Add/subtract time", "Business days"]
+  },
 ]
 
 export default function CalculatorsPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              ToolHub
-            </Link>
-            <nav className="flex items-center space-x-6">
-              <Link
-                href="/"
-                className="text-foreground/70 hover:text-foreground transition-colors text-sm font-medium"
-              >
-                Home
-              </Link>
-              <Link
-                href="/tools"
-                className="text-foreground hover:text-foreground transition-colors text-sm font-medium border-b-2 border-accent"
-              >
-                All Tools
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/10" />

@@ -67,6 +67,15 @@ const converters = [
     color: "bg-gray",
     features: ["Binary & decimal", "All storage units", "Precise calculations"]
   },
+  {
+    title: "Binary Converter",
+    description: "Convert between binary, decimal, hexadecimal, and text formats",
+    icon: Zap,
+    href: "/converters/binary",
+    popular: true,
+    color: "bg-cyan",
+    features: ["Text to binary", "Decimal conversion", "Hex support"]
+  },
 ]
 
 export default function ConvertersPage() {
