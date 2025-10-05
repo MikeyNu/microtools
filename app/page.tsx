@@ -373,8 +373,8 @@ export default function HomePage() {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div>
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="relative">
                   <Wrench className="h-8 w-8 text-accent" />
