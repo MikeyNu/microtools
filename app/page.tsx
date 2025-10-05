@@ -398,7 +398,7 @@ export default function HomePage() {
           </div>
 
           <div className="border-t border-border/20 mt-12 pt-8 text-center">
-            <p className="text-foreground/40">© 2025 ToolHub. Crafted for productivity enthusiasts.</p>
+            <p className="text-foreground/40">© 2025 Mikey Nu (Pty) Ltd. All rights reserved.</p>
           </div>
         </div>
       </footer>
