@@ -28,6 +28,14 @@ export const metadata: Metadata = {
   alternates: {
     canonical: SEO_CONFIG.site.url,
   },
+  manifest: '/site.webmanifest',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png' }],
+  },
   openGraph: {
     type: 'website',
     locale: SEO_CONFIG.site.locale,

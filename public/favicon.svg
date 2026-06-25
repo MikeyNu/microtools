@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Micro Tools">
+  <rect width="64" height="64" rx="12" fill="#F4F0E8"/>
+  <path d="M12 12h40v40H12z" fill="none" stroke="#9F341B" stroke-width="2.5"/>
+  <path d="M17 18h30M17 46h30M18 17v30M46 17v30" stroke="#D8CCBA" stroke-width="1.5"/>
+  <text x="32" y="42" text-anchor="middle" font-family="Old English Text MT, Georgia, serif" font-size="31" fill="#171310">M</text>
+  <path d="M23 47c3-3 15-3 18 0" fill="none" stroke="#9F341B" stroke-width="2" stroke-linecap="round"/>
+</svg>

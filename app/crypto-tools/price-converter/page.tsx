@@ -13,14 +13,8 @@ import { useToast } from '@/hooks/use-toast'
 import { ToolLayout } from '@/components/tool-layout'
 import { FavoriteButton, ShareButton } from '@/components/user-engagement'
 import { useToolTracker } from '@/components/analytics-provider'
-
-interface CryptoPrice {
-  symbol: string
-  name: string
-  price: number
-  change24h: number
-  lastUpdated: string
-}
+import { CRYPTO_ASSETS, fetchCryptoPrices, type CryptoPrice } from '@/lib/crypto-prices'
+import { fetchCurrencyRates } from '@/lib/currency-rates'
 
 interface ConversionResult {
   fromAmount: number
@@ -37,6 +31,7 @@ export default function CryptoPriceConverterPage() {
   const [toCurrency, setToCurrency] = useState('USD')
   const [result, setResult] = useState<ConversionResult | null>(null)
   const [prices, setPrices] = useState<Record<string, CryptoPrice>>({})
+  const [fiatRates, setFiatRates] = useState<Record<string, number>>({ USD: 1 })
   const [loading, setLoading] = useState(false)
   const [lastUpdated, setLastUpdated] = useState<string>('')
   const { toast } = useToast()
@@ -52,29 +47,12 @@ export default function CryptoPriceConverterPage() {
     url: '/crypto-tools/price-converter'
   }
 
-  // Mock price data (in a real app, this would come from an API like CoinGecko)
-  const mockPrices: Record<string, CryptoPrice> = {
-    BTC: { symbol: 'BTC', name: 'Bitcoin', price: 43250.00, change24h: 2.5, lastUpdated: new Date().toISOString() },
-    ETH: { symbol: 'ETH', name: 'Ethereum', price: 2650.00, change24h: -1.2, lastUpdated: new Date().toISOString() },
-    ADA: { symbol: 'ADA', name: 'Cardano', price: 0.485, change24h: 3.8, lastUpdated: new Date().toISOString() },
-    DOT: { symbol: 'DOT', name: 'Polkadot', price: 7.25, change24h: -0.5, lastUpdated: new Date().toISOString() },
-    LINK: { symbol: 'LINK', name: 'Chainlink', price: 14.80, change24h: 1.9, lastUpdated: new Date().toISOString() },
-    LTC: { symbol: 'LTC', name: 'Litecoin', price: 72.50, change24h: 0.8, lastUpdated: new Date().toISOString() },
-    XRP: { symbol: 'XRP', name: 'Ripple', price: 0.62, change24h: -2.1, lastUpdated: new Date().toISOString() },
-    USD: { symbol: 'USD', name: 'US Dollar', price: 1.00, change24h: 0, lastUpdated: new Date().toISOString() },
-    EUR: { symbol: 'EUR', name: 'Euro', price: 1.08, change24h: 0.1, lastUpdated: new Date().toISOString() },
-    GBP: { symbol: 'GBP', name: 'British Pound', price: 1.27, change24h: -0.2, lastUpdated: new Date().toISOString() },
-    JPY: { symbol: 'JPY', name: 'Japanese Yen', price: 0.0067, change24h: 0.3, lastUpdated: new Date().toISOString() }
-  }
-
   const currencies = [
-    { value: 'BTC', label: 'Bitcoin (BTC)', type: 'crypto' },
-    { value: 'ETH', label: 'Ethereum (ETH)', type: 'crypto' },
-    { value: 'ADA', label: 'Cardano (ADA)', type: 'crypto' },
-    { value: 'DOT', label: 'Polkadot (DOT)', type: 'crypto' },
-    { value: 'LINK', label: 'Chainlink (LINK)', type: 'crypto' },
-    { value: 'LTC', label: 'Litecoin (LTC)', type: 'crypto' },
-    { value: 'XRP', label: 'Ripple (XRP)', type: 'crypto' },
+    ...CRYPTO_ASSETS.map((asset) => ({
+      value: asset.symbol,
+      label: `${asset.name} (${asset.symbol})`,
+      type: 'crypto',
+    })),
     { value: 'USD', label: 'US Dollar (USD)', type: 'fiat' },
     { value: 'EUR', label: 'Euro (EUR)', type: 'fiat' },
     { value: 'GBP', label: 'British Pound (GBP)', type: 'fiat' },
@@ -88,14 +66,26 @@ export default function CryptoPriceConverterPage() {
   const loadPrices = async () => {
     setLoading(true)
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setPrices(mockPrices)
-      setLastUpdated(new Date().toLocaleString())
+      const [cryptoData, fiatData] = await Promise.all([
+        fetchCryptoPrices(),
+        fetchCurrencyRates('USD'),
+      ])
+      setPrices(cryptoData)
+      setFiatRates({ USD: 1, ...fiatData.rates })
+      const latestTimestamp = Math.max(
+        ...Object.values(cryptoData)
+          .map((price) => price.lastUpdated || 0)
+          .filter(Boolean)
+      )
+      setLastUpdated(
+        Number.isFinite(latestTimestamp) && latestTimestamp > 0
+          ? new Date(latestTimestamp * 1000).toLocaleString()
+          : new Date().toLocaleString()
+      )
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to load current prices',
+        description: 'Failed to load current market prices',
         variant: 'destructive'
       })
     } finally {
@@ -115,7 +105,10 @@ export default function CryptoPriceConverterPage() {
       return
     }
 
-    if (!prices[fromCurrency] || !prices[toCurrency]) {
+    const fromUsdPrice = getUsdPrice(fromCurrency)
+    const toUsdPrice = getUsdPrice(toCurrency)
+
+    if (!fromUsdPrice || !toUsdPrice) {
       toast({
         title: 'Error',
         description: 'Price data not available for selected currencies',
@@ -127,13 +120,10 @@ export default function CryptoPriceConverterPage() {
     trackToolStart()
 
     try {
-      const fromPrice = prices[fromCurrency].price
-      const toPrice = prices[toCurrency].price
-      
       // Convert to USD first, then to target currency
-      const usdValue = amount * fromPrice
-      const convertedAmount = usdValue / toPrice
-      const rate = fromPrice / toPrice
+      const usdValue = amount * fromUsdPrice
+      const convertedAmount = usdValue / toUsdPrice
+      const rate = fromUsdPrice / toUsdPrice
 
       const conversionResult: ConversionResult = {
         fromAmount: amount,
@@ -175,9 +165,16 @@ export default function CryptoPriceConverterPage() {
     }
   }
 
+  const getUsdPrice = (currency: string): number | null => {
+    if (prices[currency]) return prices[currency].usd
+    if (currency === 'USD') return 1
+    const usdToFiat = fiatRates[currency]
+    return usdToFiat ? 1 / usdToFiat : null
+  }
+
   const relatedTools = [
     { name: 'Bitcoin Address Validator', href: '/crypto-tools/bitcoin-validator' },
-    { name: 'Wallet Generator', href: '/crypto-tools/wallet-generator' },
+    { name: 'Wallet Demo', href: '/crypto-tools/wallet-generator' },
     { name: 'Currency Converter', href: '/converters/currency' },
     { name: 'Percentage Calculator', href: '/calculators/percentage' }
   ]
@@ -323,7 +320,7 @@ export default function CryptoPriceConverterPage() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Object.values(prices).filter(price => price.symbol !== 'USD').map((price) => (
+                {Object.values(prices).map((price) => (
                   <div key={price.symbol} className="border rounded-lg p-3">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -334,12 +331,12 @@ export default function CryptoPriceConverterPage() {
                         )}
                         <span className="font-medium">{price.symbol}</span>
                       </div>
-                      <Badge variant={price.change24h >= 0 ? 'default' : 'destructive'}>
-                        {price.change24h >= 0 ? '+' : ''}{price.change24h.toFixed(2)}%
+                      <Badge variant={(price.change24h ?? 0) >= 0 ? 'default' : 'destructive'}>
+                        {price.change24h !== null ? `${price.change24h >= 0 ? '+' : ''}${price.change24h.toFixed(2)}%` : 'n/a'}
                       </Badge>
                     </div>
                     <div className="text-sm text-muted-foreground mb-1">{price.name}</div>
-                    <div className="font-bold">{formatPrice(price.price, 'USD')}</div>
+                    <div className="font-bold">{formatPrice(price.usd, 'USD')}</div>
                   </div>
                 ))}
               </div>
@@ -350,7 +347,7 @@ export default function CryptoPriceConverterPage() {
         <Alert>
           <TrendingUp className="h-4 w-4" />
           <AlertDescription>
-            <strong>Note:</strong> Prices are simulated for demonstration. In a production environment, this would connect to real-time cryptocurrency APIs like CoinGecko or CoinMarketCap.
+            <strong>Note:</strong> Cryptocurrency prices are fetched from CoinGecko and fiat rates from open.er-api.com. Market data can move quickly, so confirm with your exchange before trading.
           </AlertDescription>
         </Alert>
       </div>

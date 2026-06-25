@@ -9,14 +9,30 @@ import { useRef, useState, useEffect } from "react"
 export function Navbar() {
   const searchRef = useRef<{ setQuery: (query: string) => void }>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [pathname])
 
+  useEffect(() => {
+    const updateScrollState = () => setIsScrolled(window.scrollY > 8)
+
+    updateScrollState()
+    window.addEventListener("scroll", updateScrollState, { passive: true })
+
+    return () => window.removeEventListener("scroll", updateScrollState)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+    <header
+      className={`sticky top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-200 ${
+        isScrolled
+          ? "bg-background/92 backdrop-blur-md shadow-[0_1px_0_rgba(23,19,16,0.08)]"
+          : "bg-transparent"
+      }`}
+    >
       <div className="container mx-auto px-4 sm:px-6 h-14 flex items-center gap-4">
 
         {/* Wordmark */}
@@ -28,19 +44,19 @@ export function Navbar() {
           <svg
             viewBox="0 0 316.653 340.008"
             xmlns="http://www.w3.org/2000/svg"
-            className="h-7 w-auto flex-shrink-0"
+            className="h-7 w-auto flex-shrink-0 text-accent"
             aria-hidden="true"
           >
             <polygon
-              fill="#C13209"
+              fill="currentColor"
               points="0 114.848 159.404 203.960 316.653 116.662 316.653 265.181 185.253 340.008 185.253 299.194 282.301 244.321 282.301 175.843 159.404 246.135 36.280 176.070 36.280 244.094 132.874 298.740 132.874 340.008 0 264.274 0 114.848"
             />
             <path
-              fill="#C13209"
+              fill="currentColor"
               d="M159.290,0 L2.154,90.699 l157.249,87.525 157.250,-87.525 L159.290,0 Z M188.541,105.721 v-26.303 h-58.954 v26.303 h-19.727 v-30.157 c0-9.330,7.563-16.893,16.893-16.893 h65.757 c9.330,0,16.893,7.563,16.893,16.893 v30.157 h-20.861 Z"
             />
           </svg>
-          <span className="font-mono font-bold text-base text-foreground tracking-tight leading-none">
+          <span className="font-serif font-bold text-base text-foreground leading-none">
             Micro <span className="text-accent">Tools</span>
           </span>
         </Link>
@@ -84,7 +100,7 @@ export function Navbar() {
 
       {/* Mobile nav drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background">
+        <div className="md:hidden bg-background/95 backdrop-blur-md">
           <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
             {[
               { href: "/", label: "Home" },
@@ -94,7 +110,7 @@ export function Navbar() {
               <Link
                 key={href}
                 href={href}
-                className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-card rounded-md transition-colors"
+                className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary rounded-sm transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {label}

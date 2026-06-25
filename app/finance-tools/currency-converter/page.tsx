@@ -13,13 +13,7 @@ import { useToast } from '@/hooks/use-toast'
 import { ToolLayout } from '@/components/tool-layout'
 import { FavoriteButton, ShareButton } from '@/components/user-engagement'
 import { useToolTracker } from '@/components/analytics-provider'
-
-interface Currency {
-  code: string
-  name: string
-  symbol: string
-  flag: string
-}
+import { CURRENCIES, fetchCurrencyRates, formatCurrencyAmount, type CurrencyInfo } from '@/lib/currency-rates'
 
 interface ExchangeRate {
   from: string
@@ -31,8 +25,8 @@ interface ExchangeRate {
 interface ConversionHistory {
   id: string
   amount: number
-  from: Currency
-  to: Currency
+  from: CurrencyInfo
+  to: CurrencyInfo
   rate: number
   result: number
   timestamp: string
@@ -60,71 +54,16 @@ export default function CurrencyConverterPage() {
   }
 
   // Popular currencies with flags
-  const currencies: Currency[] = [
-    { code: 'USD', name: 'US Dollar', symbol: '$', flag: '🇺🇸' },
-    { code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺' },
-    { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
-    { code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵' },
-    { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$', flag: '🇨🇦' },
-    { code: 'AUD', name: 'Australian Dollar', symbol: 'A$', flag: '🇦🇺' },
-    { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF', flag: '🇨🇭' },
-    { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', flag: '🇨🇳' },
-    { code: 'INR', name: 'Indian Rupee', symbol: '₹', flag: '🇮🇳' },
-    { code: 'KRW', name: 'South Korean Won', symbol: '₩', flag: '🇰🇷' },
-    { code: 'BRL', name: 'Brazilian Real', symbol: 'R$', flag: '🇧🇷' },
-    { code: 'MXN', name: 'Mexican Peso', symbol: '$', flag: '🇲🇽' },
-    { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$', flag: '🇸🇬' },
-    { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$', flag: '🇳🇿' },
-    { code: 'SEK', name: 'Swedish Krona', symbol: 'kr', flag: '🇸🇪' },
-    { code: 'NOK', name: 'Norwegian Krone', symbol: 'kr', flag: '🇳🇴' },
-    { code: 'DKK', name: 'Danish Krone', symbol: 'kr', flag: '🇩🇰' },
-    { code: 'PLN', name: 'Polish Zloty', symbol: 'zł', flag: '🇵🇱' },
-    { code: 'RUB', name: 'Russian Ruble', symbol: '₽', flag: '🇷🇺' },
-    { code: 'ZAR', name: 'South African Rand', symbol: 'R', flag: '🇿🇦' }
-  ]
+  const currencies = CURRENCIES
 
-  // Mock exchange rates (in real app, fetch from API like exchangerate-api.com)
-  const mockExchangeRates: { [key: string]: number } = {
-    'USD-EUR': 0.85,
-    'USD-GBP': 0.73,
-    'USD-JPY': 110.0,
-    'USD-CAD': 1.25,
-    'USD-AUD': 1.35,
-    'USD-CHF': 0.92,
-    'USD-CNY': 6.45,
-    'USD-INR': 74.5,
-    'USD-KRW': 1180.0,
-    'USD-BRL': 5.2,
-    'USD-MXN': 20.1,
-    'USD-SGD': 1.35,
-    'USD-NZD': 1.42,
-    'USD-SEK': 8.6,
-    'USD-NOK': 8.8,
-    'USD-DKK': 6.4,
-    'USD-PLN': 3.9,
-    'USD-RUB': 73.5,
-    'USD-ZAR': 14.8
-  }
+  const getExchangeRate = async (from: string, to: string): Promise<{ rate: number; lastUpdated: string }> => {
+    if (from === to) return { rate: 1, lastUpdated: new Date().toUTCString() }
 
-  const getExchangeRate = async (from: string, to: string): Promise<number> => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500))
-    
-    if (from === to) return 1
-    
-    // Check direct rate
-    const directRate = mockExchangeRates[`${from}-${to}`]
-    if (directRate) return directRate
-    
-    // Check inverse rate
-    const inverseRate = mockExchangeRates[`${to}-${from}`]
-    if (inverseRate) return 1 / inverseRate
-    
-    // Convert through USD
-    const fromUsdRate = from === 'USD' ? 1 : (mockExchangeRates[`USD-${from}`] ? 1 / mockExchangeRates[`USD-${from}`] : 1)
-    const toUsdRate = to === 'USD' ? 1 : mockExchangeRates[`USD-${to}`] || 1
-    
-    return fromUsdRate * toUsdRate
+    const data = await fetchCurrencyRates(from)
+    const rate = data.rates[to]
+    if (!rate) throw new Error(`No exchange rate was returned for ${to}`)
+
+    return { rate, lastUpdated: data.lastUpdated }
   }
 
   const convertCurrency = async () => {
@@ -154,14 +93,14 @@ export default function CurrencyConverterPage() {
     trackToolStart()
 
     try {
-      const rate = await getExchangeRate(fromCurrency, toCurrency)
+      const { rate, lastUpdated } = await getExchangeRate(fromCurrency, toCurrency)
       const result = amountNum * rate
       
       const exchangeRateData: ExchangeRate = {
         from: fromCurrency,
         to: toCurrency,
         rate,
-        lastUpdated: new Date().toISOString()
+        lastUpdated
       }
       
       setExchangeRate(exchangeRateData)
@@ -207,13 +146,8 @@ export default function CurrencyConverterPage() {
     setToCurrency(temp)
   }
 
-  const formatCurrency = (amount: number, currency: Currency) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency.code,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(amount)
+  const formatCurrency = (amount: number, currency: CurrencyInfo) => {
+    return formatCurrencyAmount(amount, currency.code)
   }
 
   const copyResult = () => {

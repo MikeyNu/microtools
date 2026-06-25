@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { DollarSign, Ruler, Thermometer, Palette, Image, HardDrive, Zap } from "lucide-react"
+import { Binary, DollarSign, Ruler, Thermometer, Palette, Image, HardDrive, Zap } from "lucide-react"
 import { CategoryLayout } from "@/components/category-layout"
 
 export const metadata: Metadata = {
@@ -50,6 +50,12 @@ const tools = [
     description: "Convert between binary, decimal, hexadecimal, and text formats",
     icon: Zap,
     href: "/converters/binary",
+  },
+  {
+    title: "Hex Converter",
+    description: "Convert hexadecimal, decimal, binary, and UTF-8 text values",
+    icon: Binary,
+    href: "/converters/hex",
   },
 ]
 

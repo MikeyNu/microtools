@@ -278,14 +278,13 @@ export function ToolRecommendations({ currentToolId }: { currentToolId?: string 
     const stored = localStorage.getItem(STORAGE_KEYS.USER_ACTIVITY)
     const activities: UserActivity[] = stored ? JSON.parse(stored) : []
     
-    // Simple recommendation logic - in a real app this would be more sophisticated
+    // Simple recommendation logic based on local usage counts.
     const toolUsage = activities.reduce((acc, activity) => {
       acc[activity.toolId] = (acc[activity.toolId] || 0) + 1
       return acc
     }, {} as Record<string, number>)
     
-    // Mock recommendations for now
-    const mockRecommendations: Tool[] = [
+    const fallbackRecommendations: Tool[] = [
       {
         id: 'percentage-calc',
         name: 'Percentage Calculator',
@@ -299,7 +298,7 @@ export function ToolRecommendations({ currentToolId }: { currentToolId?: string 
         name: 'Unit Converter',
         description: 'Convert between different units of measurement',
         category: 'Converters',
-        url: '/converters/units',
+        url: '/converters/unit',
         popularity: 88
       },
       {
@@ -307,12 +306,16 @@ export function ToolRecommendations({ currentToolId }: { currentToolId?: string 
         name: 'Color Picker',
         description: 'Pick and convert colors between formats',
         category: 'Design',
-        url: '/design/color-picker',
+        url: '/design-tools/color-picker',
         popularity: 82
       }
     ]
     
-    setRecommendations(mockRecommendations.filter(tool => tool.id !== currentToolId))
+    setRecommendations(
+      fallbackRecommendations
+        .filter(tool => tool.id !== currentToolId)
+        .sort((a, b) => (toolUsage[b.id] ?? b.popularity) - (toolUsage[a.id] ?? a.popularity))
+    )
   }, [currentToolId])
   
   if (recommendations.length === 0) return null

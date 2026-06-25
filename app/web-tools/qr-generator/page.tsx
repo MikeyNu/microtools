@@ -11,6 +11,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider"
 import { useToast } from "@/hooks/use-toast"
 import { ToolLayout } from "@/components/tool-layout"
+import QRCode from "qrcode"
+
+function formatQrContent(type: string, value: string): string {
+  const trimmed = value.trim()
+  if (type === "url" && !/^https?:\/\//i.test(trimmed)) return `https://${trimmed}`
+  if (type === "email" && !trimmed.startsWith("mailto:")) return `mailto:${trimmed}`
+  if (type === "phone" && !trimmed.startsWith("tel:")) return `tel:${trimmed}`
+  if (type === "sms" && !trimmed.startsWith("sms:")) return `sms:${trimmed}`
+  return trimmed
+}
 
 export default function QRGeneratorPage() {
   const [inputText, setInputText] = useState("")
@@ -19,7 +29,7 @@ export default function QRGeneratorPage() {
   const [qrCode, setQrCode] = useState("")
   const { toast } = useToast()
 
-  const generateQR = () => {
+  const generateQR = async () => {
     if (!inputText) {
       toast({
         title: "Error",
@@ -29,11 +39,24 @@ export default function QRGeneratorPage() {
       return
     }
 
-    // Using a QR code API service (placeholder)
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size[0]}x${size[0]}&data=${encodeURIComponent(
-      inputText,
-    )}`
-    setQrCode(qrUrl)
+    try {
+      const dataUrl = await QRCode.toDataURL(formatQrContent(qrType, inputText), {
+        width: size[0],
+        margin: 2,
+        errorCorrectionLevel: "M",
+        color: {
+          dark: "#171310",
+          light: "#FFFEFA",
+        },
+      })
+      setQrCode(dataUrl)
+    } catch {
+      toast({
+        title: "Error",
+        description: "Unable to generate this QR code",
+        variant: "destructive",
+      })
+    }
   }
 
   const downloadQR = () => {
@@ -56,7 +79,7 @@ export default function QRGeneratorPage() {
     navigator.clipboard.writeText(qrCode)
     toast({
       title: "Copied!",
-      description: "QR code URL copied to clipboard",
+      description: "QR code image data copied to clipboard",
     })
   }
 
@@ -160,7 +183,7 @@ export default function QRGeneratorPage() {
                     <h3 className="font-serif text-lg font-semibold">Generated QR Code</h3>
                     <div className="bg-muted p-6 rounded-lg text-center">
                       <img
-                        src={qrCode || "/placeholder.svg"}
+                        src={qrCode}
                         alt="Generated QR Code"
                         className="mx-auto border rounded"
                       />
@@ -172,7 +195,7 @@ export default function QRGeneratorPage() {
                       </Button>
                       <Button variant="outline" onClick={copyQRUrl} className="flex-1 bg-transparent">
                         <Copy className="h-4 w-4 mr-2" />
-                        Copy URL
+                        Copy Data
                       </Button>
                     </div>
                   </>

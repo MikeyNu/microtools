@@ -8,12 +8,37 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Upload, Download, FileText, ArrowRight, CheckCircle, AlertCircle, X } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { ToolLayout } from "@/components/tool-layout"
+import { escapeHtml } from '@/lib/pdf-text-extractor'
+import { extractPdfTextPages } from '@/lib/pdfjs-text'
 
 interface ConvertedFile {
   name: string
   originalName: string
   downloadUrl: string
   pages: number
+  extractedChars: number
+}
+
+function createWordHtml(title: string, text: string): string {
+  const paragraphs = text
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+    .join('\n')
+
+  return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(title)}</title>
+  <style>
+    body { font-family: Georgia, 'Times New Roman', serif; line-height: 1.5; color: #171310; }
+    p { margin: 0 0 12pt; }
+  </style>
+</head>
+<body>
+${paragraphs}
+</body>
+</html>`
 }
 
 export default function PDFToWordPage() {
@@ -24,7 +49,7 @@ export default function PDFToWordPage() {
   const [error, setError] = useState<string | null>(null)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const pdfFiles = acceptedFiles.filter(file => file.type === 'application/pdf')
+    const pdfFiles = acceptedFiles.filter(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'))
     if (pdfFiles.length !== acceptedFiles.length) {
       setError('Only PDF files are allowed')
       return
@@ -45,35 +70,49 @@ export default function PDFToWordPage() {
     setFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  const revokeDownloads = (outputs: ConvertedFile[]) => {
+    outputs.forEach(file => URL.revokeObjectURL(file.downloadUrl))
+  }
+
   const convertFiles = async () => {
     if (files.length === 0) return
 
     setConverting(true)
     setProgress(0)
     setError(null)
+    revokeDownloads(convertedFiles)
     setConvertedFiles([])
 
     try {
-      // Simulate conversion process
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
+        const pages = await extractPdfTextPages(file)
+        const text = pages
+          .map((page) => page.text.trim())
+          .filter(Boolean)
+          .join('\n\n')
 
-        // Simulate conversion delay
-        await new Promise(resolve => setTimeout(resolve, 3000))
+        if (!text) {
+          throw new Error(`${file.name} has no readable text layer.`)
+        }
 
-        // Simulate conversion results
+        const baseName = file.name.replace(/\.pdf$/i, '')
+        const wordHtml = createWordHtml(file.name, text)
+        const blob = new Blob([wordHtml], { type: 'application/msword;charset=utf-8' })
         const convertedFile: ConvertedFile = {
-          name: file.name.replace('.pdf', '.docx'),
+          name: `${baseName}.doc`,
           originalName: file.name,
-          downloadUrl: URL.createObjectURL(file), // In real app, this would be the converted file
-          pages: Math.floor(Math.random() * 20) + 1
+          downloadUrl: URL.createObjectURL(blob),
+          pages: pages.length,
+          extractedChars: text.length
         }
 
         setConvertedFiles(prev => [...prev, convertedFile])
         setProgress(((i + 1) / files.length) * 100)
       }
     } catch (err) {
-      setError('Failed to convert files. Please try again.')
+      const message = err instanceof Error ? err.message : 'Failed to convert files. Please try again.'
+      setError(`${message} Scanned or image-only PDFs need OCR before they can be converted in the browser.`)
     } finally {
       setConverting(false)
     }
@@ -98,6 +137,7 @@ export default function PDFToWordPage() {
 
   const reset = () => {
     setFiles([])
+    revokeDownloads(convertedFiles)
     setConvertedFiles([])
     setProgress(0)
     setError(null)
@@ -106,7 +146,7 @@ export default function PDFToWordPage() {
   return (
     <ToolLayout
       title="PDF to Word Converter"
-      description="Convert PDF documents to editable Word files"
+      description="Extract readable PDF text into a Word-compatible document"
       category="PDF Tools"
       categoryHref="/pdf-tools"
     >
@@ -172,7 +212,7 @@ export default function PDFToWordPage() {
                 <div className="flex gap-3 mt-6">
                   <Button onClick={convertFiles} disabled={converting} className="flex-1">
                     <ArrowRight className="h-4 w-4 mr-2" />
-                    {converting ? 'Converting...' : 'Convert to Word'}
+                    {converting ? 'Extracting...' : 'Create Word Document'}
                   </Button>
                   <Button variant="outline" onClick={reset}>
                     Clear All
@@ -189,7 +229,7 @@ export default function PDFToWordPage() {
         <Card className="mb-8">
           <CardContent className="pt-6">
             <div className="text-center mb-4">
-              <h3 className="font-medium text-foreground mb-2">Converting Files...</h3>
+              <h3 className="font-medium text-foreground mb-2">Extracting Text...</h3>
               <Progress value={progress} className="w-full" />
               <p className="text-sm text-muted-foreground mt-2">{Math.round(progress)}% complete</p>
             </div>
@@ -206,7 +246,7 @@ export default function PDFToWordPage() {
               Conversion Complete
             </CardTitle>
             <CardDescription>
-              Your PDF files have been successfully converted to Word documents
+              Word-compatible documents were created from the readable text layers in your PDFs.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -218,7 +258,7 @@ export default function PDFToWordPage() {
                     <div>
                       <p className="font-medium text-foreground">{file.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        Converted from {file.originalName} • {file.pages} pages
+                        Converted from {file.originalName} • {file.pages} pages • {file.extractedChars.toLocaleString()} characters
                       </p>
                     </div>
                   </div>
@@ -261,7 +301,7 @@ export default function PDFToWordPage() {
               <FileText className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="font-semibold text-foreground mb-2">Preserve Formatting</h3>
-            <p className="text-muted-foreground text-sm">Maintains original layout, fonts, and formatting</p>
+            <p className="text-muted-foreground text-sm">Creates a clean Word-readable document from extracted PDF text</p>
           </CardContent>
         </Card>
 
@@ -270,8 +310,8 @@ export default function PDFToWordPage() {
             <div className="bg-success/10 w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="h-6 w-6 text-success" />
             </div>
-            <h3 className="font-semibold text-foreground mb-2">OCR Support</h3>
-            <p className="text-muted-foreground text-sm">Converts scanned PDFs to editable text</p>
+            <h3 className="font-semibold text-foreground mb-2">Text-Layer Only</h3>
+            <p className="text-muted-foreground text-sm">Scanned or image-only PDFs need OCR before browser conversion</p>
           </CardContent>
         </Card>
 
@@ -281,7 +321,7 @@ export default function PDFToWordPage() {
               <ArrowRight className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="font-semibold text-foreground mb-2">Fast Conversion</h3>
-            <p className="text-muted-foreground text-sm">Quick and accurate PDF to Word conversion</p>
+            <p className="text-muted-foreground text-sm">Runs locally without uploading your document</p>
           </CardContent>
         </Card>
       </div>
@@ -303,7 +343,7 @@ export default function PDFToWordPage() {
             </li>
             <li className="flex items-start gap-2">
               <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>
-              Images and tables are preserved in the converted document
+              Images and complex tables are not reconstructed by this browser-only converter
             </li>
             <li className="flex items-start gap-2">
               <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 flex-shrink-0"></span>

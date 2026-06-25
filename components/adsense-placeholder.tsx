@@ -99,16 +99,16 @@ export function AdSensePlaceholder({ size, className = "", adSlot, adClient, res
   // Development placeholder
   return (
     <Card
-      className={`${sizeClasses[size]} ${className} bg-gradient-to-br from-blue-50/50 to-blue-100/50 dark:from-blue-950/20 dark:to-blue-900/20 border border-blue-200/50 dark:border-blue-800/50 flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-300 hover:border-blue-300/60 dark:hover:border-blue-700/60 backdrop-blur-sm`}
+      className={`${sizeClasses[size]} ${className} bg-card/70 border border-border/70 flex items-center justify-center shadow-none transition-colors duration-200 backdrop-blur-sm`}
     >
-      <div className="text-center text-blue-600/70 dark:text-blue-400/70">
-        <div className="text-sm font-medium mb-1">📢 Advertisement</div>
-        <div className="text-xs opacity-60 uppercase tracking-wider font-mono">
+      <div className="text-center text-muted-foreground">
+        <div className="font-serif text-sm font-medium mb-1">Advertisement</div>
+        <div className="text-xs opacity-60 uppercase font-mono">
           {currentSize.display}
         </div>
         <div className="text-xs mt-1 opacity-40">AdSense Ready</div>
         {responsive && (
-          <div className="text-xs mt-1 opacity-30 text-green-600 dark:text-green-400">
+          <div className="text-xs mt-1 opacity-40">
             Responsive
           </div>
         )}

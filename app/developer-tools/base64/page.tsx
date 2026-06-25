@@ -7,8 +7,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  ArrowUpDown, 
+import { ToolLayout } from "@/components/tool-layout"
+import {
+  ArrowUpDown,
   Copy, 
   Download, 
   Upload, 
@@ -21,6 +22,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react'
+import { bytesToArrayBuffer } from '@/lib/blob-utils'
 
 interface FileInfo {
   name: string
@@ -145,7 +147,7 @@ export default function Base64Page() {
         for (let i = 0; i < binaryString.length; i++) {
           bytes[i] = binaryString.charCodeAt(i)
         }
-        const blob = new Blob([bytes], { type: fileInfo.type })
+        const blob = new Blob([bytesToArrayBuffer(bytes)], { type: fileInfo.type })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
@@ -206,8 +208,13 @@ export default function Base64Page() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
+    <ToolLayout
+      title="Base64 Encoder / Decoder"
+      description="Encode and decode text or files using Base64"
+      category="Developer Tools"
+      categoryHref="/developer-tools"
+    >
+      <div>
         {/* Mode Selector */}
         <Card className="mb-6">
           <CardHeader>
@@ -482,6 +489,6 @@ export default function Base64Page() {
           <p className="text-muted-foreground">Advertisement Space</p>
         </div>
       </div>
-    </div>
+    </ToolLayout>
   )
 }

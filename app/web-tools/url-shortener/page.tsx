@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Copy, ExternalLink } from "lucide-react"
+import { Copy, ExternalLink, Link2, ShieldCheck } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,56 +11,91 @@ import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { ToolLayout } from "@/components/tool-layout"
 
+interface ShortenerOption {
+  name: string
+  href: string
+  note: string
+}
+
+function normalizeUrl(value: string): string {
+  const trimmed = value.trim()
+  const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+  const parsed = new URL(withProtocol)
+
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    throw new Error("Only HTTP and HTTPS URLs can be shortened.")
+  }
+
+  return parsed.href
+}
+
+function buildShortenerOptions(url: string): ShortenerOption[] {
+  const encoded = encodeURIComponent(url)
+  return [
+    {
+      name: "TinyURL",
+      href: `https://tinyurl.com/api-create.php?url=${encoded}`,
+      note: "Opens a plain-text generated short link.",
+    },
+    {
+      name: "is.gd",
+      href: `https://is.gd/create.php?format=simple&url=${encoded}`,
+      note: "Opens a generated short link from is.gd.",
+    },
+    {
+      name: "v.gd",
+      href: `https://v.gd/create.php?format=simple&url=${encoded}`,
+      note: "Opens a generated short link from v.gd.",
+    },
+  ]
+}
+
 export default function URLShortenerPage() {
   const [longUrl, setLongUrl] = useState("")
-  const [shortUrl, setShortUrl] = useState("")
-  const [customAlias, setCustomAlias] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [validatedUrl, setValidatedUrl] = useState("")
+  const [options, setOptions] = useState<ShortenerOption[]>([])
+  const [error, setError] = useState("")
   const { toast } = useToast()
 
-  const shortenUrl = () => {
-    if (!longUrl) {
+  const prepareLinks = () => {
+    try {
+      const normalized = normalizeUrl(longUrl)
+      setValidatedUrl(normalized)
+      setOptions(buildShortenerOptions(normalized))
+      setError("")
+    } catch (err) {
+      setValidatedUrl("")
+      setOptions([])
+      setError(err instanceof Error ? err.message : "Enter a valid URL.")
       toast({
-        title: "Error",
-        description: "Please enter a URL to shorten",
+        title: "Invalid URL",
+        description: "Enter a valid HTTP or HTTPS URL.",
         variant: "destructive",
       })
-      return
     }
-
-    setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      const alias = customAlias || Math.random().toString(36).substring(2, 8)
-      const shortened = `https://short.ly/${alias}`
-      setShortUrl(shortened)
-      setIsLoading(false)
-    }, 1000)
   }
 
-  const copyUrl = () => {
-    navigator.clipboard.writeText(shortUrl)
+  const copyUrl = async () => {
+    await navigator.clipboard.writeText(validatedUrl)
     toast({
-      title: "Copied!",
-      description: "Short URL copied to clipboard",
+      title: "Copied",
+      description: "Validated URL copied to clipboard",
     })
-  }
-
-  const openUrl = () => {
-    window.open(shortUrl, "_blank")
   }
 
   return (
     <ToolLayout
       title="URL Shortener"
-      description="Create short, shareable links from long URLs"
+      description="Validate a long URL and open trusted services that generate real short links."
       category="Web Tools"
       categoryHref="/web-tools"
     >
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="font-serif text-2xl">URL Shortener</CardTitle>
-          <p className="text-muted-foreground">Create short, shareable links from long URLs</p>
+          <p className="text-muted-foreground">
+            Prepare real short links through trusted redirect services.
+          </p>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
@@ -69,65 +106,69 @@ export default function URLShortenerPage() {
                 type="url"
                 placeholder="https://example.com/very/long/url/path"
                 value={longUrl}
-                onChange={(e) => setLongUrl(e.target.value)}
+                onChange={(e) => {
+                  setLongUrl(e.target.value)
+                  setError("")
+                }}
               />
             </div>
 
-            <div>
-              <Label htmlFor="customAlias">Custom Alias (Optional)</Label>
-              <Input
-                id="customAlias"
-                type="text"
-                placeholder="my-custom-link"
-                value={customAlias}
-                onChange={(e) => setCustomAlias(e.target.value)}
-              />
-              <p className="text-sm text-muted-foreground mt-1">Leave empty for random alias</p>
-            </div>
-
-            <Button onClick={shortenUrl} className="w-full" disabled={isLoading}>
-              {isLoading ? "Shortening..." : "Shorten URL"}
+            <Button onClick={prepareLinks} className="w-full">
+              <Link2 className="h-4 w-4 mr-2" />
+              Prepare Shortener Links
             </Button>
           </div>
 
-          {shortUrl && (
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {validatedUrl && (
             <div className="space-y-4">
-              <h3 className="font-serif text-lg font-semibold">Shortened URL</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">Validated URL</Badge>
+                <span className="text-xs text-muted-foreground">
+                  {validatedUrl.length} characters
+                </span>
+              </div>
+
               <div className="bg-muted p-4 rounded-lg">
                 <div className="flex items-center space-x-2">
-                  <Input value={shortUrl} readOnly className="flex-1" />
-                  <Button variant="outline" size="sm" onClick={copyUrl}>
+                  <Input value={validatedUrl} readOnly className="flex-1" />
+                  <Button variant="outline" size="sm" onClick={copyUrl} aria-label="Copy validated URL">
                     <Copy className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={openUrl}>
-                    <ExternalLink className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="bg-muted p-3 rounded-lg">
-                  <div className="text-muted-foreground">Original Length</div>
-                  <div className="font-semibold">{longUrl.length} characters</div>
-                </div>
-                <div className="bg-muted p-3 rounded-lg">
-                  <div className="text-muted-foreground">Short Length</div>
-                  <div className="font-semibold text-accent">{shortUrl.length} characters</div>
-                </div>
+              <div className="grid gap-3">
+                {options.map((option) => (
+                  <div key={option.name} className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card/75 p-3">
+                    <div>
+                      <p className="font-medium text-foreground">{option.name}</p>
+                      <p className="text-sm text-muted-foreground">{option.note}</p>
+                    </div>
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={option.href} target="_blank" rel="noreferrer">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Open
+                      </a>
+                    </Button>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          <div className="bg-muted p-4 rounded-lg">
-            <h4 className="font-semibold mb-2">Features</h4>
-            <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Custom aliases for branded links</li>
-              <li>• Click tracking and analytics</li>
-              <li>• QR code generation</li>
-              <li>• Bulk URL shortening</li>
-              <li>• Link expiration settings</li>
-            </ul>
-          </div>
+          <Alert>
+            <ShieldCheck className="h-4 w-4" />
+            <AlertDescription>
+              Short links require a redirect service. This page does not invent a fake short URL;
+              it validates your URL locally and opens providers that create the real redirect.
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
     </ToolLayout>

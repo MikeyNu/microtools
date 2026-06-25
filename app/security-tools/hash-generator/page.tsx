@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast'
 import { ToolLayout } from '@/components/tool-layout'
 import { FavoriteButton, ShareButton } from '@/components/user-engagement'
 import { useToolTracker } from '@/components/analytics-provider'
+import { generateHashHex, type HashAlgorithm as RealHashAlgorithm } from '@/lib/hash-utils'
 
 interface HashResult {
   algorithm: string
@@ -62,65 +63,20 @@ export default function HashGeneratorPage() {
     { value: 'SHA256', label: 'SHA-256 (256-bit)', recommended: true },
     { value: 'SHA384', label: 'SHA-384 (384-bit)' },
     { value: 'SHA512', label: 'SHA-512 (512-bit)', recommended: true },
-    { value: 'SHA3-256', label: 'SHA3-256 (256-bit)' },
-    { value: 'SHA3-512', label: 'SHA3-512 (512-bit)' }
   ]
 
-  // Generate hash using Web Crypto API
+  const algorithmMap: Record<string, RealHashAlgorithm> = {
+    MD5: 'MD5',
+    SHA1: 'SHA-1',
+    SHA256: 'SHA-256',
+    SHA384: 'SHA-384',
+    SHA512: 'SHA-512',
+  }
+
   const generateHash = async (data: string | ArrayBuffer, algorithm: string): Promise<string> => {
-    let algoName: string
-    
-    switch (algorithm) {
-      case 'SHA1':
-        algoName = 'SHA-1'
-        break
-      case 'SHA256':
-        algoName = 'SHA-256'
-        break
-      case 'SHA384':
-        algoName = 'SHA-384'
-        break
-      case 'SHA512':
-        algoName = 'SHA-512'
-        break
-      case 'MD5':
-        // MD5 is not supported by Web Crypto API, so we'll simulate it
-        return simulateMD5(typeof data === 'string' ? data : new TextDecoder().decode(data))
-      case 'SHA3-256':
-      case 'SHA3-512':
-        // SHA3 is not widely supported, so we'll simulate it
-        return simulateSHA3(typeof data === 'string' ? data : new TextDecoder().decode(data), algorithm)
-      default:
-        throw new Error(`Unsupported algorithm: ${algorithm}`)
-    }
-    
-    const encoder = new TextEncoder()
-    const dataBuffer = typeof data === 'string' ? encoder.encode(data) : data
-    const hashBuffer = await crypto.subtle.digest(algoName, dataBuffer)
-    const hashArray = Array.from(new Uint8Array(hashBuffer))
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-  }
-
-  // Simulate MD5 (simplified - not cryptographically secure)
-  const simulateMD5 = (input: string): string => {
-    // This is a mock MD5 implementation for demonstration
-    let hash = 0
-    for (let i = 0; i < input.length; i++) {
-      const char = input.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
-      hash = hash & hash // Convert to 32-bit integer
-    }
-    return Math.abs(hash).toString(16).padStart(32, '0')
-  }
-
-  // Simulate SHA3 (simplified)
-  const simulateSHA3 = (input: string, algorithm: string): string => {
-    const length = algorithm === 'SHA3-256' ? 64 : 128
-    let hash = ''
-    for (let i = 0; i < length; i++) {
-      hash += Math.floor(Math.random() * 16).toString(16)
-    }
-    return hash
+    const mapped = algorithmMap[algorithm]
+    if (!mapped) throw new Error(`Unsupported algorithm: ${algorithm}`)
+    return generateHashHex(data, mapped)
   }
 
   // Process input and generate hashes
@@ -314,7 +270,7 @@ export default function HashGeneratorPage() {
   return (
     <ToolLayout
       title="Hash Generator"
-      description="Generate cryptographic hashes using various algorithms like MD5, SHA1, SHA256, SHA512, and SHA3 for text and files."
+      description="Generate real MD5, SHA-1, SHA-256, SHA-384, and SHA-512 hashes for text and files."
       category="Security Tools"
       categoryHref="/security-tools"
       relatedTools={relatedTools}
@@ -587,7 +543,7 @@ export default function HashGeneratorPage() {
           <Shield className="h-4 w-4" />
           <AlertDescription>
             <strong>Security Notice:</strong> MD5 and SHA-1 are cryptographically broken and should not be used for security purposes. 
-            Use SHA-256, SHA-512, or SHA-3 for secure applications. All hashing is performed locally in your browser.
+            Use SHA-256 or SHA-512 for modern integrity checks. All hashing is performed locally in your browser.
           </AlertDescription>
         </Alert>
       </div>

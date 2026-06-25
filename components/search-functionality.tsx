@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useSearchTracker } from '@/components/analytics-provider';
+import { VictorianGlyph } from '@/components/victorian-glyph';
 
 const TOOLS_DATABASE = [
   // Calculators
@@ -26,6 +27,7 @@ const TOOLS_DATABASE = [
   { id: 'unit-converter', name: 'Unit Converter', description: 'Convert between different units of measurement', category: 'Converters', href: '/converters/unit', icon: Wrench, keywords: ['unit', 'length', 'weight', 'volume', 'convert'] },
   { id: 'color-converter', name: 'Color Converter', description: 'Convert between HEX, RGB, HSL and other color formats', category: 'Converters', href: '/converters/color', icon: Wrench, keywords: ['color', 'hex', 'rgb', 'hsl', 'convert'] },
   { id: 'binary-converter', name: 'Binary Converter', description: 'Convert text, decimal, and hex to binary', category: 'Converters', href: '/converters/binary', icon: Wrench, keywords: ['binary', 'decimal', 'hex', 'convert'] },
+  { id: 'hex-converter', name: 'Hex Converter', description: 'Convert hexadecimal, decimal, binary, and UTF-8 text', category: 'Converters', href: '/converters/hex', icon: Wrench, keywords: ['hex', 'hexadecimal', 'decimal', 'binary', 'utf-8', 'convert'] },
   { id: 'file-size-converter', name: 'File Size Converter', description: 'Convert between bytes, KB, MB, GB', category: 'Converters', href: '/converters/file-size', icon: Wrench, keywords: ['file', 'size', 'bytes', 'kilobyte', 'megabyte', 'gigabyte'] },
   // Text Tools
   { id: 'word-counter', name: 'Word Counter', description: 'Count words, characters, and paragraphs', category: 'Text Tools', href: '/text-tools/word-counter', icon: Type, keywords: ['word', 'count', 'character', 'paragraph'] },
@@ -80,6 +82,7 @@ const TOOLS_DATABASE = [
   { id: 'yaml-converter', name: 'YAML Converter', description: 'Convert between YAML and JSON', category: 'Data Tools', href: '/data-tools/yaml-converter', icon: Code2, keywords: ['yaml', 'json', 'convert'] },
   // Security Tools
   { id: 'password-checker', name: 'Password Strength Checker', description: 'Check password strength', category: 'Security Tools', href: '/security-tools/password-checker', icon: Globe, keywords: ['password', 'strength', 'security', 'check'] },
+  { id: 'security-password-generator', name: 'Password Generator', description: 'Generate high-entropy passwords locally', category: 'Security Tools', href: '/security-tools/password-generator', icon: Globe, keywords: ['password', 'generator', 'secure', 'random', 'entropy'] },
   { id: '2fa-generator', name: '2FA Generator', description: 'Generate TOTP codes for two-factor auth', category: 'Security Tools', href: '/security-tools/2fa-generator', icon: Globe, keywords: ['2fa', 'totp', 'authentication', 'otp'] },
   { id: 'ssl-checker', name: 'SSL Certificate Checker', description: 'Check SSL certificate details', category: 'Security Tools', href: '/security-tools/ssl-checker', icon: Globe, keywords: ['ssl', 'certificate', 'https', 'tls'] },
   { id: 'hash-generator-sec', name: 'Hash Generator', description: 'Generate MD5, SHA256, SHA512 hashes', category: 'Security Tools', href: '/security-tools/hash-generator', icon: Globe, keywords: ['hash', 'md5', 'sha256', 'sha512'] },
@@ -97,6 +100,8 @@ const TOOLS_DATABASE = [
   { id: 'ip-lookup', name: 'IP Address Lookup', description: 'Get information about an IP address', category: 'Network Tools', href: '/network-tools/ip-lookup', icon: Globe, keywords: ['ip', 'address', 'lookup', 'geolocation'] },
   { id: 'dns-lookup', name: 'DNS Lookup', description: 'Query DNS records for a domain', category: 'Network Tools', href: '/network-tools/dns-lookup', icon: Globe, keywords: ['dns', 'lookup', 'domain', 'records'] },
   { id: 'port-scanner', name: 'Port Scanner', description: 'Scan network ports', category: 'Network Tools', href: '/network-tools/port-scanner', icon: Globe, keywords: ['port', 'scanner', 'network', 'tcp'] },
+  { id: 'ping-test', name: 'Ping Test', description: 'Measure HTTP latency to a host or URL', category: 'Network Tools', href: '/network-tools/ping-test', icon: Globe, keywords: ['ping', 'latency', 'http', 'network', 'uptime'] },
+  { id: 'whois-lookup', name: 'Whois Lookup', description: 'Look up RDAP registration details for domains', category: 'Network Tools', href: '/network-tools/whois-lookup', icon: Globe, keywords: ['whois', 'rdap', 'domain', 'registrar', 'registration'] },
   // Finance Tools
   { id: 'compound-interest', name: 'Compound Interest Calculator', description: 'Calculate compound interest growth', category: 'Finance Tools', href: '/finance-tools/compound-interest', icon: Calculator, keywords: ['compound', 'interest', 'investment', 'savings'] },
   { id: 'investment-return', name: 'Investment Return Calculator', description: 'Calculate investment returns', category: 'Finance Tools', href: '/finance-tools/investment-return', icon: Calculator, keywords: ['investment', 'return', 'roi', 'profit'] },
@@ -186,7 +191,7 @@ export const SearchComponent = React.forwardRef<SearchComponentRef, { className?
             onChange={(e) => handleQueryChange(e.target.value)}
             onFocus={() => query.trim() && setIsOpen(true)}
             onKeyDown={handleKeyDown}
-            className="pl-9 pr-8 h-9 bg-card border-border text-sm placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:border-accent/50"
+            className="pl-9 pr-8 h-9 bg-card/90 border-border/80 text-sm placeholder:text-muted-foreground focus-visible:ring-ring focus-visible:border-accent/50"
           />
           {query && (
             <Button
@@ -203,7 +208,7 @@ export const SearchComponent = React.forwardRef<SearchComponentRef, { className?
 
         {/* Results dropdown */}
         {isOpen && query.trim() && (
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 w-[min(680px,95vw)] bg-popover border border-border rounded-lg shadow-xl z-[9999] overflow-hidden">
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 w-[min(680px,95vw)] bg-popover/95 border border-border/80 rounded-md shadow-[0_18px_42px_rgba(23,19,16,0.14)] z-[9999] overflow-hidden">
             {searchResults.length > 0 ? (
               <div className="p-2">
                 <p className="text-xs text-muted-foreground px-2 py-1.5 font-mono">
@@ -211,24 +216,26 @@ export const SearchComponent = React.forwardRef<SearchComponentRef, { className?
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {searchResults.map((tool, index) => {
-                    const Icon = tool.icon;
                     const isSelected = index === selectedIndex;
                     return (
                       <Link
                         key={tool.id}
                         href={tool.href}
-                        className={`flex items-start gap-3 p-3 rounded-md transition-colors ${
+                        className={`flex items-start gap-3 p-3 rounded-sm transition-colors ${
                           isSelected
-                            ? 'bg-accent/10 text-foreground'
-                            : 'hover:bg-card text-foreground'
+                            ? 'bg-secondary text-foreground'
+                            : 'hover:bg-secondary text-foreground'
                         }`}
                         onClick={() => setIsOpen(false)}
                       >
-                        <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Icon className="h-4 w-4 text-accent-foreground" />
-                        </div>
+                        <VictorianGlyph
+                          label={tool.name}
+                          category={tool.category}
+                          size="md"
+                          className="mt-0.5"
+                        />
                         <div className="min-w-0">
-                          <p className="text-sm font-medium leading-tight mb-0.5">{tool.name}</p>
+                          <p className="font-serif text-sm font-medium leading-tight mb-0.5">{tool.name}</p>
                           <p className="text-xs text-muted-foreground font-mono">{tool.category}</p>
                           <p className="text-xs text-muted-foreground leading-snug mt-0.5 line-clamp-1">
                             {tool.description}

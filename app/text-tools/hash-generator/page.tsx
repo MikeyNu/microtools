@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { ToolLayout } from "@/components/tool-layout"
+import { generateHashHex } from "@/lib/hash-utils"
 
 export default function HashGeneratorPage() {
   const [inputText, setInputText] = useState("")
@@ -28,24 +29,12 @@ export default function HashGeneratorPage() {
     }
 
     try {
-      const encoder = new TextEncoder()
-      const data = encoder.encode(text)
-
-      // Generate SHA-256
-      const sha256Buffer = await crypto.subtle.digest("SHA-256", data)
-      const sha256Hash = Array.from(new Uint8Array(sha256Buffer))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("")
-
-      // Generate SHA-1
-      const sha1Buffer = await crypto.subtle.digest("SHA-1", data)
-      const sha1Hash = Array.from(new Uint8Array(sha1Buffer))
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("")
-
-      // For MD5 and SHA-512, we'll use simplified versions (in production, use proper crypto libraries)
-      const md5Hash = "MD5 requires external library - " + text.length + " chars"
-      const sha512Hash = "SHA-512 requires external library - " + text.length + " chars"
+      const [md5Hash, sha1Hash, sha256Hash, sha512Hash] = await Promise.all([
+        generateHashHex(text, "MD5"),
+        generateHashHex(text, "SHA-1"),
+        generateHashHex(text, "SHA-256"),
+        generateHashHex(text, "SHA-512"),
+      ])
 
       setHashes({
         md5: md5Hash,

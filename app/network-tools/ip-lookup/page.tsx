@@ -59,11 +59,11 @@ export default function IPLookupPage() {
 
   const detectUserIP = async () => {
     try {
-      // Simulate getting user's IP (in real app, use a service like ipify.org)
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      const mockUserIP = '203.0.113.42' // Example IP
-      setUserIP(mockUserIP)
-      setIpAddress(mockUserIP)
+      const response = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' })
+      if (!response.ok) throw new Error(`IP detection returned ${response.status}`)
+      const data = await response.json()
+      setUserIP(data.ip)
+      setIpAddress(data.ip)
     } catch (error) {
       console.error('Failed to detect user IP:', error)
     } finally {
@@ -78,6 +78,61 @@ export default function IPLookupPage() {
     const ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/
     
     return ipv4Regex.test(ip) || ipv6Regex.test(ip)
+  }
+
+  const fetchIPInfo = async (ip: string): Promise<IPInfo> => {
+    try {
+      const response = await fetch(`https://ipwhois.app/json/${encodeURIComponent(ip)}`, { cache: 'no-store' })
+      if (!response.ok) throw new Error(`ipwhois.app returned ${response.status}`)
+      const data = await response.json()
+      if (!data.success) throw new Error(data.message || 'ipwhois.app did not return a result')
+
+      return {
+        ip: data.ip,
+        type: data.type || (ip.includes(':') ? 'IPv6' : 'IPv4'),
+        continent: data.continent || '',
+        country: data.country || '',
+        countryCode: data.country_code || '',
+        region: data.region || '',
+        city: data.city || '',
+        latitude: Number(data.latitude) || 0,
+        longitude: Number(data.longitude) || 0,
+        timezone: data.timezone?.id || data.timezone || '',
+        isp: data.connection?.isp || '',
+        organization: data.connection?.org || data.connection?.isp || '',
+        asn: data.connection?.asn ? `AS${data.connection.asn}` : '',
+        asnOrg: data.connection?.org || '',
+        isProxy: Boolean(data.security?.proxy),
+        isVpn: Boolean(data.security?.vpn),
+        isTor: Boolean(data.security?.tor),
+        threatLevel: data.security?.proxy || data.security?.vpn || data.security?.tor ? 'Elevated' : 'Unknown',
+      }
+    } catch {
+      const response = await fetch(`https://freeipapi.com/api/json/${encodeURIComponent(ip)}`, { cache: 'no-store' })
+      if (!response.ok) throw new Error(`FreeIPAPI returned ${response.status}`)
+      const data = await response.json()
+
+      return {
+        ip: data.ipAddress || ip,
+        type: data.ipVersion ? `IPv${data.ipVersion}` : (ip.includes(':') ? 'IPv6' : 'IPv4'),
+        continent: data.continent || '',
+        country: data.countryName || '',
+        countryCode: data.countryCode || '',
+        region: data.regionName || '',
+        city: data.cityName || '',
+        latitude: Number(data.latitude) || 0,
+        longitude: Number(data.longitude) || 0,
+        timezone: data.timeZone || '',
+        isp: data.isp || '',
+        organization: data.organization || data.isp || '',
+        asn: data.asn || '',
+        asnOrg: data.asnOrganization || data.organization || '',
+        isProxy: false,
+        isVpn: false,
+        isTor: false,
+        threatLevel: 'Unknown',
+      }
+    }
   }
 
   const lookupIP = async () => {
@@ -103,42 +158,8 @@ export default function IPLookupPage() {
     trackToolStart()
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      // Mock IP information (in real app, use services like ipapi.co, ipgeolocation.io)
-      const mockIPInfo: IPInfo = {
-        ip: ipAddress.trim(),
-        type: ipAddress.includes(':') ? 'IPv6' : 'IPv4',
-        continent: 'North America',
-        country: 'United States',
-        countryCode: 'US',
-        region: 'California',
-        city: 'San Francisco',
-        latitude: 37.7749,
-        longitude: -122.4194,
-        timezone: 'America/Los_Angeles',
-        isp: 'Cloudflare, Inc.',
-        organization: 'Cloudflare',
-        asn: 'AS13335',
-        asnOrg: 'Cloudflare, Inc.',
-        isProxy: false,
-        isVpn: false,
-        isTor: false,
-        threatLevel: 'Low'
-      }
-      
-      // Randomize some data for demonstration
-      const cities = ['San Francisco', 'New York', 'Los Angeles', 'Chicago', 'Houston']
-      const isps = ['Cloudflare, Inc.', 'Google LLC', 'Amazon.com, Inc.', 'Microsoft Corporation']
-      
-      mockIPInfo.city = cities[Math.floor(Math.random() * cities.length)]
-      mockIPInfo.isp = isps[Math.floor(Math.random() * isps.length)]
-      mockIPInfo.organization = mockIPInfo.isp
-      mockIPInfo.latitude = 37.7749 + (Math.random() - 0.5) * 10
-      mockIPInfo.longitude = -122.4194 + (Math.random() - 0.5) * 10
-      
-      setIpInfo(mockIPInfo)
+      const info = await fetchIPInfo(ipAddress.trim())
+      setIpInfo(info)
       trackToolComplete()
       
       toast({
@@ -360,13 +381,13 @@ export default function IPLookupPage() {
                   <Label className="text-sm font-medium">Security Information</Label>
                   <div className="flex flex-wrap gap-2">
                     <Badge variant={ipInfo.isProxy ? 'destructive' : 'default'}>
-                      {ipInfo.isProxy ? 'Proxy Detected' : 'No Proxy'}
+                      {ipInfo.threatLevel === 'Unknown' ? 'Proxy not reported' : ipInfo.isProxy ? 'Proxy Detected' : 'No Proxy'}
                     </Badge>
                     <Badge variant={ipInfo.isVpn ? 'destructive' : 'default'}>
-                      {ipInfo.isVpn ? 'VPN Detected' : 'No VPN'}
+                      {ipInfo.threatLevel === 'Unknown' ? 'VPN not reported' : ipInfo.isVpn ? 'VPN Detected' : 'No VPN'}
                     </Badge>
                     <Badge variant={ipInfo.isTor ? 'destructive' : 'default'}>
-                      {ipInfo.isTor ? 'Tor Exit Node' : 'No Tor'}
+                      {ipInfo.threatLevel === 'Unknown' ? 'Tor not reported' : ipInfo.isTor ? 'Tor Exit Node' : 'No Tor'}
                     </Badge>
                   </div>
                 </div>

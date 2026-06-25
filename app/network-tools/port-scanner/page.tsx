@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Shield, Search, RefreshCw, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
+import { Search, RefreshCw, AlertTriangle, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -34,7 +34,7 @@ interface ScanResults {
 
 export default function PortScannerPage() {
   const [host, setHost] = useState('')
-  const [portRange, setPortRange] = useState('1-1000')
+  const [portRange, setPortRange] = useState('80,443,8080,8443')
   const [scanning, setScanning] = useState(false)
   const [progress, setProgress] = useState(0)
   const [scanResults, setScanResults] = useState<ScanResults | null>(null)
@@ -47,7 +47,7 @@ export default function PortScannerPage() {
   const tool = {
     id: 'port-scanner',
     name: 'Port Scanner',
-    description: 'Scan for open ports on any host or IP address to check network security',
+    description: 'Check whether selected HTTP and HTTPS ports are reachable from your browser',
     category: 'network-tools',
     url: '/network-tools/port-scanner'
   }
@@ -85,27 +85,56 @@ export default function PortScannerPage() {
   }
 
   const validatePortRange = (range: string): boolean => {
-    const rangeRegex = /^\d+(-\d+)?$/
-    if (!rangeRegex.test(range)) return false
-    
-    const [start, end] = range.split('-').map(Number)
-    if (start < 1 || start > 65535) return false
-    if (end && (end < start || end > 65535)) return false
-    
-    return true
+    try {
+      parsePortRange(range)
+      return true
+    } catch {
+      return false
+    }
   }
 
   const parsePortRange = (range: string): number[] => {
-    if (range.includes('-')) {
-      const [start, end] = range.split('-').map(Number)
-      const ports = []
-      for (let i = start; i <= end; i++) {
-        ports.push(i)
+    const ports = new Set<number>()
+    const parts = range.split(',').map((part) => part.trim()).filter(Boolean)
+    if (!parts.length) throw new Error('No ports supplied')
+
+    for (const part of parts) {
+      if (!/^\d+(-\d+)?$/.test(part)) throw new Error('Invalid port syntax')
+      if (part.includes('-')) {
+        const [start, end] = part.split('-').map(Number)
+        if (start < 1 || end > 65535 || end < start) throw new Error('Invalid port range')
+        for (let port = start; port <= end; port++) ports.add(port)
+      } else {
+        const port = Number(part)
+        if (port < 1 || port > 65535) throw new Error('Invalid port')
+        ports.add(port)
       }
-      return ports
-    } else {
-      return [Number(range)]
     }
+
+    return Array.from(ports).sort((a, b) => a - b)
+  }
+
+  const probeHttpPort = async (targetHost: string, port: number): Promise<PortResult['status']> => {
+    const protocols = port === 443 || port === 8443 ? ['https'] : port === 80 || port === 8080 ? ['http'] : ['https', 'http']
+    const timeoutMs = quickScan ? 1800 : 4000
+
+    for (const protocol of protocols) {
+      const controller = new AbortController()
+      const timeout = window.setTimeout(() => controller.abort(), timeoutMs)
+      try {
+        await fetch(`${protocol}://${targetHost}:${port}/`, {
+          mode: 'no-cors',
+          cache: 'no-store',
+          signal: controller.signal,
+        })
+        window.clearTimeout(timeout)
+        return 'open'
+      } catch {
+        window.clearTimeout(timeout)
+      }
+    }
+
+    return 'filtered'
   }
 
   const scanPorts = async () => {
@@ -130,17 +159,17 @@ export default function PortScannerPage() {
     if (!validatePortRange(portRange)) {
       toast({
         title: 'Error',
-        description: 'Please enter a valid port range (e.g., 80 or 1-1000)',
+        description: 'Please enter ports as a comma list or range (e.g., 80,443 or 8000-8010)',
         variant: 'destructive'
       })
       return
     }
 
     const ports = parsePortRange(portRange)
-    if (ports.length > 10000) {
+    if (ports.length > 250) {
       toast({
         title: 'Error',
-        description: 'Port range too large. Please scan fewer than 10,000 ports.',
+        description: 'Port range too large for a browser probe. Please scan 250 ports or fewer.',
         variant: 'destructive'
       })
       return
@@ -157,29 +186,11 @@ export default function PortScannerPage() {
       const closedPorts: PortResult[] = []
       const filteredPorts: PortResult[] = []
 
-      // Simulate port scanning
+      // Browsers cannot open raw TCP sockets, so each port is checked as an HTTP/HTTPS endpoint.
       for (let i = 0; i < ports.length; i++) {
         const port = ports[i]
         
-        // Simulate scan delay
-        await new Promise(resolve => setTimeout(resolve, quickScan ? 10 : 50))
-        
-        // Mock port status (in real app, this would be actual network scanning)
-        let status: 'open' | 'closed' | 'filtered'
-        
-        // Make common ports more likely to be open
-        if (commonPorts[port]) {
-          const rand = Math.random()
-          if (rand < 0.3) status = 'open'
-          else if (rand < 0.8) status = 'closed'
-          else status = 'filtered'
-        } else {
-          const rand = Math.random()
-          if (rand < 0.05) status = 'open'
-          else if (rand < 0.85) status = 'closed'
-          else status = 'filtered'
-        }
-        
+        const status = await probeHttpPort(host.trim(), port)
         const portInfo = commonPorts[port] || { service: 'Unknown', description: 'Unknown service' }
         const result: PortResult = {
           port,
@@ -212,7 +223,7 @@ export default function PortScannerPage() {
       
       toast({
         title: 'Scan Complete',
-        description: `Found ${openPorts.length} open ports out of ${ports.length} scanned`
+        description: `Found ${openPorts.length} browser-reachable HTTP service${openPorts.length === 1 ? '' : 's'} out of ${ports.length} ports checked`
       })
     } catch (error) {
       trackToolError()
@@ -241,7 +252,7 @@ export default function PortScannerPage() {
   return (
     <ToolLayout
       title="Port Scanner"
-      description="Scan for open ports on any host or IP address to check network security and discover running services."
+      description="Check whether common web ports are reachable from your browser. Raw TCP port scanning is not available in browsers."
       category="Network Tools"
       categoryHref="/network-tools"
       relatedTools={relatedTools}
@@ -256,7 +267,7 @@ export default function PortScannerPage() {
           <CardHeader>
             <CardTitle>Port Scanner Configuration</CardTitle>
             <CardDescription>
-              Enter a host or IP address and port range to scan for open ports
+              Enter a host and ports to test for browser-reachable HTTP or HTTPS services
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -272,10 +283,10 @@ export default function PortScannerPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="port-range">Port Range</Label>
+              <Label htmlFor="port-range">Port Range</Label>
                 <Input
                   id="port-range"
-                  placeholder="Enter port range (e.g., 80 or 1-1000)"
+                  placeholder="Enter ports (e.g., 80,443 or 8000-8010)"
                   value={portRange}
                   onChange={(e) => setPortRange(e.target.value)}
                   className="font-mono"
@@ -289,9 +300,9 @@ export default function PortScannerPage() {
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => setCommonPortRange('1-1000')}
+                  onClick={() => setCommonPortRange('80,443,8080,8443')}
                 >
-                  1-1000 (Common)
+                  Web ports
                 </Button>
                 <Button 
                   variant="outline" 
@@ -323,7 +334,7 @@ export default function PortScannerPage() {
                 checked={quickScan}
                 onCheckedChange={(checked) => setQuickScan(checked as boolean)}
               />
-              <Label htmlFor="quick-scan">Quick scan (faster but less accurate)</Label>
+              <Label htmlFor="quick-scan">Quick probe (shorter timeout)</Label>
             </div>
             
             <Button 
@@ -339,7 +350,7 @@ export default function PortScannerPage() {
               ) : (
                 <>
                   <Search className="h-4 w-4 mr-2" />
-                  Start Port Scan
+                  Start HTTP Probe
                 </>
               )}
             </Button>
@@ -362,22 +373,18 @@ export default function PortScannerPage() {
               <CardHeader>
                 <CardTitle>Scan Results for {scanResults.host}</CardTitle>
                 <CardDescription>
-                  Scanned {scanResults.totalPorts} ports in {scanResults.scanTime}ms
+                  Checked {scanResults.totalPorts} ports in {scanResults.scanTime}ms using browser HTTP probes
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-success">{scanResults.openPorts.length}</div>
-                    <div className="text-sm text-muted-foreground">Open Ports</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-destructive">{scanResults.closedPorts.length}</div>
-                    <div className="text-sm text-muted-foreground">Closed Ports</div>
+                    <div className="text-sm text-muted-foreground">Reachable</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-warning">{scanResults.filteredPorts.length}</div>
-                    <div className="text-sm text-muted-foreground">Filtered Ports</div>
+                    <div className="text-sm text-muted-foreground">Not Confirmed</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold">{scanResults.totalPorts}</div>
@@ -395,7 +402,7 @@ export default function PortScannerPage() {
                     Open Ports ({scanResults.openPorts.length})
                   </CardTitle>
                   <CardDescription>
-                    These ports are accepting connections and may be running services
+                    These ports responded to a browser HTTP/HTTPS probe. This does not prove raw TCP openness.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -426,10 +433,10 @@ export default function PortScannerPage() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-warning">
                     <AlertTriangle className="h-5 w-5" />
-                    Filtered Ports ({scanResults.filteredPorts.length})
+                    Not Confirmed ({scanResults.filteredPorts.length})
                   </CardTitle>
                   <CardDescription>
-                    These ports are filtered by a firewall or security device
+                    These ports did not respond to a browser HTTP/HTTPS probe, or the browser blocked the request.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -454,8 +461,7 @@ export default function PortScannerPage() {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <strong>Important:</strong> Only scan hosts that you own or have explicit permission to test. 
-            Unauthorized port scanning may violate terms of service or local laws.
+            <strong>Important:</strong> Browsers cannot perform raw TCP port scans. This tool only checks HTTP/HTTPS reachability, and only for hosts you own or have permission to test.
           </AlertDescription>
         </Alert>
       </div>

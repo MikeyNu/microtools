@@ -14,6 +14,8 @@ import { useToast } from '@/hooks/use-toast'
 import { ToolLayout } from '@/components/tool-layout'
 import { FavoriteButton, ShareButton } from '@/components/user-engagement'
 import { useToolTracker } from '@/components/analytics-provider'
+import QRCode from 'qrcode'
+import { secureRandomString } from '@/lib/secure-random'
 
 interface TOTPAccount {
   id: string
@@ -107,12 +109,16 @@ export default function TwoFactorGeneratorPage() {
     return result.slice(0, index)
   }
 
-  // HMAC-SHA1 implementation (simplified)
-  const hmacSha1 = async (key: Uint8Array, message: Uint8Array): Promise<Uint8Array> => {
+  const hmac = async (
+    key: Uint8Array,
+    message: Uint8Array,
+    algorithm: 'SHA1' | 'SHA256' | 'SHA512'
+  ): Promise<Uint8Array> => {
+    const hash = algorithm === 'SHA1' ? 'SHA-1' : algorithm === 'SHA256' ? 'SHA-256' : 'SHA-512'
     const cryptoKey = await crypto.subtle.importKey(
       'raw',
       key.buffer as ArrayBuffer,
-      { name: 'HMAC', hash: 'SHA-1' },
+      { name: 'HMAC', hash },
       false,
       ['sign']
     )
@@ -125,12 +131,13 @@ export default function TwoFactorGeneratorPage() {
   const generateTOTP = async (secret: string, algorithm: string = 'SHA1', digits: number = 6, period: number = 30): Promise<string> => {
     try {
       const key = base32Decode(secret)
+      if (!key.length) throw new Error('Invalid Base32 secret')
       const time = Math.floor(Date.now() / 1000 / period)
       const timeBuffer = new ArrayBuffer(8)
       const timeView = new DataView(timeBuffer)
       timeView.setUint32(4, time, false)
       
-      const hash = await hmacSha1(key, new Uint8Array(timeBuffer))
+      const hash = await hmac(key, new Uint8Array(timeBuffer), algorithm as 'SHA1' | 'SHA256' | 'SHA512')
       const offset = hash[hash.length - 1] & 0xf
       const code = (
         ((hash[offset] & 0x7f) << 24) |
@@ -152,8 +159,7 @@ export default function TwoFactorGeneratorPage() {
     return base32Encode(buffer)
   }
 
-  // Generate QR code data URL
-  const generateQRCode = (account: TOTPAccount): string => {
+  const buildOtpAuthUrl = (account: TOTPAccount): string => {
     const params = new URLSearchParams({
       secret: account.secret,
       issuer: account.issuer,
@@ -162,27 +168,27 @@ export default function TwoFactorGeneratorPage() {
       period: account.period.toString()
     })
     
-    const otpauthUrl = `otpauth://totp/${encodeURIComponent(account.issuer)}:${encodeURIComponent(account.name)}?${params}`
-    
-    // Simple QR code generation (in a real app, you'd use a proper QR code library)
-    return `data:image/svg+xml;base64,${btoa(`
-      <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-        <rect width="200" height="200" fill="white"/>
-        <text x="100" y="100" text-anchor="middle" font-family="monospace" font-size="8" fill="black">
-          QR Code for ${account.name}
-        </text>
-        <text x="100" y="120" text-anchor="middle" font-family="monospace" font-size="6" fill="gray">
-          ${otpauthUrl.substring(0, 40)}...
-        </text>
-      </svg>
-    `)}`
+    return `otpauth://totp/${encodeURIComponent(account.issuer)}:${encodeURIComponent(account.name)}?${params}`
+  }
+
+  const showQRCode = async (account: TOTPAccount) => {
+    const dataUrl = await QRCode.toDataURL(buildOtpAuthUrl(account), {
+      errorCorrectionLevel: 'M',
+      margin: 2,
+      width: 240,
+      color: {
+        dark: '#171310',
+        light: '#FFFEFA',
+      },
+    })
+    setQrCodeData(dataUrl)
   }
 
   // Generate backup codes
   const generateBackupCodes = (): BackupCode[] => {
     const codes: BackupCode[] = []
     for (let i = 0; i < 10; i++) {
-      const code = Math.random().toString(36).substring(2, 10).toUpperCase()
+      const code = secureRandomString(10, 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789')
       codes.push({ code, used: false })
     }
     return codes
@@ -386,7 +392,7 @@ export default function TwoFactorGeneratorPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setQrCodeData(generateQRCode(account))}
+                            onClick={() => showQRCode(account)}
                             className="flex-1"
                           >
                             <QrCode className="h-3 w-3 mr-1" />

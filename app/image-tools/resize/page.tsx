@@ -11,6 +11,14 @@ import { Switch } from '@/components/ui/switch'
 import { Upload, Download, FileImage, ArrowRight, CheckCircle, AlertCircle, X, Maximize2, Link } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { ToolLayout } from "@/components/tool-layout"
+import {
+  BrowserImageFormat,
+  extensionForImageFormat,
+  getImageFormat,
+  loadImageFile,
+  renderImageToBlob,
+  replaceFileExtension,
+} from '@/lib/image-processing'
 
 interface ResizedImage {
   name: string
@@ -84,29 +92,35 @@ export default function ImageResizerPage() {
   const handleWidthChange = (value: string) => {
     setWidth(value)
     if (maintainAspectRatio && files.length > 0) {
-      // Calculate height based on first image's aspect ratio
+      const url = URL.createObjectURL(files[0])
       const img = new Image()
       img.onload = () => {
         const aspectRatio = img.width / img.height
         const newHeight = Math.round(parseInt(value) / aspectRatio)
         setHeight(newHeight.toString())
+        URL.revokeObjectURL(url)
       }
-      img.src = URL.createObjectURL(files[0])
+      img.src = url
     }
   }
 
   const handleHeightChange = (value: string) => {
     setHeight(value)
     if (maintainAspectRatio && files.length > 0) {
-      // Calculate width based on first image's aspect ratio
+      const url = URL.createObjectURL(files[0])
       const img = new Image()
       img.onload = () => {
         const aspectRatio = img.width / img.height
         const newWidth = Math.round(parseInt(value) * aspectRatio)
         setWidth(newWidth.toString())
+        URL.revokeObjectURL(url)
       }
-      img.src = URL.createObjectURL(files[0])
+      img.src = url
     }
+  }
+
+  const revokeOutputs = (outputs: ResizedImage[]) => {
+    outputs.forEach((image) => URL.revokeObjectURL(image.downloadUrl))
   }
 
   const resizeImages = async () => {
@@ -123,31 +137,21 @@ export default function ImageResizerPage() {
     setResizing(true)
     setProgress(0)
     setError(null)
+    revokeOutputs(resizedImages)
     setResizedImages([])
 
     try {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-
-        // Get original image dimensions
-        const img = new Image()
-        const originalDimensions = await new Promise<{width: number, height: number}>((resolve) => {
-          img.onload = () => resolve({ width: img.width, height: img.height })
-          img.src = URL.createObjectURL(file)
-        })
-
-        // Simulate resizing delay
-        await new Promise(resolve => setTimeout(resolve, 1500))
-
-        // Create preview URL
-        const preview = URL.createObjectURL(file)
+        const originalDimensions = await loadImageFile(file)
+        const sourceFormat = getImageFormat(file)
+        const outputFormat: BrowserImageFormat = sourceFormat === 'unknown' ? 'jpeg' : sourceFormat
 
         // Calculate new dimensions based on resize mode
         let newWidth = targetWidth
         let newHeight = targetHeight
 
-        if (resizeMode === 'fit') {
-          // Maintain aspect ratio, fit within bounds
+        if (resizeMode === 'fit' || (maintainAspectRatio && resizeMode === 'stretch')) {
           const aspectRatio = originalDimensions.width / originalDimensions.height
           if (targetWidth / targetHeight > aspectRatio) {
             newWidth = Math.round(targetHeight * aspectRatio)
@@ -156,21 +160,25 @@ export default function ImageResizerPage() {
           }
         }
 
-        // Simulate file size calculation
-        const originalSize = file.size
-        const sizeRatio = (newWidth * newHeight) / (originalDimensions.width * originalDimensions.height)
-        const resizedSize = Math.floor(originalSize * sizeRatio * 0.9) // Slightly smaller due to compression
+        const { blob } = await renderImageToBlob(file, {
+          width: resizeMode === 'fill' ? targetWidth : newWidth,
+          height: resizeMode === 'fill' ? targetHeight : newHeight,
+          mode: resizeMode === 'fill' ? 'fill' : 'stretch',
+          format: outputFormat,
+          quality: 0.9,
+        })
+        const preview = URL.createObjectURL(blob)
 
         const resizedImage: ResizedImage = {
-          name: file.name.replace(/\.[^/.]+$/, '_resized$&'),
+          name: replaceFileExtension(file.name.replace(/\.[^/.]+$/, '_resized'), extensionForImageFormat(outputFormat)),
           originalName: file.name,
           originalWidth: originalDimensions.width,
           originalHeight: originalDimensions.height,
-          newWidth,
-          newHeight,
-          originalSize,
-          resizedSize,
-          downloadUrl: preview, // In real app, this would be the resized image
+          newWidth: resizeMode === 'fill' ? targetWidth : newWidth,
+          newHeight: resizeMode === 'fill' ? targetHeight : newHeight,
+          originalSize: file.size,
+          resizedSize: blob.size,
+          downloadUrl: preview,
           preview
         }
 
@@ -178,7 +186,7 @@ export default function ImageResizerPage() {
         setProgress(((i + 1) / files.length) * 100)
       }
     } catch (err) {
-      setError('Failed to resize images. Please try again.')
+      setError('Failed to resize images. This browser may not support one of the selected image formats.')
     } finally {
       setResizing(false)
     }
@@ -203,6 +211,7 @@ export default function ImageResizerPage() {
 
   const reset = () => {
     setFiles([])
+    revokeOutputs(resizedImages)
     setResizedImages([])
     setProgress(0)
     setError(null)
@@ -341,7 +350,7 @@ export default function ImageResizerPage() {
                 {isDragActive ? 'Drop images here' : 'Choose images or drag them here'}
               </p>
               <p className="text-sm text-muted-foreground">
-                Supports all image formats • Maximum file size: 10MB
+                Supports browser-decodable images • Maximum file size: 10MB
               </p>
             </div>
 

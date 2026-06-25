@@ -9,6 +9,13 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Upload, Download, Image, Shrink, CheckCircle, AlertCircle, X, Settings } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { ToolLayout } from "@/components/tool-layout"
+import {
+  BrowserImageFormat,
+  extensionForImageFormat,
+  getImageFormat,
+  renderImageToBlob,
+  replaceFileExtension,
+} from '@/lib/image-processing'
 
 interface CompressedImage {
   name: string
@@ -17,6 +24,7 @@ interface CompressedImage {
   compressionRatio: number
   downloadUrl: string
   preview: string
+  reduced: boolean
 }
 
 export default function ImageCompressorPage() {
@@ -49,45 +57,52 @@ export default function ImageCompressorPage() {
     setFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  const revokeOutputs = (outputs: CompressedImage[]) => {
+    outputs.forEach((image) => URL.revokeObjectURL(image.downloadUrl))
+  }
+
   const compressImages = async () => {
     if (files.length === 0) return
 
     setCompressing(true)
     setProgress(0)
     setError(null)
+    revokeOutputs(compressedImages)
     setCompressedImages([])
 
     try {
-      // Simulate compression process
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
+        const sourceFormat = getImageFormat(file)
+        const outputFormat: BrowserImageFormat = sourceFormat === 'unknown' ? 'jpeg' : sourceFormat
+        const { blob } = await renderImageToBlob(file, {
+          format: outputFormat,
+          quality: quality[0] / 100,
+        })
+        const url = URL.createObjectURL(blob)
 
-        // Simulate compression delay
-        await new Promise(resolve => setTimeout(resolve, 1500))
-
-        // Create preview URL
-        const preview = URL.createObjectURL(file)
-
-        // Simulate compression results based on quality setting
         const originalSize = file.size
-        const qualityFactor = quality[0] / 100
-        const compressionRatio = 0.2 + (qualityFactor * 0.6) // 20-80% of original size
-        const compressedSize = Math.floor(originalSize * compressionRatio)
+        const compressedSize = blob.size
+        const reduced = compressedSize < originalSize
+        const compressionRatio = reduced
+          ? Math.round((1 - compressedSize / originalSize) * 100)
+          : 0
 
         const compressedImage: CompressedImage = {
-          name: file.name,
+          name: replaceFileExtension(file.name, extensionForImageFormat(outputFormat)),
           originalSize,
           compressedSize,
-          compressionRatio: Math.round((1 - compressionRatio) * 100),
-          downloadUrl: preview, // In real app, this would be the compressed image
-          preview
+          compressionRatio,
+          downloadUrl: url,
+          preview: url,
+          reduced
         }
 
         setCompressedImages(prev => [...prev, compressedImage])
         setProgress(((i + 1) / files.length) * 100)
       }
     } catch (err) {
-      setError('Failed to compress images. Please try again.')
+      setError('Failed to compress images. This browser may not support one of the selected image formats.')
     } finally {
       setCompressing(false)
     }
@@ -112,6 +127,7 @@ export default function ImageCompressorPage() {
 
   const reset = () => {
     setFiles([])
+    revokeOutputs(compressedImages)
     setCompressedImages([])
     setProgress(0)
     setError(null)
@@ -120,7 +136,7 @@ export default function ImageCompressorPage() {
   return (
     <ToolLayout
       title="Image Compressor"
-      description="Compress images to reduce file size without quality loss"
+      description="Compress browser-supported images locally and report the actual resulting file size"
       category="Image Tools"
       categoryHref="/image-tools"
     >
@@ -279,7 +295,7 @@ export default function ImageCompressorPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-success font-medium">
-                      {image.compressionRatio}% smaller
+                      {image.reduced ? `${image.compressionRatio}% smaller` : 'No size reduction'}
                     </span>
                     <Button size="sm" asChild>
                       <a href={image.downloadUrl} download={`compressed_${image.name}`}>
@@ -321,7 +337,7 @@ export default function ImageCompressorPage() {
               <Shrink className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="font-semibold text-foreground mb-2">Smart Compression</h3>
-            <p className="text-muted-foreground text-sm">Advanced algorithms optimize file size while preserving quality</p>
+            <p className="text-muted-foreground text-sm">Exports a real compressed image and reports the actual size</p>
           </CardContent>
         </Card>
 

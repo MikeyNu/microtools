@@ -67,7 +67,7 @@ export const SEO_CONFIG = {
     },
     cryptoTools: {
       title: "Crypto Tools - Bitcoin Validator, Price Converter & More",
-      description: "Cryptocurrency tools including Bitcoin address validator, crypto price converter, and wallet generator.",
+      description: "Cryptocurrency tools including Bitcoin address validator, crypto price converter, educational wallet demo, and mining calculators.",
       keywords: ["crypto tools", "bitcoin validator", "crypto price converter", "cryptocurrency tools", "blockchain tools"]
     },
     networkTools: {

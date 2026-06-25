@@ -236,7 +236,7 @@ export default function InvestmentReturnPage() {
     { name: 'Compound Interest Calculator', href: '/finance-tools/compound-interest' },
     { name: 'Currency Converter', href: '/finance-tools/currency-converter' },
     { name: 'Loan Calculator', href: '/calculators/loan' },
-    { name: 'Retirement Calculator', href: '/calculators/retirement' }
+    { name: 'Retirement Calculator', href: '/finance-tools/retirement-calculator' }
   ]
 
   return (

@@ -38,6 +38,26 @@ interface DNSResults {
   status: string
 }
 
+const DNS_STATUS: Record<number, string> = {
+  0: 'NOERROR',
+  1: 'FORMERR',
+  2: 'SERVFAIL',
+  3: 'NXDOMAIN',
+  4: 'NOTIMP',
+  5: 'REFUSED',
+}
+
+const createEmptyRecords = (): DNSResults['records'] => ({
+  A: [],
+  AAAA: [],
+  CNAME: [],
+  MX: [],
+  NS: [],
+  TXT: [],
+  SOA: [],
+  PTR: [],
+})
+
 export default function DNSLookupPage() {
   const [domain, setDomain] = useState('')
   const [dnsResults, setDnsResults] = useState<DNSResults | null>(null)
@@ -84,50 +104,46 @@ export default function DNSLookupPage() {
     trackToolStart()
 
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Mock DNS results (in real app, use DNS API services)
-      const mockResults: DNSResults = {
-        domain: domain.trim().toLowerCase(),
-        records: {
-          A: [
-            { type: 'A', name: domain.trim(), value: '93.184.216.34', ttl: 3600 },
-            { type: 'A', name: domain.trim(), value: '93.184.216.35', ttl: 3600 }
-          ],
-          AAAA: [
-            { type: 'AAAA', name: domain.trim(), value: '2606:2800:220:1:248:1893:25c8:1946', ttl: 3600 }
-          ],
-          CNAME: [],
-          MX: [
-            { type: 'MX', name: domain.trim(), value: 'mail.example.com', ttl: 3600, priority: 10 },
-            { type: 'MX', name: domain.trim(), value: 'mail2.example.com', ttl: 3600, priority: 20 }
-          ],
-          NS: [
-            { type: 'NS', name: domain.trim(), value: 'ns1.example.com', ttl: 86400 },
-            { type: 'NS', name: domain.trim(), value: 'ns2.example.com', ttl: 86400 }
-          ],
-          TXT: [
-            { type: 'TXT', name: domain.trim(), value: 'v=spf1 include:_spf.google.com ~all', ttl: 3600 },
-            { type: 'TXT', name: domain.trim(), value: 'google-site-verification=abc123def456', ttl: 3600 }
-          ],
-          SOA: [
-            { type: 'SOA', name: domain.trim(), value: 'ns1.example.com admin.example.com 2023010101 7200 3600 604800 86400', ttl: 86400 }
-          ],
-          PTR: []
-        },
-        nameservers: ['ns1.example.com', 'ns2.example.com'],
-        status: 'NOERROR'
-      }
-      
-      // Randomize some results for demonstration
-      const ips = ['93.184.216.34', '104.21.14.101', '172.67.154.76', '198.51.100.1']
-      mockResults.records.A = mockResults.records.A.map((record, index) => ({
-        ...record,
-        value: ips[index % ips.length]
+      const normalizedDomain = domain.trim().toLowerCase()
+      const types = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT', 'SOA'] as const
+      const records = createEmptyRecords()
+      let status = 'NOERROR'
+
+      await Promise.all(types.map(async (type) => {
+        const response = await fetch(
+          `https://dns.google/resolve?name=${encodeURIComponent(normalizedDomain)}&type=${type}`,
+          { cache: 'no-store' }
+        )
+        if (!response.ok) throw new Error(`DNS resolver returned ${response.status} for ${type}`)
+
+        const data = await response.json()
+        status = DNS_STATUS[data.Status] || `STATUS_${data.Status}`
+        const answers = Array.isArray(data.Answer) ? data.Answer : []
+
+        records[type] = answers.map((answer: { name: string; data: string; TTL: number }) => {
+          const record: DNSRecord = {
+            type,
+            name: answer.name,
+            value: answer.data.replace(/^"|"$/g, ''),
+            ttl: answer.TTL,
+          }
+
+          if (type === 'MX') {
+            const [priority, ...hostParts] = answer.data.split(/\s+/)
+            record.priority = Number(priority)
+            record.value = hostParts.join(' ')
+          }
+
+          return record
+        })
       }))
-      
-      setDnsResults(mockResults)
+
+      setDnsResults({
+        domain: normalizedDomain,
+        records,
+        nameservers: records.NS.map((record) => record.value),
+        status,
+      })
       trackToolComplete()
       
       toast({

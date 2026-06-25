@@ -6,9 +6,16 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Upload, Download, FileImage, ArrowRight, CheckCircle, AlertCircle, X, RefreshCw } from 'lucide-react'
+import { Upload, Download, FileImage, ArrowRight, CheckCircle, AlertCircle, X, RefreshCw, Check } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { ToolLayout } from "@/components/tool-layout"
+import {
+  BrowserImageFormat,
+  extensionForImageFormat,
+  getImageFormat,
+  renderImageToBlob,
+  replaceFileExtension,
+} from '@/lib/image-processing'
 
 interface ConvertedImage {
   name: string
@@ -24,11 +31,8 @@ interface ConvertedImage {
 const imageFormats = [
   { value: 'jpeg', label: 'JPEG', extension: '.jpg' },
   { value: 'png', label: 'PNG', extension: '.png' },
-  { value: 'webp', label: 'WebP', extension: '.webp' },
-  { value: 'gif', label: 'GIF', extension: '.gif' },
-  { value: 'bmp', label: 'BMP', extension: '.bmp' },
-  { value: 'tiff', label: 'TIFF', extension: '.tiff' }
-]
+  { value: 'webp', label: 'WebP', extension: '.webp' }
+] satisfies { value: BrowserImageFormat; label: string; extension: string }[]
 
 export default function FormatConverterPage() {
   const [files, setFiles] = useState<File[]>([])
@@ -36,7 +40,7 @@ export default function FormatConverterPage() {
   const [progress, setProgress] = useState(0)
   const [convertedImages, setConvertedImages] = useState<ConvertedImage[]>([])
   const [error, setError] = useState<string | null>(null)
-  const [targetFormat, setTargetFormat] = useState('webp')
+  const [targetFormat, setTargetFormat] = useState<BrowserImageFormat>('webp')
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const imageFiles = acceptedFiles.filter(file => file.type.startsWith('image/'))
@@ -61,14 +65,11 @@ export default function FormatConverterPage() {
   }
 
   const getFileFormat = (file: File): string => {
-    const type = file.type.toLowerCase()
-    if (type.includes('jpeg') || type.includes('jpg')) return 'jpeg'
-    if (type.includes('png')) return 'png'
-    if (type.includes('webp')) return 'webp'
-    if (type.includes('gif')) return 'gif'
-    if (type.includes('bmp')) return 'bmp'
-    if (type.includes('tiff')) return 'tiff'
-    return 'unknown'
+    return getImageFormat(file)
+  }
+
+  const revokeOutputs = (outputs: ConvertedImage[]) => {
+    outputs.forEach((image) => URL.revokeObjectURL(image.downloadUrl))
   }
 
   const convertImages = async () => {
@@ -77,6 +78,7 @@ export default function FormatConverterPage() {
     setConverting(true)
     setProgress(0)
     setError(null)
+    revokeOutputs(convertedImages)
     setConvertedImages([])
 
     try {
@@ -84,35 +86,19 @@ export default function FormatConverterPage() {
         const file = files[i]
         const originalFormat = getFileFormat(file)
 
-        // Skip if already in target format
         if (originalFormat === targetFormat) {
           setError(`${file.name} is already in ${targetFormat.toUpperCase()} format`)
           continue
         }
 
-        // Simulate conversion delay
-        await new Promise(resolve => setTimeout(resolve, 2000))
-
-        // Create preview URL
-        const preview = URL.createObjectURL(file)
-
-        // Simulate format conversion results
+        const { blob } = await renderImageToBlob(file, {
+          format: targetFormat,
+          quality: targetFormat === 'png' ? undefined : 0.9,
+        })
+        const preview = URL.createObjectURL(blob)
         const originalSize = file.size
-        let convertedSize = originalSize
-
-        // Simulate size changes based on format conversion
-        if (targetFormat === 'webp') {
-          convertedSize = Math.floor(originalSize * 0.7) // WebP is typically smaller
-        } else if (targetFormat === 'jpeg' && originalFormat === 'png') {
-          convertedSize = Math.floor(originalSize * 0.6) // JPEG smaller than PNG
-        } else if (targetFormat === 'png' && originalFormat === 'jpeg') {
-          convertedSize = Math.floor(originalSize * 1.4) // PNG larger than JPEG
-        } else if (targetFormat === 'bmp') {
-          convertedSize = Math.floor(originalSize * 3) // BMP is much larger
-        }
-
-        const targetFormatInfo = imageFormats.find(f => f.value === targetFormat)
-        const newFileName = file.name.replace(/\.[^/.]+$/, targetFormatInfo?.extension || '.jpg')
+        const convertedSize = blob.size
+        const newFileName = replaceFileExtension(file.name, extensionForImageFormat(targetFormat))
 
         const convertedImage: ConvertedImage = {
           name: newFileName,
@@ -121,7 +107,7 @@ export default function FormatConverterPage() {
           targetFormat: targetFormat.toUpperCase(),
           originalSize,
           convertedSize,
-          downloadUrl: preview, // In real app, this would be the converted file
+          downloadUrl: preview,
           preview
         }
 
@@ -129,7 +115,7 @@ export default function FormatConverterPage() {
         setProgress(((i + 1) / files.length) * 100)
       }
     } catch (err) {
-      setError('Failed to convert images. Please try again.')
+      setError('Failed to convert images. This browser may not support one of the selected image formats.')
     } finally {
       setConverting(false)
     }
@@ -154,6 +140,7 @@ export default function FormatConverterPage() {
 
   const reset = () => {
     setFiles([])
+    revokeOutputs(convertedImages)
     setConvertedImages([])
     setProgress(0)
     setError(null)
@@ -162,7 +149,7 @@ export default function FormatConverterPage() {
   return (
     <ToolLayout
       title="Image Format Converter"
-      description="Convert images between JPG, PNG, WebP, and other formats"
+      description="Convert browser-supported images between JPEG, PNG, and WebP"
       category="Image Tools"
       categoryHref="/image-tools"
     >
@@ -183,7 +170,7 @@ export default function FormatConverterPage() {
               <label className="text-sm font-medium text-muted-foreground mb-2 block">
                 Convert to:
               </label>
-              <Select value={targetFormat} onValueChange={setTargetFormat}>
+              <Select value={targetFormat} onValueChange={(value) => setTargetFormat(value as BrowserImageFormat)}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select target format" />
                 </SelectTrigger>
@@ -250,7 +237,7 @@ export default function FormatConverterPage() {
                 {isDragActive ? 'Drop images here' : 'Choose images or drag them here'}
               </p>
               <p className="text-sm text-muted-foreground">
-                Supports all image formats • Maximum file size: 10MB
+                Supports browser-decodable images • Outputs JPEG, PNG, or WebP • Maximum file size: 10MB
               </p>
             </div>
 
@@ -411,48 +398,24 @@ export default function FormatConverterPage() {
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b">
-                  <td className="p-2 font-medium">JPEG</td>
-                  <td className="p-2">Photos, web images</td>
-                  <td className="p-2">❌ No</td>
-                  <td className="p-2">🟢 Small</td>
-                  <td className="p-2">🟡 Good</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-2 font-medium">PNG</td>
-                  <td className="p-2">Graphics, logos</td>
-                  <td className="p-2">✅ Yes</td>
-                  <td className="p-2">🟡 Medium</td>
-                  <td className="p-2">🟢 Excellent</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-2 font-medium">WebP</td>
-                  <td className="p-2">Web, modern apps</td>
-                  <td className="p-2">✅ Yes</td>
-                  <td className="p-2">🟢 Very Small</td>
-                  <td className="p-2">🟢 Excellent</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-2 font-medium">GIF</td>
-                  <td className="p-2">Animations</td>
-                  <td className="p-2">✅ Yes</td>
-                  <td className="p-2">🟡 Medium</td>
-                  <td className="p-2">🔴 Limited</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="p-2 font-medium">BMP</td>
-                  <td className="p-2">Raw images</td>
-                  <td className="p-2">❌ No</td>
-                  <td className="p-2">🔴 Very Large</td>
-                  <td className="p-2">🟢 Perfect</td>
-                </tr>
-                <tr>
-                  <td className="p-2 font-medium">TIFF</td>
-                  <td className="p-2">Professional print</td>
-                  <td className="p-2">✅ Yes</td>
-                  <td className="p-2">🔴 Large</td>
-                  <td className="p-2">🟢 Perfect</td>
-                </tr>
+                {[
+                  { fmt: 'JPEG', bestFor: 'Photos, web images',  transparency: false, fileSize: 'Small',      sizeColor: 'text-success',      quality: 'Good',      qualityColor: 'text-warning'     },
+                  { fmt: 'PNG',  bestFor: 'Graphics, logos',     transparency: true,  fileSize: 'Medium',     sizeColor: 'text-warning',      quality: 'Excellent', qualityColor: 'text-success'     },
+                  { fmt: 'WebP', bestFor: 'Web, modern apps',    transparency: true,  fileSize: 'Very Small', sizeColor: 'text-success',      quality: 'Excellent', qualityColor: 'text-success'     },
+                ].map((row, i, arr) => (
+                  <tr key={row.fmt} className={i < arr.length - 1 ? 'border-b' : ''}>
+                    <td className="p-2 font-mono font-semibold text-foreground">{row.fmt}</td>
+                    <td className="p-2 text-muted-foreground">{row.bestFor}</td>
+                    <td className="p-2">
+                      {row.transparency
+                        ? <span className="inline-flex items-center gap-1 text-success"><Check className="h-3.5 w-3.5" />Yes</span>
+                        : <span className="inline-flex items-center gap-1 text-destructive"><X className="h-3.5 w-3.5" />No</span>
+                      }
+                    </td>
+                    <td className={`p-2 font-medium ${row.sizeColor}`}>{row.fileSize}</td>
+                    <td className={`p-2 font-medium ${row.qualityColor}`}>{row.quality}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

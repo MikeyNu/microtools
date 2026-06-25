@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast'
 import { ToolLayout } from '@/components/tool-layout'
 import { FavoriteButton, ShareButton } from '@/components/user-engagement'
 import { useToolTracker } from '@/components/analytics-provider'
+import { secureRandomString } from '@/lib/secure-random'
 
 interface PasswordAnalysis {
   score: number
@@ -203,12 +204,7 @@ export default function PasswordCheckerPage() {
     
     if (!charset) return ''
     
-    let password = ''
-    for (let i = 0; i < generatorOptions.length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length))
-    }
-    
-    return password
+    return secureRandomString(generatorOptions.length, charset)
   }
 
   const handleGeneratePassword = () => {

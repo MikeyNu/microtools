@@ -33,6 +33,12 @@ const tools = [
     icon: Fingerprint,
     href: "/security-tools/hash-generator",
   },
+  {
+    title: "Password Generator",
+    description: "Generate high-entropy passwords with cryptographic browser randomness",
+    icon: Key,
+    href: "/security-tools/password-generator",
+  },
 ]
 
 export default function SecurityToolsPage() {

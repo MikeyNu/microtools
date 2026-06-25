@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
 import { useToast } from "@/hooks/use-toast"
 import { ToolLayout } from "@/components/tool-layout"
+import { secureRandomString } from "@/lib/secure-random"
 
 export default function PasswordGeneratorPage() {
   const [length, setLength] = useState([12])
@@ -42,10 +43,7 @@ export default function PasswordGeneratorPage() {
       return
     }
 
-    let result = ""
-    for (let i = 0; i < length[0]; i++) {
-      result += charset.charAt(Math.floor(Math.random() * charset.length))
-    }
+    const result = secureRandomString(length[0], charset)
 
     setPassword(result)
     calculateStrength(result)

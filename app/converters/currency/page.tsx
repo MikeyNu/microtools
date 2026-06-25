@@ -2,56 +2,59 @@
 
 import { useState } from "react"
 import { RefreshCw } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ToolLayout } from "@/components/tool-layout"
-
-const currencies = [
-  { code: "USD", name: "US Dollar", symbol: "$" },
-  { code: "EUR", name: "Euro", symbol: "€" },
-  { code: "GBP", name: "British Pound", symbol: "£" },
-  { code: "JPY", name: "Japanese Yen", symbol: "¥" },
-  { code: "CAD", name: "Canadian Dollar", symbol: "C$" },
-  { code: "AUD", name: "Australian Dollar", symbol: "A$" },
-  { code: "CHF", name: "Swiss Franc", symbol: "CHF" },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
-  { code: "INR", name: "Indian Rupee", symbol: "₹" },
-  { code: "BRL", name: "Brazilian Real", symbol: "R$" },
-]
+import { CURRENCIES, fetchCurrencyRates, formatCurrencyAmount } from "@/lib/currency-rates"
 
 export default function CurrencyConverterPage() {
   const [amount, setAmount] = useState("1")
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("EUR")
   const [result, setResult] = useState<number | null>(null)
+  const [rate, setRate] = useState<number | null>(null)
+  const [lastUpdated, setLastUpdated] = useState("")
+  const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
-  // Mock exchange rates - in a real app, you'd fetch from an API
-  const mockRates: Record<string, Record<string, number>> = {
-    USD: { EUR: 0.85, GBP: 0.73, JPY: 110, CAD: 1.25, AUD: 1.35, CHF: 0.92, CNY: 6.45, INR: 74.5, BRL: 5.2 },
-    EUR: { USD: 1.18, GBP: 0.86, JPY: 129, CAD: 1.47, AUD: 1.59, CHF: 1.08, CNY: 7.6, INR: 87.8, BRL: 6.1 },
-    GBP: { USD: 1.37, EUR: 1.16, JPY: 150, CAD: 1.71, AUD: 1.85, CHF: 1.26, CNY: 8.8, INR: 102, BRL: 7.1 },
-  }
+  const convertCurrency = async () => {
+    const amountNum = Number.parseFloat(amount)
+    if (!Number.isFinite(amountNum) || amountNum < 0) {
+      setError("Enter a valid non-negative amount.")
+      setResult(null)
+      setRate(null)
+      return
+    }
 
-  const convertCurrency = () => {
     setLoading(true)
-    // Simulate API call delay
-    setTimeout(() => {
-      const amountNum = Number.parseFloat(amount)
-      if (amountNum && fromCurrency && toCurrency) {
-        if (fromCurrency === toCurrency) {
-          setResult(amountNum)
-        } else {
-          // Use mock rates
-          const rate = mockRates[fromCurrency]?.[toCurrency] || 1
-          setResult(Math.round(amountNum * rate * 100) / 100)
-        }
+    setError("")
+
+    try {
+      if (fromCurrency === toCurrency) {
+        setRate(1)
+        setResult(amountNum)
+        setLastUpdated(new Date().toUTCString())
+        return
       }
+
+      const data = await fetchCurrencyRates(fromCurrency)
+      const nextRate = data.rates[toCurrency]
+      if (!nextRate) throw new Error(`No exchange rate was returned for ${toCurrency}.`)
+
+      setRate(nextRate)
+      setResult(amountNum * nextRate)
+      setLastUpdated(data.lastUpdated)
+    } catch (err) {
+      setResult(null)
+      setRate(null)
+      setError(err instanceof Error ? err.message : "Failed to fetch exchange rates.")
+    } finally {
       setLoading(false)
-    }, 500)
+    }
   }
 
   const swapCurrencies = () => {
@@ -99,7 +102,7 @@ export default function CurrencyConverterPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {currencies.map((currency) => (
+                      {CURRENCIES.map((currency) => (
                         <SelectItem key={currency.code} value={currency.code}>
                           {currency.symbol} {currency.name} ({currency.code})
                         </SelectItem>
@@ -121,7 +124,7 @@ export default function CurrencyConverterPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {currencies.map((currency) => (
+                      {CURRENCIES.map((currency) => (
                         <SelectItem key={currency.code} value={currency.code}>
                           {currency.symbol} {currency.name} ({currency.code})
                         </SelectItem>
@@ -131,11 +134,17 @@ export default function CurrencyConverterPage() {
                 </div>
 
                 <Button onClick={convertCurrency} className="w-full" disabled={loading}>
-                  {loading ? "Converting..." : "Convert Currency"}
+                  {loading ? "Fetching live rate..." : "Convert Currency"}
                 </Button>
+
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
               </div>
 
-              {result !== null && (
+              {result !== null && rate !== null && (
                 <div className="space-y-4">
                   <h3 className="font-serif text-lg font-semibold">Result</h3>
                   <div className="bg-muted p-6 rounded-lg text-center">
@@ -143,15 +152,14 @@ export default function CurrencyConverterPage() {
                       {amount} {fromCurrency} equals
                     </div>
                     <div className="text-3xl font-bold text-primary mb-2">
-                      {result.toLocaleString()} {toCurrency}
+                      {formatCurrencyAmount(result, toCurrency)}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      Exchange rate: 1 {fromCurrency} = {((result || 0) / Number.parseFloat(amount || "1")).toFixed(4)}{" "}
-                      {toCurrency}
+                      Exchange rate: 1 {fromCurrency} = {rate.toFixed(6)} {toCurrency}
                     </div>
                   </div>
                   <div className="text-xs text-muted-foreground text-center">
-                    * Rates are for demonstration purposes only
+                    Rates from open.er-api.com. Last updated: {lastUpdated}
                   </div>
                 </div>
               )}

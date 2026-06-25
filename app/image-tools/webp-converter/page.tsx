@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Upload, Download, FileImage, ArrowRight, CheckCircle, AlertCircle, X, Zap } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { ToolLayout } from "@/components/tool-layout"
+import { renderImageToBlob } from '@/lib/image-processing'
 
 interface ConvertedImage {
   name: string
@@ -18,6 +19,7 @@ interface ConvertedImage {
   compressionRatio: number
   downloadUrl: string
   preview: string
+  reduced: boolean
 }
 
 export default function WebPConverterPage() {
@@ -46,8 +48,7 @@ export default function WebPConverterPage() {
       'image/jpeg': ['.jpg', '.jpeg'],
       'image/png': ['.png'],
       'image/gif': ['.gif'],
-      'image/bmp': ['.bmp'],
-      'image/tiff': ['.tiff']
+      'image/bmp': ['.bmp']
     },
     maxSize: 10 * 1024 * 1024 // 10MB
   })
@@ -56,47 +57,50 @@ export default function WebPConverterPage() {
     setFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  const revokeOutputs = (outputs: ConvertedImage[]) => {
+    outputs.forEach((image) => URL.revokeObjectURL(image.downloadUrl))
+  }
+
   const convertImages = async () => {
     if (files.length === 0) return
 
     setConverting(true)
     setProgress(0)
     setError(null)
+    revokeOutputs(convertedImages)
     setConvertedImages([])
 
     try {
-      // Simulate conversion process
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-
-        // Simulate conversion delay
-        await new Promise(resolve => setTimeout(resolve, 2000))
-
-        // Create preview URL
-        const preview = URL.createObjectURL(file)
-
-        // Simulate WebP conversion results
+        const { blob } = await renderImageToBlob(file, {
+          format: 'webp',
+          quality: quality[0] / 100,
+        })
+        const preview = URL.createObjectURL(blob)
         const originalSize = file.size
-        const qualityFactor = quality[0] / 100
-        // WebP typically achieves 25-50% better compression than JPEG
-        const webpCompressionRatio = 0.3 + (qualityFactor * 0.4) // 30-70% of original size
-        const convertedSize = Math.floor(originalSize * webpCompressionRatio)
+        const convertedSize = blob.size
+        const reduced = convertedSize < originalSize
+        const compressionRatio = reduced
+          ? Math.round((1 - convertedSize / originalSize) * 100)
+          : 0
 
         const convertedImage: ConvertedImage = {
           name: file.name.replace(/\.[^/.]+$/, '.webp'),
           originalName: file.name,
           originalSize,
           convertedSize,
-          compressionRatio: Math.round((1 - webpCompressionRatio) * 100),
-          downloadUrl: preview, // In real app, this would be the converted WebP file
-          preview
+          compressionRatio,
+          downloadUrl: preview,
+          preview,
+          reduced
         }
 
         setConvertedImages(prev => [...prev, convertedImage])
         setProgress(((i + 1) / files.length) * 100)
       }
     } catch (err) {
-      setError('Failed to convert images. Please try again.')
+      setError('Failed to convert images. This browser may not support one of the selected image formats.')
     } finally {
       setConverting(false)
     }
@@ -121,6 +125,7 @@ export default function WebPConverterPage() {
 
   const reset = () => {
     setFiles([])
+    revokeOutputs(convertedImages)
     setConvertedImages([])
     setProgress(0)
     setError(null)
@@ -138,7 +143,7 @@ export default function WebPConverterPage() {
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-success mb-1">25-50%</div>
+              <div className="text-2xl font-bold text-success mb-1">Often</div>
               <div className="text-sm text-muted-foreground">Smaller file size</div>
             </div>
             <div>
@@ -219,7 +224,7 @@ export default function WebPConverterPage() {
                 {isDragActive ? 'Drop images here' : 'Choose images or drag them here'}
               </p>
               <p className="text-sm text-muted-foreground">
-                Supports JPG, PNG, GIF, BMP, TIFF • Maximum file size: 10MB
+                Supports browser-decodable JPG, PNG, GIF, and BMP images • Maximum file size: 10MB
               </p>
             </div>
 
@@ -315,7 +320,7 @@ export default function WebPConverterPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-success font-medium">
-                      {image.compressionRatio}% smaller
+                      {image.reduced ? `${image.compressionRatio}% smaller` : 'No size reduction'}
                     </span>
                     <Button size="sm" asChild>
                       <a href={image.downloadUrl} download={image.name}>

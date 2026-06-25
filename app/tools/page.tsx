@@ -9,6 +9,7 @@ import Link from "next/link"
 import { AdSensePlaceholder } from "@/components/adsense-placeholder"
 import { ADSENSE_CONFIG, getAdUnitId, shouldDisplayAds } from "@/lib/adsense-config"
 import { SearchComponent } from "@/components/search-functionality"
+import { VictorianGlyph } from "@/components/victorian-glyph"
 import { useState, useMemo } from "react"
 
 const allTools = [
@@ -93,6 +94,20 @@ const allTools = [
     description: "Convert between bytes, KB, MB, GB, and TB",
     category: "Converters",
     href: "/converters/file-size",
+    icon: Zap,
+  },
+  {
+    name: "Binary Converter",
+    description: "Convert between binary, decimal, hexadecimal, and text formats",
+    category: "Converters",
+    href: "/converters/binary",
+    icon: Zap,
+  },
+  {
+    name: "Hex Converter",
+    description: "Convert hexadecimal, decimal, binary, and UTF-8 text values",
+    category: "Converters",
+    href: "/converters/hex",
     icon: Zap,
   },
 
@@ -380,6 +395,20 @@ const allTools = [
     href: "/security-tools/2fa-generator",
     icon: Shield,
   },
+  {
+    name: "Hash Generator (Security)",
+    description: "Generate cryptographic hashes for text and files",
+    category: "Security Tools",
+    href: "/security-tools/hash-generator",
+    icon: Shield,
+  },
+  {
+    name: "Password Generator (Security)",
+    description: "Generate high-entropy passwords with cryptographic randomness",
+    category: "Security Tools",
+    href: "/security-tools/password-generator",
+    icon: Shield,
+  },
 
   // Math Tools
   {
@@ -463,6 +492,20 @@ const allTools = [
     href: "/network-tools/port-scanner",
     icon: Globe,
   },
+  {
+    name: "Ping Test",
+    description: "Measure browser-observed HTTP latency to a host or URL",
+    category: "Network Tools",
+    href: "/network-tools/ping-test",
+    icon: Globe,
+  },
+  {
+    name: "Whois Lookup",
+    description: "Look up structured RDAP registration details for domains",
+    category: "Network Tools",
+    href: "/network-tools/whois-lookup",
+    icon: Globe,
+  },
 
   // Finance Tools
   {
@@ -537,7 +580,7 @@ export default function AllToolsPage() {
       <main className="container mx-auto px-6 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-4">
             All Tools
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -551,8 +594,7 @@ export default function AllToolsPage() {
           {/* Search */}
           <div className="max-w-md mx-auto mb-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl blur-xl"></div>
-              <div className="relative bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/20 dark:border-gray-700/30 rounded-xl shadow-lg">
+              <div className="relative bg-card/90 backdrop-blur-sm border border-border/80 rounded-md">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
                 <Input
                   type="text"
@@ -589,6 +631,9 @@ export default function AllToolsPage() {
                 className="text-sm"
                 onClick={() => setSelectedCategory(category.name)}
               >
+                {category.name !== "All" && (
+                  <VictorianGlyph label={category.name} variant="plain" size="sm" className="mr-1" />
+                )}
                 {category.name}
                 <Badge variant="secondary" className="ml-2 text-xs">
                   {selectedCategory === category.name ? filteredTools.length : category.count}
@@ -602,14 +647,17 @@ export default function AllToolsPage() {
         {filteredTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
             {filteredTools.map((tool, index) => {
-            const IconComponent = tool.icon
             return (
-              <Card key={tool.name} className="group hover:shadow-lg transition-all duration-300 hover:scale-105 border-border/50 hover:border-accent/50">
+              <Card key={tool.name} className="group border-border/80 bg-card/95 transition-all duration-200 hover:border-accent/50 hover:shadow-[0_12px_28px_rgba(23,19,16,0.08)]">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="p-2 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors">
-                      <IconComponent className="h-5 w-5 text-accent" />
-                    </div>
+                    <VictorianGlyph
+                      label={tool.name}
+                      category={tool.category}
+                      variant="soft"
+                      size="lg"
+                      className="group-hover:bg-accent/15 transition-colors"
+                    />
                     <div className="flex gap-1">
                       {tool.popular && (
                         <Badge variant="secondary" className="text-xs">
@@ -715,15 +763,12 @@ export default function AllToolsPage() {
                 count: allTools.filter(tool => tool.category === "SEO Tools").length,
               },
             ].map((category) => {
-              const IconComponent = category.icon
               return (
                 <Link key={category.title} href={category.href}>
-                  <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-105 border-border/50 hover:border-accent/50 cursor-pointer">
+                  <Card className="group border-border/80 bg-card/95 transition-all duration-200 hover:border-accent/50 hover:shadow-[0_12px_28px_rgba(23,19,16,0.08)] cursor-pointer">
                     <CardHeader>
                       <div className="flex items-center justify-between mb-2">
-                        <div className="p-3 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors">
-                          <IconComponent className="h-6 w-6 text-accent" />
-                        </div>
+                        <VictorianGlyph label={category.title} size="xl" />
                         <Badge variant="secondary">
                           {category.count} tools
                         </Badge>

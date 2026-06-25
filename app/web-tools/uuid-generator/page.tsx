@@ -16,31 +16,35 @@ export default function UUIDGeneratorPage() {
   const [version, setVersion] = useState("4")
   const { toast } = useToast()
 
+  const formatUuidBytes = (bytes: Uint8Array) => {
+    const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("")
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
+  }
+
+  const generateUuidV7 = () => {
+    const bytes = new Uint8Array(16)
+    crypto.getRandomValues(bytes)
+
+    let timestamp = Date.now()
+    for (let i = 5; i >= 0; i--) {
+      bytes[i] = timestamp & 0xff
+      timestamp = Math.floor(timestamp / 256)
+    }
+
+    bytes[6] = (bytes[6] & 0x0f) | 0x70
+    bytes[8] = (bytes[8] & 0x3f) | 0x80
+    return formatUuidBytes(bytes)
+  }
+
   const generateUUID = () => {
     const numCount = Math.min(Number.parseInt(count) || 1, 100)
     const newUuids: string[] = []
 
     for (let i = 0; i < numCount; i++) {
       if (version === "4") {
-        // UUID v4 (random)
-        const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-          const r = (Math.random() * 16) | 0
-          const v = c === "x" ? r : (r & 0x3) | 0x8
-          return v.toString(16)
-        })
-        newUuids.push(uuid)
+        newUuids.push(crypto.randomUUID())
       } else {
-        // Simplified UUID v1 (timestamp-based)
-        const timestamp = Date.now().toString(16)
-        const random = Math.random().toString(16).substring(2, 14)
-        const uuid = `${timestamp.substring(0, 8)}-${timestamp.substring(8)}-1xxx-yxxx-${random}`
-        newUuids.push(
-          uuid.replace(/[xy]/g, (c) => {
-            const r = (Math.random() * 16) | 0
-            const v = c === "x" ? r : (r & 0x3) | 0x8
-            return v.toString(16)
-          }),
-        )
+        newUuids.push(generateUuidV7())
       }
     }
 
@@ -96,7 +100,7 @@ export default function UUIDGeneratorPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">UUID v1 (Timestamp)</SelectItem>
+                  <SelectItem value="7">UUID v7 (Time-ordered)</SelectItem>
                   <SelectItem value="4">UUID v4 (Random)</SelectItem>
                 </SelectContent>
               </Select>
@@ -135,8 +139,7 @@ export default function UUIDGeneratorPage() {
             <h4 className="font-semibold mb-2">About UUIDs</h4>
             <div className="text-sm text-muted-foreground space-y-2">
               <p>
-                <strong>UUID v1:</strong> Based on timestamp and MAC address. Guarantees uniqueness but may reveal
-                information about when and where it was generated.
+                <strong>UUID v7:</strong> Time-ordered UUIDs with cryptographic random bits. Useful for sortable database keys.
               </p>
               <p>
                 <strong>UUID v4:</strong> Randomly generated. Most commonly used version with very low probability

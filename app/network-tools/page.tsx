@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Globe, Search, Shield } from "lucide-react"
+import { Activity, Globe, Search, Shield } from "lucide-react"
 import { CategoryLayout } from "@/components/category-layout"
 
 export const metadata: Metadata = {
@@ -27,13 +27,25 @@ const tools = [
     icon: Shield,
     href: "/network-tools/port-scanner",
   },
+  {
+    title: "Ping Test",
+    description: "Measure browser-observed HTTP latency for a host or URL",
+    icon: Activity,
+    href: "/network-tools/ping-test",
+  },
+  {
+    title: "Whois Lookup",
+    description: "Look up structured RDAP registration details for domains",
+    icon: Globe,
+    href: "/network-tools/whois-lookup",
+  },
 ]
 
 export default function NetworkToolsPage() {
   return (
     <CategoryLayout
       title="Network Tools"
-      description="IP lookup, DNS resolution, and port scanning for network diagnostics and debugging."
+      description="IP lookup, DNS resolution, latency checks, Whois/RDAP, and port scanning for network diagnostics."
       icon={Globe}
       toolCount={tools.length}
       tools={tools}

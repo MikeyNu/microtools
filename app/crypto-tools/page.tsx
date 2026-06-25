@@ -5,7 +5,7 @@ import { CategoryLayout } from "@/components/category-layout"
 export const metadata: Metadata = {
   title: "Crypto Tools - Bitcoin & Cryptocurrency Utilities | Micro Tools",
   description:
-    "Free cryptocurrency tools including Bitcoin address validator, crypto price converter, and wallet generator. Secure and reliable crypto utilities.",
+    "Free cryptocurrency tools including Bitcoin address validator, crypto price converter, educational wallet demo, and mining calculators.",
 }
 
 const tools = [
@@ -22,8 +22,8 @@ const tools = [
     href: "/crypto-tools/price-converter",
   },
   {
-    title: "Wallet Generator",
-    description: "Generate secure cryptocurrency wallet addresses",
+    title: "Wallet Demo",
+    description: "Explore educational wallet keypair derivation without creating production wallets",
     icon: Shield,
     href: "/crypto-tools/wallet-generator",
   },
@@ -39,7 +39,7 @@ export default function CryptoToolsPage() {
   return (
     <CategoryLayout
       title="Crypto Tools"
-      description="Bitcoin address validation, crypto price conversion, wallet generation, and mining calculators."
+      description="Bitcoin address validation, crypto price conversion, educational wallet demos, and mining calculators."
       icon={Bitcoin}
       toolCount={tools.length}
       tools={tools}

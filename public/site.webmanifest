@@ -1,0 +1,23 @@
+{
+  "name": "Micro Tools",
+  "short_name": "Micro Tools",
+  "description": "Free online tools and calculators for developers, designers, and everyday work.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F0E8",
+  "theme_color": "#9F341B",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -21,67 +21,7 @@ import {
   RefreshCw
 } from 'lucide-react'
 import { ToolLayout } from "@/components/tool-layout"
-
-// Simple hash implementations (for demo purposes - in production, use crypto libraries)
-class SimpleHash {
-  static md5(str: string): string {
-    // This is a simplified MD5 implementation for demo
-    // In production, use a proper crypto library
-    let hash = 0
-    if (str.length === 0) return ''
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
-      hash = hash & hash // Convert to 32-bit integer
-    }
-    return Math.abs(hash).toString(16).padStart(8, '0').repeat(4).substring(0, 32)
-  }
-
-  static sha1(str: string): string {
-    // Simplified SHA1 for demo
-    let hash = 0
-    if (str.length === 0) return ''
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
-      hash = hash & hash
-    }
-    return Math.abs(hash).toString(16).padStart(8, '0').repeat(5).substring(0, 40)
-  }
-
-  static sha256(str: string): string {
-    // Simplified SHA256 for demo
-    let hash = 0
-    if (str.length === 0) return ''
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
-      hash = hash & hash
-    }
-    return Math.abs(hash).toString(16).padStart(8, '0').repeat(8).substring(0, 64)
-  }
-
-  static sha512(str: string): string {
-    // Simplified SHA512 for demo
-    let hash = 0
-    if (str.length === 0) return ''
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i)
-      hash = ((hash << 5) - hash) + char
-      hash = hash & hash
-    }
-    return Math.abs(hash).toString(16).padStart(8, '0').repeat(16).substring(0, 128)
-  }
-
-  static crc32(str: string): string {
-    // Simplified CRC32 for demo
-    let crc = 0 ^ (-1)
-    for (let i = 0; i < str.length; i++) {
-      crc = (crc >>> 8) ^ ((crc ^ str.charCodeAt(i)) & 0xFF)
-    }
-    return ((crc ^ (-1)) >>> 0).toString(16).padStart(8, '0')
-  }
-}
+import { generateHashHex, type HashAlgorithm as RealHashAlgorithm } from '@/lib/hash-utils'
 
 interface HashResult {
   algorithm: string
@@ -129,6 +69,14 @@ const algorithms: { [key: string]: HashAlgorithm } = {
   }
 }
 
+const algorithmMap: Record<string, RealHashAlgorithm> = {
+  md5: 'MD5',
+  sha1: 'SHA-1',
+  sha256: 'SHA-256',
+  sha512: 'SHA-512',
+  crc32: 'CRC32',
+}
+
 export default function HashGeneratorPage() {
   const [inputText, setInputText] = useState('')
   const [selectedAlgorithm, setSelectedAlgorithm] = useState('sha256')
@@ -140,7 +88,7 @@ export default function HashGeneratorPage() {
     generateHashes()
   }, [inputText, selectedAlgorithm, generateAll])
 
-  const generateHashes = () => {
+  const generateHashes = async () => {
     if (!inputText.trim()) {
       setResults([])
       return
@@ -149,18 +97,17 @@ export default function HashGeneratorPage() {
     const newResults: HashResult[] = []
 
     if (generateAll) {
-      // Generate all hash types
-      Object.keys(algorithms).forEach(algo => {
-        const hash = generateHash(inputText, algo)
-        newResults.push({
+      const allResults = await Promise.all(Object.keys(algorithms).map(async (algo) => {
+        const hash = await generateHash(inputText, algo)
+        return {
           algorithm: algo,
           hash,
           length: hash.length
-        })
-      })
+        }
+      }))
+      newResults.push(...allResults)
     } else {
-      // Generate only selected algorithm
-      const hash = generateHash(inputText, selectedAlgorithm)
+      const hash = await generateHash(inputText, selectedAlgorithm)
       newResults.push({
         algorithm: selectedAlgorithm,
         hash,
@@ -171,21 +118,10 @@ export default function HashGeneratorPage() {
     setResults(newResults)
   }
 
-  const generateHash = (text: string, algorithm: string): string => {
-    switch (algorithm) {
-      case 'md5':
-        return SimpleHash.md5(text)
-      case 'sha1':
-        return SimpleHash.sha1(text)
-      case 'sha256':
-        return SimpleHash.sha256(text)
-      case 'sha512':
-        return SimpleHash.sha512(text)
-      case 'crc32':
-        return SimpleHash.crc32(text)
-      default:
-        return ''
-    }
+  const generateHash = async (text: string, algorithm: string): Promise<string> => {
+    const mapped = algorithmMap[algorithm]
+    if (!mapped) return ''
+    return generateHashHex(text, mapped)
   }
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,17 +129,27 @@ export default function HashGeneratorPage() {
     if (!file) return
 
     const reader = new FileReader()
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const result = e.target?.result
-      if (typeof result === 'string') {
-        setInputText(result)
+      if (result instanceof ArrayBuffer) {
+        const hashJobs = generateAll ? Object.keys(algorithms) : [selectedAlgorithm]
+        const hashed = await Promise.all(hashJobs.map(async (algo) => {
+          const hash = await generateHashHex(result, algorithmMap[algo])
+          return {
+            algorithm: algo,
+            hash,
+            length: hash.length
+          }
+        }))
+        setResults(hashed)
+        setInputText('')
         setFileInfo({
           name: file.name,
           size: file.size
         })
       }
     }
-    reader.readAsText(file)
+    reader.readAsArrayBuffer(file)
   }
 
   const copyToClipboard = async (text: string) => {

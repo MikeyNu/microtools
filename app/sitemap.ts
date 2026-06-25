@@ -17,6 +17,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/text-tools",
     "/web-tools",
     "/seo-tools",
+    "/network-tools",
+    "/security-tools",
   ]
 
   // Calculator pages
@@ -36,6 +38,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/converters/temperature",
     "/converters/color",
     "/converters/file-size",
+    "/converters/binary",
+    "/converters/hex",
+    "/converters/image",
   ]
 
   // Text tool pages
@@ -64,6 +69,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/seo-tools/robots-generator",
     "/seo-tools/open-graph",
     "/seo-tools/schema-generator",
+    "/seo-tools/sitemap-generator",
+  ]
+
+  const networkPages = [
+    "/network-tools/ip-lookup",
+    "/network-tools/dns-lookup",
+    "/network-tools/port-scanner",
+    "/network-tools/ping-test",
+    "/network-tools/whois-lookup",
+  ]
+
+  const securityPages = [
+    "/security-tools/password-checker",
+    "/security-tools/password-generator",
+    "/security-tools/2fa-generator",
+    "/security-tools/ssl-checker",
+    "/security-tools/hash-generator",
   ]
 
   const allPages = [
@@ -73,6 +95,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...textToolPages,
     ...webToolPages,
     ...seoToolPages,
+    ...networkPages,
+    ...securityPages,
   ]
 
   return allPages.map((page) => ({

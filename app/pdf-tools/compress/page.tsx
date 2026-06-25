@@ -5,27 +5,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Upload, Download, FileText, Shrink, CheckCircle, AlertCircle, X, Settings } from 'lucide-react'
+import { Upload, Download, FileText, Shrink, CheckCircle, AlertCircle, X } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
+import { PDFDocument } from 'pdf-lib'
 import { ToolLayout } from "@/components/tool-layout"
+import { bytesToArrayBuffer } from '@/lib/blob-utils'
 
-interface CompressedFile {
+interface OptimizedFile {
   name: string
   originalSize: number
-  compressedSize: number
-  compressionRatio: number
+  optimizedSize: number
+  reductionPercent: number
   downloadUrl: string
+  reduced: boolean
 }
 
 export default function PDFCompressorPage() {
   const [files, setFiles] = useState<File[]>([])
   const [compressing, setCompressing] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [compressedFiles, setCompressedFiles] = useState<CompressedFile[]>([])
+  const [compressedFiles, setCompressedFiles] = useState<OptimizedFile[]>([])
   const [error, setError] = useState<string | null>(null)
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    const pdfFiles = acceptedFiles.filter(file => file.type === 'application/pdf')
+    const pdfFiles = acceptedFiles.filter(file => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'))
     if (pdfFiles.length !== acceptedFiles.length) {
       setError('Only PDF files are allowed')
       return
@@ -46,40 +49,50 @@ export default function PDFCompressorPage() {
     setFiles(prev => prev.filter((_, i) => i !== index))
   }
 
+  const revokeDownloads = (outputs: OptimizedFile[]) => {
+    outputs.forEach(file => URL.revokeObjectURL(file.downloadUrl))
+  }
+
   const compressFiles = async () => {
     if (files.length === 0) return
 
     setCompressing(true)
     setProgress(0)
     setError(null)
+    revokeDownloads(compressedFiles)
     setCompressedFiles([])
 
     try {
-      // Simulate compression process
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-
-        // Simulate compression delay
-        await new Promise(resolve => setTimeout(resolve, 2000))
-
-        // Simulate compression results
+        const pdf = await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true })
+        const optimizedBytes = await pdf.save({
+          useObjectStreams: true,
+          addDefaultPage: false,
+          objectsPerTick: 100,
+        })
+        const blob = new Blob([bytesToArrayBuffer(optimizedBytes)], { type: 'application/pdf' })
         const originalSize = file.size
-        const compressionRatio = 0.3 + Math.random() * 0.4 // 30-70% compression
-        const compressedSize = Math.floor(originalSize * compressionRatio)
+        const optimizedSize = blob.size
+        const reduced = optimizedSize < originalSize
+        const reductionPercent = reduced
+          ? Math.round((1 - optimizedSize / originalSize) * 100)
+          : 0
 
-        const compressedFile: CompressedFile = {
+        const compressedFile: OptimizedFile = {
           name: file.name,
           originalSize,
-          compressedSize,
-          compressionRatio: Math.round((1 - compressionRatio) * 100),
-          downloadUrl: URL.createObjectURL(file) // In real app, this would be the compressed file
+          optimizedSize,
+          reductionPercent,
+          reduced,
+          downloadUrl: URL.createObjectURL(blob)
         }
 
         setCompressedFiles(prev => [...prev, compressedFile])
         setProgress(((i + 1) / files.length) * 100)
       }
     } catch (err) {
-      setError('Failed to compress files. Please try again.')
+      setError('Failed to optimize one or more PDFs. A file may be encrypted, damaged, or unsupported by browser-based parsing.')
     } finally {
       setCompressing(false)
     }
@@ -104,6 +117,7 @@ export default function PDFCompressorPage() {
 
   const reset = () => {
     setFiles([])
+    revokeDownloads(compressedFiles)
     setCompressedFiles([])
     setProgress(0)
     setError(null)
@@ -112,7 +126,7 @@ export default function PDFCompressorPage() {
   return (
     <ToolLayout
       title="PDF Compressor"
-      description="Compress PDF files to reduce file size"
+      description="Optimize PDF structure locally and download the actual resulting files"
       category="PDF Tools"
       categoryHref="/pdf-tools"
     >
@@ -174,7 +188,7 @@ export default function PDFCompressorPage() {
                 <div className="flex gap-3 mt-6">
                   <Button onClick={compressFiles} disabled={compressing} className="flex-1">
                     <Shrink className="h-4 w-4 mr-2" />
-                    {compressing ? 'Compressing...' : 'Compress Files'}
+                    {compressing ? 'Optimizing...' : 'Optimize Files'}
                   </Button>
                   <Button variant="outline" onClick={reset}>
                     Clear All
@@ -191,7 +205,7 @@ export default function PDFCompressorPage() {
         <Card className="mb-8">
           <CardContent className="pt-6">
             <div className="text-center mb-4">
-              <h3 className="font-medium text-foreground mb-2">Compressing Files...</h3>
+              <h3 className="font-medium text-foreground mb-2">Optimizing Files...</h3>
               <Progress value={progress} className="w-full" />
               <p className="text-sm text-muted-foreground mt-2">{Math.round(progress)}% complete</p>
             </div>
@@ -208,7 +222,7 @@ export default function PDFCompressorPage() {
               Compression Complete
             </CardTitle>
             <CardDescription>
-              Your files have been successfully compressed
+              Your files have been processed locally. Download the actual optimized PDFs below.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -220,9 +234,9 @@ export default function PDFCompressorPage() {
                     <div>
                       <p className="font-medium text-foreground">{file.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {formatFileSize(file.originalSize)} → {formatFileSize(file.compressedSize)}
-                        <span className="text-success font-medium ml-2">
-                          ({file.compressionRatio}% smaller)
+                        {formatFileSize(file.originalSize)} → {formatFileSize(file.optimizedSize)}
+                        <span className={`${file.reduced ? 'text-success' : 'text-muted-foreground'} font-medium ml-2`}>
+                          {file.reduced ? `(${file.reductionPercent}% smaller)` : '(no size reduction)'}
                         </span>
                       </p>
                     </div>
@@ -243,7 +257,7 @@ export default function PDFCompressorPage() {
                 Download All
               </Button>
               <Button variant="outline" onClick={reset}>
-                Compress More Files
+                Optimize More Files
               </Button>
             </div>
           </CardContent>
@@ -266,7 +280,7 @@ export default function PDFCompressorPage() {
               <Shrink className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="font-semibold text-foreground mb-2">Smart Compression</h3>
-            <p className="text-muted-foreground text-sm">Advanced algorithms reduce file size while preserving quality</p>
+            <p className="text-muted-foreground text-sm">Rewrites PDF object streams locally and reports the real file size</p>
           </CardContent>
         </Card>
 
@@ -276,7 +290,7 @@ export default function PDFCompressorPage() {
               <CheckCircle className="h-6 w-6 text-success" />
             </div>
             <h3 className="font-semibold text-foreground mb-2">Secure Processing</h3>
-            <p className="text-muted-foreground text-sm">Files are processed securely and deleted after compression</p>
+            <p className="text-muted-foreground text-sm">Files stay in your browser and are not uploaded to a server</p>
           </CardContent>
         </Card>
 
@@ -286,7 +300,7 @@ export default function PDFCompressorPage() {
               <Download className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="font-semibold text-foreground mb-2">Batch Processing</h3>
-            <p className="text-muted-foreground text-sm">Compress multiple PDF files at once for efficiency</p>
+            <p className="text-muted-foreground text-sm">Optimize multiple PDF files and download each result</p>
           </CardContent>
         </Card>
       </div>

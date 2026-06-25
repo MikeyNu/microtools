@@ -39,7 +39,7 @@ export function ToolLayout({
             />
 
             <div className="mb-6">
-              <h1 className="font-mono font-bold text-2xl sm:text-3xl text-foreground mb-2 tracking-tight">
+              <h1 className="font-serif font-bold text-2xl sm:text-3xl text-foreground mb-2">
                 {title}
               </h1>
               <p className="text-muted-foreground">{description}</p>
@@ -73,9 +73,9 @@ export function ToolLayout({
               )}
 
               {relatedTools.length > 0 && (
-                <Card className="border-border bg-card">
+                <Card className="border-border/80 bg-card/95">
                   <CardHeader className="pb-3 pt-4 px-4">
-                    <CardTitle className="font-mono text-sm font-semibold text-foreground">
+                    <CardTitle className="text-sm font-semibold text-foreground">
                       Related Tools
                     </CardTitle>
                   </CardHeader>

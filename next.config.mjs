@@ -14,7 +14,6 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   skipTrailingSlashRedirect: true,
-  distDir: 'out',
   
   // Note: Security headers cannot be applied with static export
   // They need to be configured on your web server (GoDaddy/hosting provider)

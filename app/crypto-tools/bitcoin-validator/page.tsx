@@ -196,7 +196,7 @@ export default function BitcoinValidatorPage() {
 
   const relatedTools = [
     { name: 'Crypto Price Converter', href: '/crypto-tools/price-converter' },
-    { name: 'Wallet Generator', href: '/crypto-tools/wallet-generator' },
+    { name: 'Wallet Demo', href: '/crypto-tools/wallet-generator' },
     { name: 'Hash Generator', href: '/developer-tools/hash-generator' },
     { name: 'Base64 Encoder', href: '/developer-tools/base64' }
   ]
