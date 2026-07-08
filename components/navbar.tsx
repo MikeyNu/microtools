@@ -17,6 +17,17 @@ export function Navbar() {
   }, [pathname])
 
   useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [isMobileMenuOpen])
+
+  useEffect(() => {
     const updateScrollState = () => setIsScrolled(window.scrollY > 8)
 
     updateScrollState()
@@ -90,35 +101,58 @@ export function Navbar() {
         {/* Mobile menu toggle */}
         <button
           className="md:hidden p-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onClick={() => setIsMobileMenuOpen(true)}
           aria-label="Toggle menu"
-          aria-expanded={isMobileMenuOpen}
         >
-          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          <Menu className="h-5 w-5" />
         </button>
       </div>
 
-      {/* Mobile nav drawer */}
+      {/* Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-background/95 backdrop-blur-md">
-          <nav className="container mx-auto px-4 py-3 flex flex-col gap-1">
-            {[
-              { href: "/", label: "Home" },
-              { href: "/tools", label: "All Tools" },
-              { href: "/about", label: "About" },
-            ].map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className="px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-secondary rounded-sm transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+        <div 
+          className="fixed inset-0 z-[60] bg-background/60 backdrop-blur-sm md:hidden transition-opacity"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
       )}
+
+      {/* Mobile nav sidebar */}
+      <div 
+        className={`fixed inset-y-0 right-0 z-[70] w-1/2 bg-background shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden flex flex-col border-l border-border ${
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="p-4 flex justify-between items-center border-b border-border">
+          <span className="font-serif font-bold text-base text-foreground">Menu</span>
+          <button 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <nav className="flex flex-col gap-1 p-4">
+          {[
+            { href: "/", label: "Home" },
+            { href: "/tools", label: "All Tools" },
+            { href: "/about", label: "About" },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`px-3 py-3 text-sm rounded-md transition-colors ${
+                pathname === href
+                  ? "bg-accent/10 text-accent font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+      </div>
     </header>
   )
 }
