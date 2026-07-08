@@ -2,7 +2,16 @@ import type React from "react"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import { GeistMono } from "geist/font/mono"
+import { Cormorant_Garamond } from "next/font/google"
 import "./globals.css"
+
+const cormorantGaramond = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-cormorant",
+  display: "swap",
+  weight: ["300", "400", "600", "700"],
+  style: ["normal", "italic"],
+})
 import { SEO_CONFIG } from "@/lib/seo-config"
 import { AnalyticsProvider } from "@/components/analytics-provider"
 import { AdSenseProvider } from "@/components/adsense-provider"
@@ -84,7 +93,7 @@ export default function RootLayout({
   return (
     <html
       lang={SEO_CONFIG.site.language}
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable} ${cormorantGaramond.variable}`}
     >
       <head>
         <link rel="preconnect" href="https://www.googletagmanager.com" />

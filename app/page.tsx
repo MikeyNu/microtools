@@ -139,8 +139,8 @@ export default function HomePage() {
       {/* ── Hero ─────────────────────────────────────────────────── */}
       <section className="border-b border-border/80 py-14 sm:py-20">
         <div className="container mx-auto px-4 sm:px-6">
-          <h1 className="font-serif font-bold text-5xl sm:text-6xl text-foreground leading-none mb-5 max-w-2xl">
-            Every tool,<br />already here.
+          <h1 className="font-serif font-bold text-5xl sm:text-6xl text-foreground leading-none mb-5 max-w-2xl tracking-tight">
+            Every tool,<br /><em>already here.</em>
           </h1>
           <div className="w-12 h-0.5 bg-accent mb-5" />
           <p className="text-muted-foreground text-base sm:text-lg max-w-xl leading-relaxed">

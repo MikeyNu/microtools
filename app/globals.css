@@ -56,7 +56,7 @@
   --museum-ornament-strong:  #CFC1AD;
   --museum-verdigris:        #2F665D;
   --museum-gilt:             #A9823A;
-  --font-display:            "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-display:            var(--font-cormorant), "Cormorant Garamond", Garamond, Georgia, serif;
 
   /* Radius — base is card radius */
   --radius: 0.5rem;
