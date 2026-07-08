@@ -7,9 +7,22 @@
 // 3. Replace all placeholder IDs below with your real ad unit IDs
 // 4. Set NEXT_PUBLIC_ADSENSE_PUBLISHER_ID in your .env.local file
 
+// Helper function to format AdSense Publisher ID properly
+export function formatPublisherId(id?: string): string {
+  if (!id) return "";
+  let cleanId = id.trim();
+  if (cleanId.startsWith("ca-")) {
+    cleanId = cleanId.replace("ca-", "");
+  }
+  if (!cleanId.startsWith("pub-")) {
+    cleanId = `pub-${cleanId}`;
+  }
+  return `ca-${cleanId}`;
+}
+
 export const ADSENSE_CONFIG = {
   // Your AdSense Publisher ID (REQUIRED from environment variables)
-  publisherId: `ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`,
+  publisherId: formatPublisherId(process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID),
 
   // Customer ID for support
   customerId: "962207481",

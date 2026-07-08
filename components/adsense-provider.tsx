@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, createContext, useContext, useState } from 'react';
-import { ADSENSE_CONFIG } from '@/lib/adsense-config';
+import { ADSENSE_CONFIG, formatPublisherId } from '@/lib/adsense-config';
 
 // AdSense Context
 interface AdSenseContextType {
@@ -50,7 +50,7 @@ export function AdSenseProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    const fullPublisherId = `ca-${publisherId}`;
+    const fullPublisherId = formatPublisherId(publisherId);
 
     try {
       // Load AdSense script if not already loaded
@@ -240,7 +240,7 @@ export function AdSenseScript() {
     return null;
   }
 
-  const fullPublisherId = `ca-${publisherId}`;
+  const fullPublisherId = formatPublisherId(publisherId);
 
   return (
     <script
@@ -310,7 +310,7 @@ export function TrackedAd({
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}
-        data-ad-client={`ca-${process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID}`}
+        data-ad-client={formatPublisherId(process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID)}
         data-ad-slot={adUnitId}
         data-ad-format="auto"
         data-full-width-responsive="true"
