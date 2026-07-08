@@ -37,7 +37,8 @@ export function Navbar() {
   }, [])
 
   return (
-    <header
+    <>
+      <header
       className={`sticky top-0 z-50 transition-[background-color,box-shadow,backdrop-filter] duration-200 ${
         isScrolled
           ? "bg-background/92 backdrop-blur-md shadow-[0_1px_0_rgba(23,19,16,0.08)]"
@@ -107,6 +108,7 @@ export function Navbar() {
           <Menu className="h-5 w-5" />
         </button>
       </div>
+      </header>
 
       {/* Overlay */}
       {isMobileMenuOpen && (
@@ -153,6 +155,6 @@ export function Navbar() {
           ))}
         </nav>
       </div>
-    </header>
+    </>
   )
 }

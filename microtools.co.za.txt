@@ -1,0 +1,60 @@
+; Domain: microtools.co.za
+; Exported (y-m-d hh:mm:ss): 2026-07-08 09:52:56
+;
+; This file is intended for use for informational and archival
+; purposes ONLY and MUST be edited before use on a production
+; DNS server.
+;
+; In particular, you must update the SOA record with the correct
+; authoritative name server and contact e-mail address information,
+; and add the correct NS records for the name servers which will
+; be authoritative for this domain.
+;
+; For further information, please consult the BIND documentation
+; located on the following website:
+;
+; http://www.isc.org/
+;
+; And RFC 1035:
+;
+; http://www.ietf.org/rfc/rfc1035.txt
+;
+; Please note that we do NOT offer technical support for any use
+; of this zone data, the BIND name server, or any other third-
+; party DNS software.
+;
+; Use at your own risk.
+
+
+$ORIGIN microtools.co.za.
+
+; SOA Record
+@	3600	 IN 	SOA	ns73.domaincontrol.com.	dns.jomax.net. (
+					2026070802
+					28800
+					7200
+					604800
+					3600
+					) 
+
+; A Record
+@	1800	 IN 	A	216.150.1.1
+admin	10800	 IN 	A	132.148.178.194
+mail	10800	 IN 	A	132.148.178.194
+
+; NS Record
+@	3600	 IN 	NS	ns73.domaincontrol.com.
+@	3600	 IN 	NS	ns74.domaincontrol.com.
+
+; TXT Record
+_dmarc	3600	 IN 	TXT	"v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:dmarc_rua@onsecureserver.net;"
+
+; CNAME Record
+cpanel	10800	 IN 	CNAME	@
+webdisk	10800	 IN 	CNAME	@
+webdisk.admin	10800	 IN 	CNAME	@
+whm	10800	 IN 	CNAME	@
+www	1800	 IN 	CNAME	2a614e11f0924300.vercel-dns-016.com.
+www.admin	10800	 IN 	CNAME	@
+_domainconnect	3600	 IN 	CNAME	_domainconnect.gd.domaincontrol.com.
+
